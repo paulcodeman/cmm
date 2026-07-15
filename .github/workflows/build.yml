@@ -52,9 +52,15 @@ jobs:
     steps:
       - uses: actions/download-artifact@v7
         with:
+          name: linux-i386
+
+      - uses: actions/download-artifact@v7
+        with:
           name: windows-i386
 
       - uses: softprops/action-gh-release@v3
         with:
-          files: c--.exe
+          files: |
+            c--
+            c--.exe
           generate_release_notes: true
