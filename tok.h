@@ -482,7 +482,7 @@ void MakeBreak(unsigned char typeb);
 void SetBreakLabel();
 void SetContinueLabel();
 void CheckDir();
-int SkipParam();
+int SkipParam(int depth=1);
 long GetBitMask(int ofs,int size);
 void AddPostData(unsigned int loop);
 //void NotPostUnion();

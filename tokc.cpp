@@ -4238,7 +4238,12 @@ unsigned int oaddESP=addESP;
 #endif
 	do{
 		nexttok();
-		if(tok2==tk_openbracket)nexttok();
+		int paren_depth = 0;
+		if(tok==tk_openbracket)paren_depth=1;
+		while(tok2==tk_openbracket){
+			nexttok();
+			paren_depth++;
+		}
 		if(tok2==tk_closebracket){
 			nexttok();
 			jmptocompr=1;
@@ -4256,7 +4261,7 @@ unsigned int oaddESP=addESP;
 		nexttok();	//необходимо для избежания предупреждения о неинициализированной переменной
 		cha=cha2;
 		inptr=inptr2;
-		SkipParam();
+		SkipParam(paren_depth);
 		inptr2=inptr;
 		cha2=cha;
 		linenum2=linenumber;
@@ -8270,9 +8275,9 @@ int SkipBlock()
 	return TRUE;
 }
 
-int SkipParam()
+int SkipParam(int depth)
 {
-	for(int i=1;i!=0;){
+	for(int i=depth;i!=0;){
 		FastTok(0);
 		if(tok==tk_question)CheckDir();
 		switch(tok){
