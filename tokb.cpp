@@ -7883,7 +7883,6 @@ tl_hmul2:
 									addESP+=razr==r16?2:4;
 									do_e_axmath(sign,razr,&ofsstr);
 									if(tok!=tk_closebracket)expected(')');
-									nexttok();
 									op66(razr);
 									op(0x58+EDX);
 									addESP-=razr==r16?2:4;
@@ -7930,7 +7929,6 @@ tl_hmul2:
 										addESP+=razr==r16?2:4;
 										do_e_axmath(sign,razr,&ofsstr);
 										if(tok!=tk_closebracket)expected(')');
-										nexttok();
 										op66(razr);
 										op(0x58+EDX);
 										addESP-=razr==r16?2:4;
