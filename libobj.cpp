@@ -16,7 +16,7 @@ enum{
 };
 
 struct LISTNAMESYMBOL{
-	int idx;	//Ð¸Ð½Ð´ÐµÐºÑ Ð¸Ð¼ÐµÐ½Ð¸
+	int idx;	//¨­¤¥ªá ¨¬¥­¨
 	int seg;
 	int adr;
 	idrec *rec;
@@ -151,7 +151,7 @@ long flag;
 		flag=obj->flags;
 		align=GetAlighSize(flag);
 		obj->vsize=-1;
-		if((flag&IMAGE_SCN_CNT_CODE)&&(flag&IMAGE_SCN_MEM_EXECUTE)){//ÑÐµÐºÑ†Ð¸Ñ ÐºÐ¾Ð´Ð°
+		if((flag&IMAGE_SCN_CNT_CODE)&&(flag&IMAGE_SCN_MEM_EXECUTE)){//á¥ªæ¨ï ª®¤ 
 			obj->vsize=s_code;
 			obj->sectionRVA=poutptr=Align(poutptr,align);
 			poutptr+=obj->psize;
@@ -159,13 +159,13 @@ long flag;
 		}
 		else{
 			if((flag&IMAGE_SCN_MEM_READ)&&(flag&IMAGE_SCN_MEM_WRITE)){
-				if(flag&IMAGE_SCN_CNT_INITIALIZED_DATA){	//ÑÐµÐºÑ†Ð¸Ñ Ð¸Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ñ… Ð´Ð°Ð½Ð½Ñ‹Ñ…
+				if(flag&IMAGE_SCN_CNT_INITIALIZED_DATA){	//á¥ªæ¨ï ¨­¨æ¨ «¨§¨à®¢ ­­ëå ¤ ­­ëå
 					obj->vsize=s_data;
 					obj->sectionRVA=poutptrdata=Align(poutptrdata,align);
 					poutptrdata+=obj->psize;
 					if(splitdata==FALSE)poutptr=poutptrdata;
 				}
-				else if(flag&IMAGE_SCN_CNT_UNINITIALIZED_DATA){	//ÑÐµÐºÑ†Ð¸Ñ bss
+				else if(flag&IMAGE_SCN_CNT_UNINITIALIZED_DATA){	//á¥ªæ¨ï bss
 					obj->vsize=s_bss;
 					obj->sectionRVA=ppostsize=Align(postsize,align);
 					postsize+=obj->psize;
@@ -255,7 +255,7 @@ idrec *rec;
 				strncpy((char *)string,(char *)tsym->N.sname,8);
 				string[8]=0;
 			}
-			//Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ñ‚ÑŒ Ð¸Ð¼Ñ
+			//¯à¥®¡à §®¢ âì ¨¬ï
 			ConvertName((char *)string);
 			seg=(listnamesymbol+j)->seg=GetSegm(tsym->SectionNumber);
 //			printf("find name \"%s\" seg=%d type=%d class=%d\n",(char *)string,seg,tsym->Type,tsym->StorageClass);
@@ -290,7 +290,7 @@ idrec *rec;
 //				printf("tok=%d %s\n",tok,itok.name);
 			}
 			else{
-				if(seg==s_extern/*&&tsym->Type==32*/){	//Ð²Ð½ÐµÑˆÐ½Ð¸Ð¹ Ð¾Ð±ÑŠÐµÐºÑ‚ Ð»ÑŽÐ±Ð¾Ð³Ð¾ Ñ‚Ð¸Ð¿Ð°
+				if(seg==s_extern/*&&tsym->Type==32*/){	//¢­¥è­¨© ®¡ê¥ªâ «î¡®£® â¨¯ 
 					strcpy(itok.name,(char *)string);
 //					printf("undef proc \"%s\"\n",itok.name);
 					string[0]=0;

@@ -12,7 +12,7 @@
 
 //#define DEBUGMODE
 
-#define OPTVARCONST // я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+#define OPTVARCONST // ������ ���������� �����������
 
 #define MAXNUMPATH 16
 #define DATATYPES 9 	// number of data types
@@ -34,8 +34,8 @@
 #define MAXSYSCOM 25
 #define NUMNUM 32
 #define NUMNUM64 64
-#define OBJECTALIGN 4096	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-#define WARNCOUNT 15	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+#define OBJECTALIGN 4096	//������������ ������ � ������
+#define WARNCOUNT 15	//����� ��������� ��������������
 
 #define ver1 0
 #define ver2 239
@@ -63,12 +63,12 @@
 	#endif
 #endif
 
-extern unsigned char FixUpTable;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ Fix UP for Windows
+extern unsigned char FixUpTable;	//��������� �������� ������� Fix UP for Windows
 extern unsigned char WinMonoBlock;
 extern unsigned int currentfileinfo;
 
 #if !defined (_MAIN_)
-extern char fobj;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ obj
+extern char fobj;	//������� ��������� obj
 extern char *rawfilename;
 extern struct tm timeptr;
 extern char outext[];
@@ -80,22 +80,22 @@ extern int numfindpath;
 extern char *findpath[];
 extern char bufpath[];
 extern unsigned int  startptr;
-extern unsigned char wconsole;//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ windows
+extern unsigned char wconsole;//������� ��������� ����������� ���������� windows
 extern unsigned long ImageBase;
 extern int numexport;
 extern struct listexport *lexport;
-extern unsigned char optstr;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned char optstr;	//����������� ��������� ��������
 extern unsigned char crif;	//check reply include file
-extern unsigned char idasm;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned char idasm;	//������������ ���������� ������� ����������������
 extern char modelmem;
 extern char *stubfile;
 extern char comsymbios;
 extern unsigned char sobj;
 extern short dllflag;
-extern char *bufstr;	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern int sbufstr;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern unsigned char wbss;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern int numrel;	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern char *bufstr;	//����� ��� ����� �� ��������
+extern int sbufstr;	//��������� ������ ����� ������
+extern unsigned char wbss;	//���� ���������� � ��������� ������
+extern int numrel;	//����� ��������� � ������� �����������
 extern unsigned char usestub;
 extern char *winstub;
 extern unsigned char dpmistub;
@@ -104,7 +104,7 @@ extern int startupfile;
 extern int alignproc,aligncycle;
 extern FILE *hout;
 extern unsigned char useDOS4GW;
-extern unsigned char use_env;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned char use_env;	//���������� ���������
 extern unsigned char clearpost;
 extern unsigned char uselea;
 extern unsigned char regoverstack;
@@ -119,9 +119,9 @@ extern unsigned char ESPloc;
 extern unsigned char string[STRLEN],string2[STRLEN+20];
 
 #if !defined (_TOKC_)
-extern unsigned int outptrsize;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned int outptrsize;	//������ ��������� ������
 extern unsigned char string3[STRLEN];
-extern char *BackTextBlock;	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern char *BackTextBlock;	//����� ��� ������������� ������
 extern int SizeBackBuf;
 extern unsigned char cha;
 extern unsigned int inptr;
@@ -158,33 +158,33 @@ extern unsigned int startStartup;
 extern unsigned char useStartup;
 extern unsigned int endStartup;
 extern unsigned char notpost;
-extern unsigned char am32; 		      // я┐╜я┐╜я┐╜я┐╜я┐╜ 32 я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned char am32; 		      // ����� 32 ������ ���������
 extern unsigned int externnum;
-extern unsigned char FastCallApi;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ API я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern unsigned char FixUp;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern void *liststring;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned char FastCallApi;	//��������� ������� ����� API ��������
+extern unsigned char FixUp;	//������ �� ������� �����������
+extern void *liststring;	//������� �������������� ������ � �������
 extern struct FILEINFO *startfileinfo;
 extern unsigned int totalmodule;
 extern int retproc;
-extern unsigned char splitdata;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜
-extern unsigned char AlignCycle;       //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern char param[];	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern unsigned char dynamic_flag;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern unsigned char setzeroflag;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ zero flag
+extern unsigned char splitdata;	//�������� ������ �� ����
+extern unsigned char AlignCycle;       //����������� ������ ������
+extern char param[];	//����� ��� ���������� ���������
+extern unsigned char dynamic_flag;	//���� ��������� ������������ ���������
+extern unsigned char setzeroflag;	//�������� ������ zero flag
 extern unsigned char insertmode;
-extern unsigned int numblocks;	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned int numblocks;	//����� ���������� �����
 extern unsigned char notunreach;
 extern idrec *staticlist;
 extern unsigned int procedure_start; /* address of start of procedure */
-extern int lastcommand;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+extern int lastcommand;	//��������� �������� � �����
 extern unsigned int initBP;
 extern unsigned char fstatic;
-//extern int sizestack;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+//extern int sizestack;	//������ �� ���������������� ���������� �������
 extern unsigned char addstack;
-extern unsigned long addESP;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
-extern unsigned char blockproc;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern treelocalrec *tlr;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern treelocalrec *btlr;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned long addESP;	//������� �����
+extern unsigned char blockproc;	//������������ ����� �������
+extern treelocalrec *tlr;	//������� ��������� ������
+extern treelocalrec *btlr;	//������� ������������� ��������� ������
 extern int returntype; 				 /* return type, (void, byte, word, ...) */
 #endif
 extern int tok,tok2;
@@ -212,9 +212,9 @@ extern char *bufrm;
 extern UNDEFOFF *undefoffstart;
 extern DLLLIST *listdll;
 extern char skipfind;
-extern struct structteg *tegtree;			//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
-extern struct structteg *ltegtree;		//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
-//extern struct idrec *lstructlist; //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern struct structteg *tegtree;			//���������� ������ �����
+extern struct structteg *ltegtree;		//��������� ������ �����
+//extern struct idrec *lstructlist; //������ ��������� ��������
 extern struct idrec *definestart;
 extern SINFO strinf;
 extern char *startline, *endinput;
@@ -242,12 +242,12 @@ extern unsigned int stackstartaddress;
 extern int dataromstart,dataromsize;
 extern unsigned char startuptomain;
 extern unsigned char dosstring;
-extern unsigned int numdomain;	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ main
-extern char *domain;	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ main
-extern unsigned char usedirectiv;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned int numdomain;	//����� �������� ����������� �� main
+extern char *domain;	//����� ���� �������� ����������� �� main
+extern unsigned char usedirectiv;	//���� ��������� ���������
 extern unsigned char atex;
-extern unsigned int postnumflag;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-extern unsigned char sdp_mode;	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned int postnumflag;	//���� ���������� �������������� � ���������� ������
+extern unsigned char sdp_mode;	//����� �������������� �������� ������������ ��������
 extern int calcnumber;
 extern int strpackdef;
 extern int strpackcur;
@@ -264,7 +264,7 @@ extern ITOK itok,itok2,ptok;
 extern int divexpand;
 extern int optnumber;
 extern char *badadr;
-extern LISTFLOAT *floatnum;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ float я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern LISTFLOAT *floatnum;	//������ float ��������
 extern unsigned int numfloatconst;
 extern unsigned int ofsfloatlist;
 #endif
@@ -279,9 +279,9 @@ extern unsigned int pdbg;      // number of post entrys
 
 #if !defined (_OUTPE_)
 extern unsigned long ImageBase;
-extern unsigned long vsizeheader; //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜.
+extern unsigned long vsizeheader; //����������� ������ ���������.
 extern int filingzerope;
-extern unsigned long FILEALIGN;	// я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+extern unsigned long FILEALIGN;	// ������������ ������ � �����
 #endif
 
 #if !defined (_ERRORS_)
@@ -307,7 +307,7 @@ extern int destructor;
 #if !defined (_RES_)
 extern unsigned char *resbuf;
 extern unsigned int curposbuf;
-extern int numres;	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+extern int numres;	//������� ����� ��������
 extern int numstrtbl;
 #endif
 
@@ -315,7 +315,7 @@ extern unsigned char idxregs[5];
 
 // start of procedure pre-definitions
 /*-----------------19.09.98 17:18-------------------
-	 я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ main.cpp
+	 ������� ������������ � main.cpp
 --------------------------------------------------*/
 void *MALLOC(unsigned long size);
 void *REALLOC(void *block,unsigned long size);
@@ -323,7 +323,7 @@ void IncludePath(char *buf);
 int SelectComand(char *pptr,int *count);
 void strbtrim(char *st);
 unsigned long  Align(unsigned long size,unsigned long val);
-int AlignCD(char segm,int val);	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜
+int AlignCD(char segm,int val);	//��������� ������ ��� ���
 void ErrOpenFile(char *str);
 unsigned int EntryPoint();
 long CopyFile(FILE *in,FILE *out);
@@ -336,19 +336,19 @@ int MakeCoff();
 void setdindata(idrec *ptr,int i);
 
 /*-----------------08.03.98 20:10-------------------
- я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ toka.c
+ ������� ����������� � toka.c
 --------------------------------------------------*/
 void CheckAllMassiv(char *&buf,int sizeel,SINFO *strc,ITOK *ctok=&itok,int reg1=idxregs[0],int reg2=idxregs[1]);
 void docalls(); //attempt to declare undefs from library and dynamic proc's
 int FindOff(unsigned char *name,int base);
-void nextchar();	//я┐╜я┐╜я┐╜ я┐╜ toke
+void nextchar();	//��� � toke
 void nexttok();
-void whitespace(); //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+void whitespace(); //������� ��������� ��������
 int searchtree(ITOK *itk4,int *tk4,unsigned char *strin4);
 void AddUndefOff(int segm,char *ostring);
-void InitStruct();	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-unsigned long LocalStruct(int flag,int *localline);	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
-struct structteg * FindTeg(int Global,char *name=itok.name);	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜
+void InitStruct();	//���������������� ���������
+unsigned long LocalStruct(int flag,int *localline);	//���������������� ��������� ���������
+struct structteg * FindTeg(int Global,char *name=itok.name);	//����� ���
 void dostruct();
 int FastSearch(unsigned char *list,short unsigned *ofs,int type,char *str);
 void FindDirectiv();
@@ -366,7 +366,7 @@ void dodelete();
 void donew();
 void RunNew(int size);
 int CallDestructor(structteg *searcht);
-int FindUseName(char *name);	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜
+int FindUseName(char *name);	//����� ������ �� ������� ���
 void DateToStr(char *buf);
 int CalcRm16(int base,int idx);
 int CheckDef();
@@ -379,7 +379,7 @@ void ExpandRm(int rm,int sib,int *zoom,int *base,int *idx);
 void BackMod();
 
 /*-----------------08.03.98 21:45-------------------
- я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ tokb.h
+ ������� ����������� � tokb.h
 --------------------------------------------------*/
 void AddReloc(int segm=itok.segm);
 int doalmath(int sign,char **ofsstr);
@@ -431,7 +431,7 @@ void float2stack(int num);
 void dofloatstack(int num);
 
 /*-----------------08.03.98 20:59-------------------
- я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ tokc.c
+ ������� ����������� � tokc.c
 --------------------------------------------------*/
 localrec * addlocalvar(char *str,int tok,unsigned int num,int addmain=FALSE);
 int addpoststring(int segm=CS,int len=itok.number, int term=itok.flag); 	 /* add a string to the post queue */
@@ -449,7 +449,7 @@ int doid (char uppercase,int expectedreturn);
 void insert_dynamic(int insert=FALSE);
 int macros(int expectedreturn);
 void op(int byte);
-void opd(int byte);	//я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+void opd(int byte);	//����� ����� � ������� ������
 void op66(int ctoc);
 int op67(int ctok);
 void outqwordd (unsigned long long);
@@ -514,7 +514,7 @@ void LLabel();
 void AddApiToPost(unsigned int num);
 
 /*-----------------08.03.98 20:06-------------------
- я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ toke.c
+ ������� ���������� � toke.c
 --------------------------------------------------*/
 void jumperror(unsigned int line,char *type);
 void beep();			 /* beep for any internal errors */
@@ -568,7 +568,7 @@ int calcfloatnumber(float *retnum,float number,int operand);
 int calcdoublenumber(double *retnum,double number,int operand);
 
 /*-----------------08.03.98 22:24-------------------
- я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ tokr.c
+ ������� ����������� � tokr.c
 --------------------------------------------------*/
 void doasm(int next=FALSE);
 int short_ok(long thenumber,int reg32=FALSE);

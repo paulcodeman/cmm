@@ -1,8 +1,8 @@
 #define _MAIN_
 
 #ifdef _UNIX_
-#define DIV_PATH ':'			//С„С…С‹С€Р„С…С‹в„– СЏС”Р„С…С‰ С‚ СЏС…РЃС…СЊС…СЌСЌСЋС‰ СЋСЉРЃС”С†С…СЌС€В  PATH
-#define DIV_FOLD '/'			//В¤Р„С€СЊ С‘С€СЊС‚СЋС‹СЋСЊ РЃСЂС‡С„С…С‹В в– Р„С‘В  СЏСЂСЏСЉС€ С‚ СЏС”Р„С€ СЉ Р‡СЂС‰С‹С”
+#define DIV_PATH ':'			//делитель путей в переменной окружения PATH
+#define DIV_FOLD '/'			//этим символом разделяются папки в пути к файлу
 #endif
 
 #ifdef _WIN32_
@@ -42,7 +42,7 @@ FILE *hout=NULL;
 const char *namestartupfile="startup.h--";
 
 char outext[4] = "com";
-short extflag=TRUE;//РЃСЂС‘В°С€РЃС…СЌС€С… СЊСЋС†СЌСЋ СЏРЃС€С‘С‚СЋС€Р„в„–
+short extflag=TRUE;//расширение можно присвоить
 //int scrsize;
 unsigned char gwarning=FALSE;
 unsigned char sobj=FALSE;
@@ -61,15 +61,15 @@ char meinfo[]=
 time_t systime;
 struct tm timeptr;
 char comsymbios=FALSE;
-char fobj=FALSE;	//СЏРЃС€С‡СЌСЂСЉ СѓС…СЌС…РЃСЂРЋС€С€ obj
+char fobj=FALSE;	//признак генерации obj
 unsigned int	startptr = 0x100; 			// start address
-unsigned char wconsole=FALSE;	//СЏРЃС€С‡СЌСЂСЉ СѓС…СЌС…РЃСЂРЋС€С€ СЉСЋСЌС‘СЋС‹в„–СЌСЋСѓСЋ СЏРЃС€С‹СЋС†С…СЌС€В  windows
-unsigned char optstr=FALSE;	//СЋСЏР„С€СЊС€С‡СЂРЋС€В  С‘Р„РЃСЋСЉСЋС‚в€љС— СЉСЋСЌС‘Р„СЂСЌР„
+unsigned char wconsole=FALSE;	//признак генерации консольного приложения windows
+unsigned char optstr=FALSE;	//оптимизация строковых констант
 unsigned char crif=TRUE;	//check reply include file
-unsigned char idasm=FALSE;	//СЂС‘С‘С…СЊСЃС‹С…РЃСЌв€љС… С€СЌС‘Р„РЃС”СЉРЋС€С€ С‘СћС€Р„СЂР„в„– С€С„С…СЌР„С€Р‡С€СЉСЂР„СЋРЃСЂСЊС€
-unsigned char wbss=2;	//СЏСЋС‘Р„ СЏС…РЃС…СЊС…СЌСЌв€љС… С‚ СЋР„С„С…С‹в„–СЌС”в–  С‘С…СЉРЋС€в– 
-unsigned char use_env=FALSE;	//СЏС…РЃС…СЊС…СЌСЌСЂВ  СЋСЉРЃС”С†С…СЌС€В 
-int numrel=0;	//СћС€С‘С‹СЋ В¤С‹С…СЊС…СЌР„СЋС‚ С‚ Р„СЂСЃС‹С€РЋС… СЏС…РЃС…СЊС…в€™С…СЌС€С‰
+unsigned char idasm=FALSE;	//ассемблерные инструкции считать идентификаторами
+unsigned char wbss=2;	//пост переменные в отдельную секцию
+unsigned char use_env=FALSE;	//переменная окружения
+int numrel=0;	//число элементов в таблице перемещений
 unsigned char useordinal=FALSE;
 unsigned char useDOS4GW=FALSE;
 unsigned char clearpost=FALSE;
@@ -194,7 +194,7 @@ enum {
 #endif
 	c_map,   c_we,      c_ext,   c_opath, c_end};
 
-#define NUMEXT 6	//СћС€С‘С‹СЋ РЃСЂС‡РЃС…В°С…СЌСЌв€љС— РЃСЂС‘В°С€РЃС…СЌС€С‰ СЉСЋСЊСЏС€С‹С€РЃС”С…СЊСЋСѓСЋ Р‡СЂС‰С‹СЂ
+#define NUMEXT 6	//число разрешенных расширений компилируемого файла
 char extcompile[NUMEXT][4]={"c--","cmm","c","h--","hmm","h"};
 
 #ifdef _KOS_
@@ -202,8 +202,8 @@ char __pgmname[256];
 char __cmdline[256];
 #endif
 
-char *bufstr=NULL;	//СЃС”Р‡С…РЃ С„С‹В  С‘Р„РЃСЋСЉ С€С‡ СЏРЃСЋРЋС…С„С”РЃ
-int sbufstr=SIZEBUF;	//СЌСЂСћСЂС‹в„–СЌв€љС‰ РЃСЂС‡СЊС…РЃ В¤Р„СЋСѓСЋ СЃС”Р‡С…РЃСЂ
+char *bufstr=NULL;	//буфер для строк из процедур
+int sbufstr=SIZEBUF;	//начальный размер этого буфера
 
 void compile();
 void PrintInfo(char **str);
@@ -220,7 +220,7 @@ int writeoutput();
 void BadCommandLine(char *str);
 void  CheckExtenshions();
 void ImportName(char *name);
-void WarnUnusedVar();//СЏРЃС…С„С”СЏРЃС…С†С„С…СЌС€В  СЋ СЌС…С€С‘СЏСЋС‹в„–С‡СЋС‚СЂСЌСЌв€љС— СЏРЃСЋРЋС…С„С”РЃСЂС— С€ СЏС…РЃС…СЊС…СЌСЌв€љС—
+void WarnUnusedVar();//предупреждения о неиспользованных процедурах и переменных
 void MakeExeHeader(EXE_DOS_HEADER *exeheader);
 void CheckPageCode(unsigned int ofs);
 int MakePE();
@@ -299,7 +299,7 @@ unsigned char pari=FALSE;
 		rawfilename=rawext=NULL;
 		LoadIni((char *)"c--.ini");	 
 		
-		for(count=1;count<argc;count++){ //СЋСЃРЃСЂСЃСЋР„СЉСЂ СЉСЋСЊСЂСЌС„СЌСЋС‰ С‘Р„РЃСЋСЉС€
+		for(count=1;count<argc;count++){ //обработка командной строки
 			if(argv[count][0]=='/'||argv[count][0]=='-'){
 			//if(argv[count][0]=='-'){
 				if(SelectComand(argv[count]+1,&count)==c_end) BadCommandLine(argv[count]);
@@ -309,7 +309,7 @@ unsigned char pari=FALSE;
 					rawfilename=argv[count];
 					pari=TRUE;
 					if((rawext=strrchr(rawfilename,'.'))!=NULL){
-						if(stricmp(rawext,".ini")==0){	//С”СЉСЂС‡СЂСЌ ini Р‡СЂС‰С‹
+						if(stricmp(rawext,".ini")==0){	//указан ini файл
 							rawfilename=NULL;
 							rawext=NULL;
 							LoadIni(argv[count]);
@@ -336,7 +336,7 @@ unsigned char pari=FALSE;
 		PrintInfo((char **)usage);
 		exit( e_noinputspecified );
 	}
-	time(&systime); //Р„С…СЉС”в€™С…С… С‚РЃС…СЊВ 
+	time(&systime); //текущее время
 	memcpy(&timeptr,localtime(&systime),sizeof(tm));
 	InitDefineConst();
 	compile();
@@ -364,11 +364,11 @@ union{
 	long longhold;
 	void *nextstr;
 };
-//С‘СЋС‡С„СЂР„в„– С€СЊВ  Р‡СЂС‰С‹СЂ С‘ СЏРЃС…С„С”СЏРЃС…С†С„С…СЌС€В СЊС€ С€ С…С‘С‹С€ СЋСЌ С…С‘Р„в„– С”С„СЂС‹С€Р„в„–
+//создать имя файла с предупреждениями и если он есть удалить
 	errfile.name=(char *)MALLOC(strlen(rawfilename)+5);
 	sprintf(errfile.name,"%s.err",rawfilename);
 	if(stat(errfile.name,(struct stat *)string2)==0)remove(errfile.name);
-//С…С‘С‹С€ С…С‘Р„в„– С€СЊВ  Р‡СЂС‰С‹СЂ С„С‹В  СЏРЃС…С„С”СЏРЃС…С†С„С…СЌС€С‰ СЏРЃСЋС‚С…РЃС€Р„в„– С…СѓСЋ С‘С”в€™С…С‘Р„С‚СЋС‚СЂСЌС€С… С€ С”С„СЂС‹С€Р„в„–.
+//если есть имя файла для предупреждений проверить его существование и удалить.
 	if(wartype.name!=NULL){
 		if(stat(wartype.name,(struct stat *)string2)==0)remove(wartype.name);
 	}
@@ -388,7 +388,7 @@ union{
 #ifdef __NEWLEX__
 	inittokn();
 #endif
-	compilefile((char *)string,2); //С‘СЋСЃС‘Р„С‚С…СЌСЌСЋ РЃСЂС‡СЃСЋРЃСЉСЂ С€ СЉСЋСЊСЏС€С‹В РЋС€В 
+	compilefile((char *)string,2); //собственно разборка и компиляция
 	puts("Link . . .");
 	if(comfile==file_w32&&wbss==2){
 		wbss=FALSE;
@@ -397,10 +397,10 @@ union{
 	if(notdoneprestuff==TRUE)doprestuff();	//startup code
 	if(endifcount>=0)preerror("?endif expected before end of file");
 	AddObj();
-	docalls();	//С„СЋСЃСЂС‚С€Р„в„– С‚СЌС…В°СЌС€С… СЏРЃСЋРЋС…С„С”РЃв€љ
+	docalls();	//добавить внешние процедуры
 	addinitvar();
 	CheckUndefClassProc();
-	if(undefoffstart!=NULL){	//С‚в€љС„СЂР„в„– С‘СЏС€С‘СЋСЉ СЌС…С€С‡С‚С…С‘Р„СЌв€љС— С‘С‘в€љС‹СЋСЉ
+	if(undefoffstart!=NULL){	//выдать список неизвестных ссылок
 		UNDEFOFF *curptr=undefoffstart;
 		for(;;){
 			char holdstr[80];
@@ -425,11 +425,11 @@ union{
 		liststring=nextstr;
 	}
 	free(bufstr);
-	if(warning==TRUE&&wact[7].usewarn)WarnUnusedVar();//СЏРЃС…С„С”СЏРЃС…С†С„С…СЌС€В  СЋ СЌС…С€С‘СЏСЋС‹в„–С‡СЋС‚СЂСЌСЌв€љС— СЏРЃСЋРЋС…С„С”РЃСЂС— С€ СЏС…РЃС…СЊС…СЌСЌв€љС—
-	if(numstrtbl)CreatStrTabRes();	//С‡СЂС‚С…РЃВ°С€Р„в„– С‘СЋС‡С„СЂСЌС€С… РЃС…С‘С”РЃС‘СЋС‚
+	if(warning==TRUE&&wact[7].usewarn)WarnUnusedVar();//предупреждения о неиспользованных процедурах и переменных
+	if(numstrtbl)CreatStrTabRes();	//завершить создание ресурсов
 	if(fobj==FALSE){
 		if(comfile==file_w32&&error==0){
-			AddJmpApi();	//СЉСЋС‘С‚С…СЌСЌв€љС… С‚в€љС‡СЋС‚в€љ API
+			AddJmpApi();	//косвенные вызовы API
 			CreatWinStub();
 		}
 		longhold=outptr;
@@ -475,7 +475,7 @@ union{
 		}
 		else longhold+=(long)postsize+(long)(stacksize);
 		if(am32==0&&longhold>65535L&&!(modelmem==TINY&&(!resizemem)))preerror("Code, data and stack total exceeds 64k");
-		if(posts>0)doposts();  //в•™С‘Р„СЂСЌСЋС‚С€Р„в„– СЂС„РЃС…С‘СЂ С‚в€љС‡СЋС‚СЋС‚ СЏРЃСЋРЋС…С„С”РЃ С€ СЏС…РЃС…С—СЋС„СЋС‚
+		if(posts>0)doposts();  //Установить адреса вызовов процедур и переходов
 		if(resizemem&&comfile==file_com){
 			segments_required=(outptr+postsize+stacksize+15)/16;
 			*(short *)&output[resizesizeaddress]=(short)segments_required;
@@ -605,8 +605,8 @@ void strbtrim(char *st)
 int i;
 char *p,*q;
 	p=q=st;
-	while(isspace(*p))p++;	//СЏСЋСЉСЂ СЌС…С‡СЌСЂСћСЂв€™С€С… С‘С€СЊС‚СЋС‹в€љ
-	while(*p)*q++=*p++;     //СЏС…РЃС…СЊС…С‘Р„С€Р„в„– С‘Р„РЃСЋСЉС”
+	while(isspace(*p))p++;	//пока незначащие символы
+	while(*p)*q++=*p++;     //переместить строку
 	*q='\0';
 	for(i=strlen(st)-1;isspace(st[i])&&i>=0;i--);
 	st[i+1]='\0';
@@ -651,14 +651,14 @@ int i;
 unsigned char neg=FALSE;
 char *ptr;
 int len;
-	if((ptr=strchr(pptr,';'))!=NULL)*ptr=0;// С€в€™С…СЊ СЉСЋСЊСЊС…СЌР„СЂРЃС€С‰ СЋР„С‘С…СЉСЂС…СЊ С‚С‘С… СЏСЋС‘С‹С… СЌС…СѓСЋ
-        if((ptr=strchr(pptr,'='))!=NULL){ // С€в€™С…СЊ С‡СЌСЂСЉ РЃСЂС‚С…СЌС‘Р„С‚СЂ
-		*ptr=0; // С„С…С‹С€СЊ
+	if((ptr=strchr(pptr,';'))!=NULL)*ptr=0;// ищем комментарий отсекаем все после него
+        if((ptr=strchr(pptr,'='))!=NULL){ // ищем знак равенства
+		*ptr=0; // делим
 		ptr++;
-	  strbtrim(ptr);	//С”СЃРЃСЂР„в„– С‹С€В°СЌС€С… СЏРЃСЋСЃС…С‹в€љ
+	  strbtrim(ptr);	//убрать лишние пробелы
 	}
-  strbtrim(pptr);	//С”СЃРЃСЂР„в„– С‹С€В°СЌС€С… СЏРЃСЋСЃС…С‹в€љ
-	if(*pptr==0)return c_end+1;	//СЏС”С‘Р„СЂВ  С‘Р„РЃСЋСЉСЂ
+  strbtrim(pptr);	//убрать лишние пробелы
+	if(*pptr==0)return c_end+1;	//пустая строка
 	if((i=strlen(pptr))>1&&pptr[i-1]=='-'){
 		neg=TRUE;
 		pptr[i-1]=0;
@@ -897,7 +897,7 @@ nexpardll:
 					break;
 				case c_scd:
 /*-----------------13.08.00 23:01-------------------
- СЃС”С„С…Р„ С‚С‚С…С„С…СЌСЂ СЏСЋС‘С‹С… С„СЋРЃСЂСЃСЋР„СЉС€ С„С€СЌСЂСЊС€СћС…С‘СЉС€С— СЏРЃСЋРЋС…С„С”РЃ
+ будет введена после доработки динамических процедур
 	--------------------------------------------------*/
 					splitdata=(unsigned char)1^neg;
 					if(modelmem==SMALL)splitdata=TRUE;
@@ -1065,7 +1065,7 @@ nexpardll:
 #endif
 				case c_ext:     //***lev***
 					strcpy(outext,BackString(ptr)); //***lev***
-					extflag=FALSE; //СћР„СЋСЃв€љ РЃСЂС‘В°С€РЃС…СЌС€С… СЌС… СЏС…РЃС…С‡СЂСЃС€С‚СЂС‹СЋС‘в„– С„РЃС”СѓС€СЊС€ СЉС‹в– СћСЂСЊС€, С…С‘С‹С€ СЋСЌС€ С€С„С”Р„ СЏСЋС‡С†С…
+					extflag=FALSE; //чтобы расширение не перезабивалось другими ключами, если они идут позже
 					break;  //***lev***
                 case c_opath:
                     strcpy(opath,BackString(ptr));
@@ -1181,7 +1181,7 @@ char m1[256];
 			
 /*****************************************************************************
 * .NAME   : MALLOC
-* .TITLE  : в”¬в€љС„С…С‹В С…Р„ СЏСЂСЊВ Р„в„– С‘ СЋСЃРЃСЂСЃСЋР„СЉСЋС‰ СЋВ°С€СЃСЋСЉ.
+* .TITLE  : Выделяет память с обработкой ошибок.
 *****************************************************************************/
 void OutMemory()
 {
@@ -1252,11 +1252,11 @@ unsigned long addvalue,i,addval,addvalw32=0,addvalbss=0;
 	}
 	else{
 		if((outptrdata%2)==1){	/* alignment of entire post data block manditory */
-			addvalue++;	//СЌСЂСћСЂС‹СЋ СЌС…С€СЌС€РЋ.С„СЂСЌСЌв€љС—
+			addvalue++;	//начало неиниц.данных
 			postsize++;
 		}
 /*		if(am32&&(outptrdata%4)==2){
-			addvalue+=2;	//СЌСЂСћСЂС‹СЋ СЌС…С€СЌС€РЋ.С„СЂСЌСЌв€љС—
+			addvalue+=2;	//начало неиниц.данных
 			postsize+=2;
 		}*/
 	}
@@ -1297,7 +1297,7 @@ unsigned long addvalue,i,addval,addvalw32=0,addvalbss=0;
 				break;
 		}
 	}
-	ooutptr=addvalue;	//С‘СЋС—РЃСЂСЌС€Р„в„– СЌСЂСћСЂС‹СЋ post С„С‹В  debug;
+	ooutptr=addvalue;	//сохранить начало post для debug;
 }
 
 void GetMemExeDat()
@@ -1526,7 +1526,7 @@ void warnunused(struct idrec *ptr)
 	}
 }
 
-void WarnUnusedVar()//СЏРЃС…С„С”СЏРЃС…С†С„С…СЌС€В  СЋ СЌС…С€С‘СЏСЋС‹в„–С‡СЋС‚СЂСЌСЌв€љС— СЏРЃСЋРЋС…С„С”РЃСЂС— С€ СЏС…РЃС…СЊС…СЌСЌв€љС—
+void WarnUnusedVar()//предупреждения о неиспользованных процедурах и переменных
 {
 	warnunused(treestart);
 	for(unsigned int i=0;i<totalmodule;i++)warnunused((startfileinfo+i)->stlist);
@@ -1535,7 +1535,7 @@ void WarnUnusedVar()//СЏРЃС…С„С”СЏРЃС…С†С„С…СЌС€В  СЋ СЌС…С€С‘СЏСЋС‹в„–С‡СЋС‚СЂС
 void addinitvar()
 {
 unsigned int i;
-	if(numfloatconst){	//С‚С‘Р„СЂС‚С€Р„в„– СЉСЋСЌС‘Р„СЂСЌР„в€љ float С€ СЏРЃС€С‚В С‡СЂР„в„– С€С—
+	if(numfloatconst){	//вставить константы float и привязать их
 		if(alignword||optimizespeed)AlignCD(DS,chip>5?16:4);
 		for(i=0;i<posts;i++){
 			if((postbuf+i)->type==POST_FLOATNUM){
@@ -1562,12 +1562,12 @@ unsigned int i;
 		numfloatconst=0;
 		floatnum=NULL;
 	}
-	for(i=0;i<(unsigned int)numswtable;i++){	//С‘СЋС‡С„СЂР„в„– С€ С‚С‘Р„СЂС‚С€Р„в„– Р„СЂСЃС‹С€РЋв€љ switch
+	for(i=0;i<(unsigned int)numswtable;i++){	//создать и вставить таблицы switch
 		int j;
 		FSWI *swt=swtables+i;
 		if(alignword)AlignCD(DS,swt->type);
 		if(dbg&2)AddDataNullLine((char)swt->type,"switch table address");
-		if(am32==FALSE){	//С‚С‘Р„СЂС‚С€Р„в„– С‚ СЉСЋС„ СЂС„РЃС…С‘ Р„СЂСЃС‹С€РЋв€љ
+		if(am32==FALSE){	//вставить в код адрес таблицы
 			*(unsigned short *)&output[swt->ptb]=(unsigned short)outptrdata;
 		}
 		else *(unsigned long *)&output[swt->ptb]=outptrdata;
@@ -1576,7 +1576,7 @@ unsigned int i;
 
 		unsigned long val=swt->defal;
 		int oline=outptrdata;
-		for(j=0;j<swt->sizetab;j++){	//С‡СЂСЏСЋС‹СЌС€Р„в„– Р„СЂСЃС‹С€РЋС” С‡СЌСЂСћС…СЌС€В СЊС€ СЏСЋ С”СЊСЋС‹СћСЂСЌС€в– 
+		for(j=0;j<swt->sizetab;j++){	//заполнить таблицу значениями по умолчанию
 //			if((swt->info+jj)->type==singlcase)
 			AddReloc(DS);
 			if(am32)outdwordd(val);
@@ -1584,14 +1584,14 @@ unsigned int i;
 		}
 		if(swt->mode==2){
 			if(dbg&2)AddDataNullLine((char)swt->razr,"switch table value");
-			if(oam32==FALSE){	//С‚С‘Р„СЂС‚С€Р„в„– С‚ СЉСЋС„ СЂС„РЃС…С‘ Р„СЂСЃС‹С€РЋв€љ
+			if(oam32==FALSE){	//вставить в код адрес таблицы
 				*(unsigned short *)&output[swt->ptv]=(unsigned short)outptrdata;
 			}
 			else *(unsigned long *)&output[swt->ptv]=outptrdata;
 		}
-		int ii=0;	//С‘СћС…Р„СћС€СЉ case
+		int ii=0;	//счетчик case
 		for(int jj=0;jj<swt->numcase;jj++){
-			j=(swt->info+jj)->value;	//С‡СЌСЂСћС…СЌС€С…
+			j=(swt->info+jj)->value;	//значение
 			val=(swt->info+jj)->postcase;
 			if((swt->info+jj)->type==singlcase){
 				if(swt->mode==1){
@@ -1666,7 +1666,7 @@ unsigned char bcha;
 unsigned int oline,ofile;
 char *ostartline;
 	if(alignword){
-		if(ptr->rectok==tk_structvar)alignersize+=AlignCD(DS,2);	//С‚в€љРЃСЋС‚СЌВ Р„в„–
+		if(ptr->rectok==tk_structvar)alignersize+=AlignCD(DS,2);	//выровнять
 		else alignersize+=AlignCD(DS,GetVarSize(ptr->rectok));
 	}
 //	printf("loc=%08X out=%08X num=%08X\n",*(unsigned long *)&output[(postbuf+i)->loc],outptrdata,ptr->recnumber);
