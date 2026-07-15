@@ -125,7 +125,6 @@ struct Object_Table
 	unsigned long Reserved;
 };
 
-
 enum {
 	Segment_Type_Normal,
 	Segment_Zero_Filled,

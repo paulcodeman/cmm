@@ -6,8 +6,6 @@
 
 #define _DISASM_
 
-
-
 /* Percent tokens in strings:
 
    First char after '%':
@@ -68,8 +66,6 @@
 
 +       P - simple prefix
 
-
-
    Second char after '%':
 
 	a - two words in memory (BOUND)
@@ -107,8 +103,6 @@
 	m - no size memory operand
 
 */
-
-
 
 /* watch out for aad && aam with odd operands */
 
@@ -288,8 +282,6 @@ char *opmap1[256]={
 
 };
 
-
-
 char *second[] = {
 
 /* 0 */
@@ -450,8 +442,6 @@ char *second[] = {
 
 };
 
-
-
 char *second_f30f[]={
 
 // 0
@@ -573,8 +563,6 @@ char *second_f30f[]={
 	0,0,0,0,0,0,0,0
 
 };
-
-
 
 char *second_f20f[]={
 
@@ -703,8 +691,6 @@ char *second_f20f[]={
 	0,0,0,0
 
 };
-
-
 
 const char *second_660f[]={
 
@@ -846,8 +832,6 @@ const char *second_660f[]={
 
 };
 
-
-
 char *groups[][8] = {   /* group 0 is group 3 for %Ev set */
 
 /* 0 */
@@ -914,11 +898,7 @@ char *groups[][8] = {   /* group 0 is group 3 for %Ev set */
 
 	}
 
-
-
 };
-
-
 
 /* zero here means invalid.  If first entry starts with '*', use st(i) */
 
@@ -1010,8 +990,6 @@ char *fop_61[]={"*fucomip st,%GF",0,0,0,0,0,0,0};
 
 char *fop_62[]={"*fcomip st,%GF",0,0,0,0,0,0,0};
 
-
-
 char **fspecial[] = { /* 0=use st(i), 1=undefined 0 in fop_* means undefined */
 
   0, 0, 0, 0, 0, 0, 0, 0,
@@ -1031,8 +1009,6 @@ char **fspecial[] = { /* 0=use st(i), 1=undefined 0 in fop_* means undefined */
   f0, f0, f0, f0, fop_60, fop_61, fop_62, f0
 
 };
-
-
 
 char *floatops[] = { /* assumed " %EF" at end of each.  mod != 3 only */
 
@@ -1070,23 +1046,17 @@ char *floatops[] = { /* assumed " %EF" at end of each.  mod != 3 only */
 
 };
 
-
-
 /* variables controlled by command line flags */
 
 unsigned char seg_size=16;   /* default size is 16 */
 
 unsigned char must_do_size;
 
-
-
 unsigned int wordop,qwordop;           /* dealing with word or byte operand */
 
 unsigned long instruction_offset;
 
 unsigned short done_space; /* for opcodes with > one space */
-
-
 
 char ubuf[100],*ubufp;
 
@@ -1102,8 +1072,6 @@ unsigned int opsize;            /* just like it says ...       */
 
 unsigned int addrsize;
 
-
-
 void printbyte(unsigned char c)
 
 {
@@ -1116,8 +1084,6 @@ void printbyte(unsigned char c)
 
 }
 
-
-
 void printword(unsigned short c)
 
 {
@@ -1129,8 +1095,6 @@ void printword(unsigned short c)
 	else uprintf("0%Xh",c);
 
 }
-
-
 
 void printdword(unsigned int c)
 
@@ -1145,8 +1109,6 @@ void printdword(unsigned int c)
 	else uprintf("0%lXh",c);
 
 }
-
-
 
 void addr_to_hex(long addr, unsigned char splitup)
 
@@ -1182,8 +1144,6 @@ WORD32 adr;
 
 }
 
-
-
 unsigned char getbyte(void)
 
 {
@@ -1202,8 +1162,6 @@ short c;
 
 }
 
-
-
 int modrm()
 
 {
@@ -1214,8 +1172,6 @@ int modrm()
 
 }
 
-
-
 int sib()
 
 {
@@ -1225,8 +1181,6 @@ int sib()
   return sibv;
 
 }
-
-
 
 /*------------------------------------------------------------------------*/
 
@@ -1245,8 +1199,6 @@ va_list argptr;
   while (*ubufp) ubufp++;
 
 }
-
-
 
 void uputchar(char c)
 
@@ -1276,8 +1228,6 @@ void uputchar(char c)
 
 }
 
-
-
 /*------------------------------------------------------------------------*/
 
 int bytes(char c)
@@ -1303,8 +1253,6 @@ int bytes(char c)
   return 0;
 
 }
-
-
 
 /*------------------------------------------------------------------------*/
 
@@ -1337,8 +1285,6 @@ char  signchar;
 			 else n = 1;
 
        break;
-
-
 
   case 'a': break;
 
@@ -1552,8 +1498,6 @@ char  signchar;
 
 }
 
-
-
 /*------------------------------------------------------------------------*/
 
 void reg_name(int regnum, char size)
@@ -1611,8 +1555,6 @@ void reg_name(int regnum, char size)
   }
 
 }
-
-
 
 /*------------------------------------------------------------------------*/
 
@@ -1697,8 +1639,6 @@ int s, i, b;
   }
 
 }
-
-
 
 /*------------------------------------------------------------------------*/
 
@@ -1838,8 +1778,6 @@ int extend = (addrsize == 32) ? 4 : 2;
 
 }
 
-
-
 /*------------------------------------------------------------------------*/
 
 void floating_point(int e1)
@@ -1877,8 +1815,6 @@ int esc = e1*8 + REG(modrm());
   }
 
 }
-
-
 
 /*------------------------------------------------------------------------*/
 
@@ -2368,8 +2304,6 @@ defg:
 
 }
 
-
-
 void ua_str(char *str)
 
 {
@@ -2417,8 +2351,6 @@ char c;
   }
 
 }
-
-
 
 void unassemble(unsigned long ofs)
 
@@ -2640,11 +2572,7 @@ endp:
 
 }
 
-
-
 #define MAXSTR 12
-
-
 
 void undata(unsigned ofs,unsigned long len,unsigned int type)
 

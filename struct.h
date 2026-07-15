@@ -313,7 +313,6 @@ struct ftime {
 	unsigned ft_year:7;  /* год-1980 */
 };
 
-
 typedef struct _STRING_LIST_
 {
 	void *next;	//следующая структура

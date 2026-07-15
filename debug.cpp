@@ -1,18 +1,12 @@
 #include "tok.h"
 
-
-
 #define _DEBUG_
-
-
 
 #define MAXDBGS 1000
 
 #define MAXNUMSYM 500
 
 #define MAXLSTSTR 128	//максимальный размер строки листинга
-
-
 
 void AddNameToTable(char *name);
 
@@ -23,8 +17,6 @@ int CreateDosDebug();
 int CreateW32Debug();
 
 void GeneratLst();
-
-
 
 unsigned int *dbgloc=NULL;	//адресс точки
 
@@ -38,8 +30,6 @@ unsigned char *lstflag=NULL;	//флаги управления листинго�
 
 unsigned int *lstend;
 
-
-
 unsigned int pdbg=0;      /* number of post entrys */
 
 unsigned int pdbgmax=MAXDBGS;      /* max number of post entrys */
@@ -51,8 +41,6 @@ unsigned int ooutptr=0xffffffff;
 char lsttypedata=0;	//тип данных для листинга, по умолчанию код
 
 unsigned int outputcodestart=0;
-
-
 
 struct D16START{
 
@@ -116,8 +104,6 @@ struct D16START{
 
 };
 
-
-
 struct MODULE{
 
 	unsigned long name;
@@ -140,8 +126,6 @@ struct MODULE{
 
 };
 
-
-
 typedef struct _SFT_
 
 {
@@ -152,8 +136,6 @@ typedef struct _SFT_
 
 }SFT;
 
-
-
 typedef struct _LT_
 
 {
@@ -163,8 +145,6 @@ typedef struct _LT_
 	unsigned short ofs;
 
 }LT;
-
-
 
 typedef struct _CT_
 
@@ -179,8 +159,6 @@ typedef struct _CT_
 	unsigned short count;
 
 }CT;
-
-
 
 static struct _SMB_
 
@@ -197,8 +175,6 @@ static struct _SMB_
 	unsigned short clas;
 
 }*symbols;
-
-
 
 static struct SEGMENT{
 
@@ -220,8 +196,6 @@ static struct SEGMENT{
 
 }*segment;
 
-
-
 unsigned char dbg=FALSE,dbgact;
 
 static short numsymbols=0;
@@ -235,8 +209,6 @@ static unsigned char *bufname;
 static int lastofspul=0;
 
 static int segcode;
-
-
 
 static struct _COR_INFO_
 
@@ -253,8 +225,6 @@ static struct _COR_INFO_
 	unsigned short file;	//файл
 
 }*corinfo=NULL;
-
-
 
 void InitDbg()
 
@@ -290,8 +260,6 @@ void InitDbg()
 
 }
 
-
-
 void AddDataLine(char ssize/*,char typev*/)
 
 {
@@ -308,15 +276,11 @@ void AddDataLine(char ssize/*,char typev*/)
 
 }
 
-
-
 void AddDataNullLine(char ssize,char *name)
 
 {
 
 	oline--;
-
-
 
 	lsttypedata=(unsigned char)(ssize<<1);
 
@@ -331,8 +295,6 @@ void AddDataNullLine(char ssize,char *name)
 	if(name!=NULL)lststring[pdbg-1]=BackString(name);
 
 }
-
-
 
 void AddCodeNullLine(char *name)
 
@@ -350,8 +312,6 @@ void AddCodeNullLine(char *name)
 
 }
 
-
-
 void AddEndLine()
 
 {
@@ -359,8 +319,6 @@ void AddEndLine()
 	if(pdbg/*&&lstend[pdbg-1]==0*/)lstend[pdbg-1]=outptr;
 
 }
-
-
 
 void AddLine(int SkipLineInfo)
 
@@ -462,8 +420,6 @@ void AddLine(int SkipLineInfo)
 
 }
 
-
-
 void KillLastLine()
 
 {
@@ -511,8 +467,6 @@ void KillLastLine()
 	}
 
 }
-
-
 
 //создание отладочного файла
 
@@ -618,8 +572,6 @@ unsigned int i,j;
 
 }
 
-
-
 void AddNameToTable(char *name)
 
 {
@@ -637,8 +589,6 @@ char c;
 	}while(c!=0);
 
 }
-
-
 
 void AddSymbolList(struct idrec *ptr)
 
@@ -690,8 +640,6 @@ void AddSymbolList(struct idrec *ptr)
 
 }
 
-
-
 void AddNameToPul(char *name)
 
 {
@@ -719,8 +667,6 @@ int i;
 	lastofspul+=++i;
 
 }
-
-
 
 void AddGlobalName(struct idrec *ptr)
 
@@ -789,8 +735,6 @@ void AddGlobalName(struct idrec *ptr)
 	}
 
 }
-
-
 
 int CreateW32Debug()
 
@@ -1022,8 +966,6 @@ unsigned int i,j,jj,ofs;
 
 }
 
-
-
 int CreateDosDebug()
 
 {
@@ -1062,8 +1004,6 @@ unsigned short beg,end;
 
 	d16header.numsymbl=d16header.numgsymb=numsymbols;
 
-
-
 	d16header.sign=0x040352FB;	//sign & version
 
 	d16header.imagesize=runfilesize;	//image size
@@ -1086,8 +1026,6 @@ unsigned short beg,end;
 
 //	d16header.fdebug=1;
 
-
-
 	d16header.ucnovn=0x380000;
 
 	d16header.sizeblock=sizeof(MODULE)*totalmodule+sizeof(SFT)*totalmodule+
@@ -1097,8 +1035,6 @@ unsigned short beg,end;
 			6*totalmodule+/*NUMTYPES*12+*/sizeof(_SMB_)*numsymbols/*+numsymbols*4*/;
 
 	d16header.reftsize=numsymbols*4;
-
-
 
 //module table
 
@@ -1272,8 +1208,6 @@ unsigned short beg,end;
 
 }
 
-
-
 void KillDataLine(int line)
 
 {
@@ -1299,8 +1233,6 @@ void KillDataLine(int line)
 	pdbg--;
 
 }
-
-
 
 void GeneratLst()
 
@@ -1387,8 +1319,6 @@ unsigned char flag;
 	hout=NULL;
 
 }
-
-
 
 #ifdef DEBUGMODE
 

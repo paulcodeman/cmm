@@ -28,14 +28,12 @@ static int notdef=TRUE;
 static char precha;
 int scanalltoks=TRUE;
 
-
 static volatile idrec **DynamicList=NULL;
 static int sizeDL;	//размер списка
 static volatile int countDP;	//число динамических процедур в списке
 static int findofset=FALSE;
 #define STEPDL 128;	//шаг увеличения размера списка
 ITOK structadr;
-
 
 char id2[ID2S][9]={
 	"ESCHAR","ESBYTE","ESINT","ESWORD","ESLONG","ESDWORD","ESFLOAT","ESQWORD","ESDOUBLE",
@@ -100,7 +98,6 @@ extern void opb(unsigned long num,unsigned int ofs,unsigned int size);
 extern void CorrectOfsBit(int bitofs);
 extern int skipstring(int pos,unsigned char term);
 extern int skipcomment(int pos);
-
 
 void retoldscanmode(int mode)
 {
@@ -2397,7 +2394,6 @@ localrec *ptr;
 #endif
 }
 
-
 void NewMod(int numipar)
 {
 COM_MOD *newm;
@@ -2690,7 +2686,6 @@ void AddDynamicList(idrec *ptr)
 	DynamicList[countDP]=ptr;
 	countDP++;
 }
-
 
 void docals(struct idrec *ptr)
 /* extract any procedures required from interal library and insert any

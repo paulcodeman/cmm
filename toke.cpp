@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include "tok.h"
 
-
 unsigned char gotoendif=FALSE;
 
 unsigned char atex=FALSE;
@@ -23,8 +22,6 @@ unsigned int postnumflag;	//флая┐╜ я┐╜я┐╜слея┐╜я┐�
 
 int calcnumber=FALSE;
 
-
-
 char mesmain[]="main";
 
 char *macroname[]={"inp","inportb","inport","inportd","outp","outportb",
@@ -37,8 +34,6 @@ enum{m_ib,m_ibt,m_iw,m_id,m_ob,m_obt,m_ow,m_od,m_sqrt,m_cos,m_sin,m_atan2,
 
      m_tan,m_log,m_log10,m_exp,m_atan,m_fabs,m_end};
 
-
-
 int FindProcLib(int);
 
 int RetAtExit();
@@ -48,8 +43,6 @@ int ConvRetCode(int i);
 int CompConst(int firstval);
 
 int dirmode;
-
-
 
 #define NUMIFDEF 32	//я┐╜я┐╜я┐╜симя┐╜я┐╜ьная┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ректив ifdef/ifndef
 
@@ -79,8 +72,6 @@ unsigned int resizesizeaddress;  /* location of resize memory size descr. */
 
 unsigned int stackstartaddress;  /* location of SP assignment */
 
-
-
 /*-----------------18.09.98 23:20-------------------
 
  я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ SYS
@@ -105,13 +96,9 @@ int dataromstart,dataromsize;
 
 int dataseg=0x70;
 
-
-
 unsigned int numdomain=0;	//я┐╜сло я┐╜я┐╜цедя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ская┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ main
 
 char *domain;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜цедя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ская┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ main
-
-
 
 int ifdefconst();
 
@@ -120,8 +107,6 @@ void CheckNumIF();
 void KillVarOfTree(idrec **treestart);
 
 void IncludeFile(char *fileincl,int tfind);
-
-
 
 char *pragmalist[]={"option","line","startup","resource","pack","debug","indexregs",""};
 
@@ -147,13 +132,9 @@ int debug=FALSE;
 
 #endif
 
-
-
 STACKALIGN *stackalign=NULL;
 
 /* -------------- constant math procedures start --------------- */
-
-
 
 int calcqwordnumber(unsigned long long *retnum,unsigned long long number,int operand)
 
@@ -210,8 +191,6 @@ unsigned long long value;
 	return TRUE;
 
 }
-
-
 
 unsigned long long doconstqwordmath()
 
@@ -437,8 +416,6 @@ done_qword:;
 
 }
 
-
-
 int calcdwordnumber(unsigned long *retnum,unsigned long number,int operand)
 
 {
@@ -494,8 +471,6 @@ unsigned long value;
 	return TRUE;
 
 }
-
-
 
 int is_high_prec(int op)
 {
@@ -725,8 +700,6 @@ done_high:;
 
 }
 
-
-
 int calclongnumber(long *retnum,long number,int operand)
 
 {
@@ -782,8 +755,6 @@ long value;
 	return TRUE;
 
 }
-
-
 
 signed long doconstlongmath()
 
@@ -1009,8 +980,6 @@ done_long:;
 
 }
 
-
-
 int calcfloatnumber(float *retnum,float number,int operand)
 
 {
@@ -1042,8 +1011,6 @@ float value;
 	return TRUE;
 
 }
-
-
 
 long doconstfloatmath()
 
@@ -1181,8 +1148,6 @@ float value;
 
 }
 
-
-
 int calcdoublenumber(double *retnum,double number,int operand)
 
 {
@@ -1214,8 +1179,6 @@ double value;
 	return TRUE;
 
 }
-
-
 
 long long doconstdoublemath()
 
@@ -1357,11 +1320,7 @@ double value;
 
 }
 
-
-
 /* ================= simple syntax procedures start =================== */
-
-
 
 void nextseminext()
 
@@ -1373,8 +1332,6 @@ void nextseminext()
 
 }
 
-
-
 void seminext()
 
 {
@@ -1385,8 +1342,6 @@ void seminext()
 
 }
 
-
-
 void beep() 			 /* beep for any internal errors */
 
 {
@@ -1394,8 +1349,6 @@ void beep() 			 /* beep for any internal errors */
 	printf("\a");
 
 }
-
-
 
 int expecting(int want)
 
@@ -1419,8 +1372,6 @@ int expecting(int want)
 
 }
 
-
-
 void expectingoperand(int want)
 
 /* compares current token with want token.	If different, issues error
@@ -1434,8 +1385,6 @@ void expectingoperand(int want)
 	else getoperand();
 
 }
-
-
 
 void SwTok(int want)
 
@@ -1467,8 +1416,6 @@ void SwTok(int want)
 
 }
 
-
-
 /*-----------------03.07.99 22:48-------------------
 
  я┐╜я┐╜я┐╜я┐╜реня┐╜я┐╜я┐╜ я┐╜я┐╜цедя┐╜я┐╜я┐╜
@@ -1489,15 +1436,11 @@ void  outprocedure(unsigned char *array,unsigned int length)
 
 }
 
-
-
 #define MMBANER 11
 
 unsigned char aabaner[]={
 
 	0x53,0x50,0x48,0x49,0x4E,0x58,0x43,0x2d,0x2d,ver1,ver2};	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ SPHINXC--ver
-
-
 
 #define MMEXP 18
 
@@ -1520,8 +1463,6 @@ unsigned char aaEXP[]={
 	0xD9,0xFD,		 //fscale
 
 	0xDD,0xD9 };	 //fstp	 st(1)
-
-
 
 void CallExitProcess()
 
@@ -1550,8 +1491,6 @@ void CallExitProcess()
 	}
 
 }
-
-
 
 int includeit(int type)
 
@@ -1741,8 +1680,6 @@ int i=0;
 
 }
 
-
-
 int ConvRetCode(int i)
 
 {
@@ -1771,8 +1708,6 @@ int ConvRetCode(int i)
 
 }
 
-
-
 int RetAtExit()
 
 {
@@ -1791,8 +1726,6 @@ int RetAtExit()
 
 }
 
-
-
 int includeproc()
 
 {
@@ -1800,8 +1733,6 @@ int includeproc()
 	return ConvRetCode(FindProcLib(1));
 
 }
-
-
 
 /*-----------------18.01.99 22:42-------------------
 
@@ -2143,8 +2074,6 @@ enout:
 
 }
 
-
-
 /*-----------------06.02.99 16:09-------------------
 
  я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜шнея┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜текя┐╜я┐╜
@@ -2163,8 +2092,6 @@ typedef struct _IPROC_
 
 }IPROC;
 
-
-
 struct _HLIB_
 
 {
@@ -2180,8 +2107,6 @@ struct _HLIB_
 	IPROC info[4];
 
 }hlib;
-
-
 
 int FindProcLib(int type)
 
@@ -2291,8 +2216,6 @@ int size;
 
 }
 
-
-
 void addconsttotree(char *keystring,long long constvalue,int type)
 
 //я┐╜я┐╜тавя┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜таня┐╜я┐╜ я┐╜ я┐╜я┐╜ревя┐╜
@@ -2388,8 +2311,6 @@ int cmpresult;
 //	newptr->count=1;
 
 }
-
-
 
 void addtodefine(char *keystring)//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рокя┐╜ я┐╜ я┐╜я┐╜ревя┐╜ define
 
@@ -2497,8 +2418,6 @@ int cmpresult;
 
 }
 
-
-
 unsigned char get_directive_value()  //return the 0 or 1 value for directive
 
 {
@@ -2520,8 +2439,6 @@ unsigned char get_directive_value()  //return the 0 or 1 value for directive
 	return(0);
 
 }
-
-
 
 int GetStringAsIt()
 
@@ -2593,8 +2510,6 @@ errstr:
 
 }
 
-
-
 void InitDefineConst()
 
 {
@@ -2663,8 +2578,6 @@ void InitDefineConst()
 
 }
 
-
-
 char *AddTextToBuf(char *buf,int *size,int start,int add)
 
 {
@@ -2694,8 +2607,6 @@ int addsize;
 	return buf;
 
 }
-
-
 
 void AddMacro(char *name,int numpar,char *paramstr)
 
@@ -2767,8 +2678,6 @@ idrec *ptr;
 
 	}*/
 
-
-
 //	printf("tok=%d %s %s\n",tok,name,bstring);
 
 	addtodefine(name);
@@ -2782,8 +2691,6 @@ idrec *ptr;
 	ptr->line=linenumber-1;
 
 }
-
-
 
 void GetMacro(char *name)
 
@@ -2837,8 +2744,6 @@ char *paramstr;
 
 }
 
-
-
 int pushpop(int i)
 
 {
@@ -2869,8 +2774,6 @@ STACKALIGN *newpar;
 
 			stackalign=newpar;
 
-
-
 			strpackcur=(stackalign!=NULL?stackalign->size:strpackdef);
 
 			return TRUE;
@@ -2880,8 +2783,6 @@ STACKALIGN *newpar;
 	return FALSE;
 
 }
-
-
 
 void doifdef(int intok)
 
@@ -3099,8 +3000,6 @@ int oscanlexmode;
 
 }
 
-
-
 void InitIdxRegs()
 
 {
@@ -3162,8 +3061,6 @@ int i,j;
 	}
 
 }
-
-
 
 void directive()
 
@@ -4593,8 +4490,6 @@ endef:
 
 }
 
-
-
 void doenum()
 
 {
@@ -4681,8 +4576,6 @@ char holdid[IDLENGTH];
 
 }
 
-
-
 int CompConst(int firstval)
 
 {
@@ -4738,8 +4631,6 @@ int CompConst(int firstval)
 	return FALSE;
 
 }
-
-
 
 int ifdefconst()
 
@@ -4844,8 +4735,6 @@ int ifdefconst()
 
 }
 
-
-
 void CheckNumIF()
 
 {
@@ -4854,11 +4743,7 @@ void CheckNumIF()
 
 }
 
-
-
 static int firstincl=FALSE;
-
-
 
 void IncludeFile(char *fileincl,int tfind)
 
@@ -4882,11 +4767,7 @@ int opostnumflag;
 
 COM_MOD *ocurmod=cur_mod;
 
-
-
 int oendifcount;
-
-
 
 	oendifcount=endifcount;
 
@@ -4976,15 +4857,11 @@ int oendifcount;
 
 }
 
-
-
 /*-----------------31.05.99 21:39-------------------
 
  я┐╜я┐╜я┐╜я┐╜я┐╜ржкя┐╜ startup
 
  --------------------------------------------------*/
-
-
 
 int startlabl(char *namelab)
 
@@ -5002,8 +4879,6 @@ int startlabl(char *namelab)
 
 }
 
-
-
 void searchvar(char *name,int err)
 
 {
@@ -5013,8 +4888,6 @@ void searchvar(char *name,int err)
 	if(searchtree(&itok,&tok,string)==FALSE&&err)thisundefined(name);
 
 }
-
-
 
 void doprestuff()  //я┐╜я┐╜я┐╜циая┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜чальноя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜, like resize mem, jump to main...
 
@@ -5246,8 +5119,6 @@ int odbg=dbg;
 
 	else if(jumptomain==CALL_NONE)addconsttotree("__nonejmptomain",TRUE);
 
-
-
 	if(dbg){
 
 		if(am32==FALSE){
@@ -5270,11 +5141,7 @@ int odbg=dbg;
 
 	dbg=odbg;
 
-
-
 	if((dbg&1)&&outptr==startptr)KillLastLine();
-
-
 
 	if(atex||(comfile==file_w32&&(!dllflag))){
 
@@ -5375,8 +5242,6 @@ endp:
 	dbgact=0;
 
 }
-
-
 
 void KillVarOfTree(idrec **treestart)
 

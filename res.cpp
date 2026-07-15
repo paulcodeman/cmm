@@ -92,7 +92,6 @@ void r_Language();
 void r_Version();
 void NewResourse();
 
-
 void badformat(char *name)
 {
 char buf[80];
@@ -1401,7 +1400,6 @@ int sortpos=0;	//позиция в списке сортировки
 	}
 	*/
 }
-
 
 int MakeRes(unsigned long ofsres,LISTRELOC **listrel)
 {

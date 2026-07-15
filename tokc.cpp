@@ -10142,7 +10142,6 @@ char *BackString(char *str)
 	return retbuf;
 }
 
-
 void GetFileTime(int fd,struct ftime *buf)
 {
 /*

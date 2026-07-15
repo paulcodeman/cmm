@@ -2,10 +2,8 @@
 #define	SEEK_CUR	(1)
 #define SEEK_END	(2)
 
-
 #define _PORT_CPP_
 #include "port.h"
-
 
 long getfilelen(int fd)
 { 
@@ -15,8 +13,6 @@ long getfilelen(int fd)
 	lseek(fd,curr,SEEK_SET);
 	return reslt;
 }
-
-
 
 #ifndef _WIN32_ 
 
@@ -33,7 +29,6 @@ char* strlwr(char* s)
   while (*p = tolower(*p)) p++;
   return s;
 }
-
 
 int strnicmp(const char* s1, const char* s2, int len)
 {
@@ -103,7 +98,6 @@ int MultiByteToWideChar(
 	while ((lpMultiByteStr[i*2]!=0) && (lpMultiByteStr[i*2+1]!=0)) i++;
 	return i/2;
 }
-
 
 #ifdef _KOS_
 

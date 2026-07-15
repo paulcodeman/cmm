@@ -76,7 +76,6 @@ union REGS {
   struct BYTEREGS h;
 };
 
-
 long getfilelen(int);
 
 #ifndef _WIN32_
@@ -84,7 +83,6 @@ long getfilelen(int);
 #define MB_PRECOMPOSED 1
 #define OemToChar OemToCharA
 #define CharToOem CharToOemA
-
 
 bool OemToCharA(char*, char*);
 bool CharToOemA(char*, char*);
@@ -117,6 +115,5 @@ void* malloc(int);
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif  // ___PORT_H___

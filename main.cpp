@@ -1101,9 +1101,6 @@ void print8item(char *str)
 	puts("");
 }
 
-
-
-
 void _loadIni(FILE *inih)
 {
 	char m1[256];
@@ -1304,8 +1301,6 @@ void GetMemExeDat()
 {
 	if(outputdata==output&&outputdata!=0)outputdata=(unsigned char *)MALLOC((size_t)MAXDATA);
 }
-
-
 
 int writeoutput()
 {
