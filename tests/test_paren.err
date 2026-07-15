@@ -1,0 +1,5 @@
+tests/test_paren.c(1)#1> value expected.
+tests/test_paren.c(1)#2> operator identifier expected.
+tests/test_paren.c(1)#3> ';' expected.
+tests/test_paren.c(1)#4> unuseable input.
+tests/test_paren.c(1)#5> unuseable input.
