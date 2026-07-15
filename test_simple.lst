@@ -1,0 +1,18 @@
+SPHINX/SHEKER C-- One Pass Disassembler. Version 0.239 b26 Jul 15 2026
+
+test_simple.c 1: void main()
+{
+    dword a, b, c;
+    a = 2; b = 3;
+    c = a + b;
+}
+0100 C80C0000                 enter   0Ch,0
+0104 666A02                   push    2
+0107 668F46FC                 pop     dword ptr [bp-4]
+010B 666A03                   push    3
+010E 668F46F8                 pop     dword ptr [bp-8]
+0112 666A05                   push    5
+0115 6658                     pop     eax
+0117 668946F4                 mov     [bp-0Ch],eax
+011B C9                       leave
+011C C3                       ret

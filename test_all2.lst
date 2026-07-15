@@ -1,0 +1,86 @@
+SPHINX/SHEKER C-- One Pass Disassembler. Version 0.239 b26 Jul 15 2026
+
+test_all2.c 1: dword a, b, c, d, e;
+
+dword fn_arg(dword x)
+{
+    return x * 10;
+}
+
+dword fn_mul(dword x, y)
+{
+    return x * y;
+}
+
+void main()
+0100 55                       push    bp
+0101 89E5                     mov     bp,sp
+0103 668B4604                 mov     eax,[bp+4]
+0107 666BC00A                 imul    eax,eax,0Ah
+010B 5D                       pop     bp
+010C C20400                   ret     4
+010F 55                       push    bp
+0110 89E5                     mov     bp,sp
+0112 668B4608                 mov     eax,[bp+8]
+0116 66F76604                 mul     dword ptr [bp+4]
+011A 5D                       pop     bp
+011B C20800                   ret     8
+011E 666A02                   push    2
+0121 668F06F201               pop     dword ptr [1F2h]
+0126 666A03                   push    3
+0129 668F06F601               pop     dword ptr [1F6h]
+012E 666A05                   push    5
+0131 668F06FA01               pop     dword ptr [1FAh]
+0136 666A07                   push    7
+0139 668F06FE01               pop     dword ptr [1FEh]
+013E 666A05                   push    5
+0141 6658                     pop     eax
+0143 666BC005                 imul    eax,eax,5
+0147 6683F814                 cmp     eax,14h
+014B 0F860900                 jbe     158h
+014F 666A0A                   push    0Ah
+0152 6658                     pop     eax
+0154 66A3F201                 mov     [1F2h],eax
+0158 66A1F201                 mov     eax,[1F2h]
+015C 6683C003                 add     eax,3
+0160 6650                     push    eax
+0162 666A0C                   push    0Ch
+0165 6658                     pop     eax
+0167 665A                     pop     edx
+0169 66F7E2                   mul     edx
+016C 66A30202                 mov     [202h],eax
+0170 66A1F201                 mov     eax,[1F2h]
+0174 6683C003                 add     eax,3
+0178 666BC005                 imul    eax,eax,5
+017C 6650                     push    eax
+017E E87FFF                   call    100h
+0181 66A30202                 mov     [202h],eax
+0185 66FF36F201               push    dword ptr [1F2h]
+018A E873FF                   call    100h
+018D 6650                     push    eax
+018F 66FF36F601               push    dword ptr [1F6h]
+0194 66FF36FA01               push    dword ptr [1FAh]
+0199 E873FF                   call    10Fh
+019C 665A                     pop     edx
+019E 6601D0                   add     eax,edx
+01A1 66F726FE01               mul     dword ptr [1FEh]
+01A6 66A30202                 mov     [202h],eax
+01AA 66FF36F201               push    dword ptr [1F2h]
+01AF E84EFF                   call    100h
+01B2 6650                     push    eax
+01B4 66FF36F601               push    dword ptr [1F6h]
+01B9 66FF36FA01               push    dword ptr [1FAh]
+01BE E84EFF                   call    10Fh
+01C1 665A                     pop     edx
+01C3 6601D0                   add     eax,edx
+01C6 66F726FE01               mul     dword ptr [1FEh]
+01CB 66A30202                 mov     [202h],eax
+01CF 66A1F201                 mov     eax,[1F2h]
+01D3 660306F601               add     eax,[1F6h]
+01D8 6650                     push    eax
+01DA 66FF36FA01               push    dword ptr [1FAh]
+01DF E82DFF                   call    10Fh
+01E2 66F726FE01               mul     dword ptr [1FEh]
+01E7 660306F201               add     eax,[1F2h]
+01EC 66A30202                 mov     [202h],eax
+01F0 C3                       ret

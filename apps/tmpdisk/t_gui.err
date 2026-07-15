@@ -1,0 +1,12 @@
+C:\Users\Paul\Desktop\kolibrios\programs\develop\cmm\apps\c--\../lib/kolibri.h(26)#1> number expected.
+C:\Users\Paul\Desktop\kolibrios\programs\develop\cmm\apps\c--\../lib/kolibri.h(27)#2> number expected.
+tmpdisk\t_gui.c(330)#3> 'rezult_text' undefined.
+tmpdisk\t_gui.c(330)#4> ')' expected.
+tmpdisk\t_gui.c(330)#5> ';' expected.
+tmpdisk\t_gui.c(330)#6> unuseable input.
+tmpdisk\t_gui.c(354)#7> 'rezult_text' undefined.
+tmpdisk\t_gui.c(354)#8> ')' expected.
+tmpdisk\t_gui.c(354)#9> ';' expected.
+tmpdisk\t_gui.c(354)#10> unuseable input.
+tmpdisk\t_gui.c(329)#11> 'Console_Work' undefined.
+C:\Users\Paul\Desktop\kolibrios\programs\develop\cmm\apps\c--\../lib/kolibri.h(668)#12> 'main' undefined.

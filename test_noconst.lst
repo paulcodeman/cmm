@@ -1,0 +1,16 @@
+SPHINX/SHEKER C-- One Pass Disassembler. Version 0.239 b26 Jul 15 2026
+
+test_noconst.c 1: dword a,b,c,d;
+void main()
+{
+    if ((a + b) * c > 15)
+        d = 1;
+}
+0100 66A12001                 mov     eax,[120h]
+0104 6603062401               add     eax,[124h]
+0109 66F7262801               mul     dword ptr [128h]
+010E 6683F80F                 cmp     eax,0Fh
+0112 0F860800                 jbe     11Eh
+0116 666A01                   push    1
+0119 668F062C01               pop     dword ptr [12Ch]
+011E C3                       ret

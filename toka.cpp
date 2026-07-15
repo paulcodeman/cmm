@@ -6009,7 +6009,7 @@ int next=1;
 					if(mode==2)itok4->number=inptr-2;
 					do{
 						nextchar();
-					}while(!endoffile&&cha!=13);	//строка коментария
+					}while(!endoffile&&cha!=13&&cha!=10);	//строка коментария
 					if(endoffile)*tok4=tk_eof;
 					if(mode==2)*tok4=tk_comment1;
 					else FastTok(mode,tok4,itok4);

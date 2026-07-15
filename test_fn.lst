@@ -1,0 +1,24 @@
+SPHINX/SHEKER C-- One Pass Disassembler. Version 0.239 b26 Jul 15 2026
+
+test_fn.c 1: dword fn_arg(dword x)
+{
+    return x * 10;
+}
+
+void main()
+{
+    dword a;
+    a = fn_arg(5);
+}
+0100 55                       push    bp
+0101 89E5                     mov     bp,sp
+0103 668B4604                 mov     eax,[bp+4]
+0107 666BC00A                 imul    eax,eax,0Ah
+010B 5D                       pop     bp
+010C C20400                   ret     4
+010F C8040000                 enter   4,0
+0113 666A05                   push    5
+0116 E8E7FF                   call    100h
+0119 668946FC                 mov     [bp-4],eax
+011D C9                       leave
+011E C3                       ret

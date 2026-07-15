@@ -1,0 +1,27 @@
+SPHINX/SHEKER C-- One Pass Disassembler. Version 0.239 b26 Jul 15 2026
+
+test_prec2.c 1: dword a,b,c;
+void main()
+{
+    a = 10; b = 2;
+    c = a + b * 2;
+    if (a + b * 2 > 15) c = 1;
+    if (a * b + 2 > 15) c = 2;
+0100 666A0A                   push    0Ah
+0103 668F064001               pop     dword ptr [140h]
+0108 666A02                   push    2
+010B 668F064401               pop     dword ptr [144h]
+0110 666A0E                   push    0Eh
+0113 6658                     pop     eax
+0115 66A34801                 mov     [148h],eax
+0119 6683F80F                 cmp     eax,0Fh
+011D 0F860800                 jbe     129h
+0121 666A01                   push    1
+0124 668F064801               pop     dword ptr [148h]
+0129 666A16                   push    16h
+012C 6658                     pop     eax
+012E 6683F80F                 cmp     eax,0Fh
+0132 0F860800                 jbe     13Eh
+0136 666A02                   push    2
+0139 668F064801               pop     dword ptr [148h]
+013E C3                       ret

@@ -1,0 +1,49 @@
+SPHINX/SHEKER C-- One Pass Disassembler. Version 0.239 b26 Jul 15 2026
+
+test_nocomment.c 1: dword a, b, c, d, e;
+
+dword box(dword v)
+{
+    return v;
+}
+
+void main()
+{
+    a = 2; b = 3; c = 5; d = 7;
+
+    if ((a + b) * c
+0100 55                       push    bp
+0101 89E5                     mov     bp,sp
+0103 668B4604                 mov     eax,[bp+4]
+0107 5D                       pop     bp
+0108 C20400                   ret     4
+010B 666A02                   push    2
+010E 668F066C01               pop     dword ptr [16Ch]
+0113 666A03                   push    3
+0116 668F067001               pop     dword ptr [170h]
+011B 666A05                   push    5
+011E 668F067401               pop     dword ptr [174h]
+0123 666A07                   push    7
+0126 668F067801               pop     dword ptr [178h]
+012B 666A05                   push    5
+012E 6658                     pop     eax
+0130 666BC005                 imul    eax,eax,5
+0134 6683F814                 cmp     eax,14h
+0138 0F860900                 jbe     145h
+013C 666A0A                   push    0Ah
+013F 6658                     pop     eax
+0141 66A37C01                 mov     [17Ch],eax
+0145 666A05                   push    5
+0148 6658                     pop     eax
+014A 6650                     push    eax
+014C 6683C007                 add     eax,7
+0150 665A                     pop     edx
+0152 66F7E2                   mul     edx
+0155 66A37C01                 mov     [17Ch],eax
+0159 666A05                   push    5
+015C 6658                     pop     eax
+015E 666BC005                 imul    eax,eax,5
+0162 6650                     push    eax
+0164 E899FF                   call    100h
+0167 66A37C01                 mov     [17Ch],eax
+016B C3                       ret

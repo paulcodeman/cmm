@@ -1,0 +1,5 @@
+test_precedence_all.c(1)#1> ')' expected.
+test_precedence_all.c(1)#2> unuseable input.
+test_precedence_all.c(1)#3> unuseable input.
+test_precedence_all.c(1)#4> operator identifier expected.
+test_precedence_all.c(1)#5> ';' expected.
