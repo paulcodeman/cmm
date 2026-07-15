@@ -383,6 +383,7 @@ void BackMod();
 void AddReloc(int segm=itok.segm);
 int doalmath(int sign,char **ofsstr);
 int do_e_axmath(int sign,int razr,char **ofsstr);
+void do_e_axmath2(int sign,int razr,int expand);
 void getintoal(int gtok,ITOK *gstok,char *&gbuf,SINFO *gstr); /* AH may also be changed */
 void getinto_e_ax(int sign,int gtok,ITOK *gstok,char *&gbuf,SINFO *gstr,int razr,int useAX=FALSE);
 int  doeaxfloatmath(int itreturn=tk_reg32,int reg=AX,int addop=0);

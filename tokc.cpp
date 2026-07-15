@@ -2812,6 +2812,16 @@ nn1:
 				razr++;
 		}
 	}
+	// handle continuation through nested parens: e.g. if ((a + b) > 15) or if ((a + b) * c > 15)
+	while(tok == tk_closebracket && bracket > 1) {
+		bracket--;
+		nexttok();
+		if(itok.type == tp_compare || itok.type == tp_stopper) break;
+		if(tok == tk_closebracket) continue;
+		int r = (razr == r_undef) ? r32 : razr;
+		do_e_axmath2(0, r, 0);
+		ittok = tk_reg32;
+	}
 	if(tok!=tk_closebracket){	//сравнение
 		ofsstr2=GetLecsem(tk_closebracket);
 		comparetok=CheckCompareTok(preg);
