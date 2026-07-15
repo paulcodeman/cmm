@@ -1,18 +1,12 @@
 #define _TOKR_
 
-
-
 #include "tok.h"
-
-
 
 char useasm=FALSE;
 
 char asmparam=FALSE;
 
 #include "asmnemon.h"
-
-
 
 void asmtwo1(int basecode); // used for ADD ADC SUB SBB CMP AND OR XOR.
 
@@ -100,8 +94,6 @@ void DDDW(int faradd);
 
 void AADM(int code);
 
-
-
 extern void shortjumperror();
 
 extern void invalidfarjumpitem();
@@ -137,8 +129,6 @@ extern void xmmregexpected(int type);
 extern void fpustakexpected(int type);
 
 extern void fpuvarexpected(int type);
-
-
 
 void doasm(int nexta)
 
@@ -1726,8 +1716,6 @@ invlgp:
 
 						break;
 
-
-
 					case tk_undefofs:
 
 						strcpy(hstok.name,itok.name);
@@ -1767,8 +1755,6 @@ invlgp:
 						outdword(itok.number);
 
 						break;
-
-
 
 					default:
 
@@ -2647,8 +2633,6 @@ PUSHFD:
 				possiblecpu=9;
 
 				break;
-
-
 
 			case a_psrlw:
 
@@ -3584,8 +3568,6 @@ nointx:
 
 				break;
 
-
-
 			case a_fiadd:	//FIADD
 
 				FpuType4(0,0);
@@ -3652,8 +3634,6 @@ nointx:
 
 				break;
 
-
-
 			case a_fld:	//FLD
 
 				FpuType5(0xD9,0);
@@ -3671,8 +3651,6 @@ nointx:
 				FpuType5(0xDD,0x18);
 
 				break;
-
-
 
 			case a_fbld:	//FBLD
 
@@ -3724,8 +3702,6 @@ nointx:
 
 				break;
 
-
-
 			case a_fldcw:	//FLDCW
 
 				FpuType7(0x28);
@@ -3741,8 +3717,6 @@ nointx:
 				FpuType7(0x38);
 
 				break;
-
-
 
 			case a_f2xm1:
 
@@ -5442,8 +5416,6 @@ nointx:
 
 				break;
 
-
-
 			case -1: codeexpected(); break;
 
 			default:
@@ -5509,8 +5481,6 @@ nointx:
 	if(tok==tk_semicolon)nexttok();
 
 }
-
-
 
 void cmov(int num)
 
@@ -5598,8 +5568,6 @@ dwords:
 
 }
 
-
-
 #ifdef OPTVARCONST
 
 int GetOperand(int code)
@@ -5637,8 +5605,6 @@ int GetOperand(int code)
 }
 
 #endif
-
-
 
 void  asmtwo1(int basecode) // used for ADD ADC SUB SBB CMP AND OR XOR.
 
@@ -6148,8 +6114,6 @@ erval:
 
 #endif
 
-
-
 			break;
 
 		case tk_bytevar:
@@ -6233,8 +6197,6 @@ erval:
 	if(next)nexttok();
 
 }
-
-
 
 int GOTO()
 
@@ -6325,8 +6287,6 @@ undefproc:
 	return next;
 
 }
-
-
 
 unsigned char gotol(int faradd)
 
@@ -6610,8 +6570,6 @@ err:
 
 }
 
-
-
 void  asmregmem(int out1,int out2) // used for LEA LDS LES LFS LGS LSS.
 
 {
@@ -6665,8 +6623,6 @@ int holdreg;
 	outaddress(&itok);
 
 }
-
-
 
 void Scanbit(int basecode)
 
@@ -6761,8 +6717,6 @@ erval:
 	if(cpu<3)cpu=3;
 
 }
-
-
 
 void CheckBit(int code)
 
@@ -6942,8 +6896,6 @@ varreg:
 
 }
 
-
-
 void asmone1(int basecode)			 // used for INC and DEC.
 
 {
@@ -7053,8 +7005,6 @@ dec:
 	}
 
 }
-
-
 
 void asmone2(int basecode)			 // used for NEG NOT MUL IMUL DIV IDIV.
 
@@ -7173,8 +7123,6 @@ neg:
 	}
 
 }
-
-
 
 void  asmshortjump(int shortcode,int nearcode)
 
@@ -7408,8 +7356,6 @@ unsigned long numlong;
 
 }
 
-
-
 void lar_lsl(int code)
 
 {
@@ -7508,8 +7454,6 @@ lar1:
 
 }
 
-
-
 unsigned char tabldeckr(int code)
 
 {
@@ -7596,8 +7540,6 @@ char name[IDLENGTH];
 
 }
 
-
-
 void  protectinstr(int code,int code2)
 
 {
@@ -7669,8 +7611,6 @@ int i=0;
 	if(cpu<2)cpu=2;
 
 }
-
-
 
 void doasmmov() 		// do MOV
 
@@ -8334,8 +8274,6 @@ ervar:
 
 }
 
-
-
 void asmextend(int basecode)	 // procedure MOVSX and MOVZX
 
 {
@@ -8421,8 +8359,6 @@ int razr=r16;
 	if(cpu<3)cpu=3;
 
 }
-
-
 
 void movd()
 
@@ -8559,8 +8495,6 @@ int i=0;
 	if(i&&cpu<9)cpu=9;
 
 }
-
-
 
 void movq()
 
@@ -8778,8 +8712,6 @@ int i=1,xmm=0;
 
 }
 
-
-
 void packMMX(int code,int code1,int code2)
 
 {
@@ -8903,8 +8835,6 @@ int xmm=FALSE;
 	if(next==TRUE)nexttok();
 
 }
-
-
 
 void asmshift(int basecode) 		 // used for ROL ROR RCL RCR SHL SAL SHR SAR.
 
@@ -9090,8 +9020,6 @@ rol:
 
 }
 
-
-
 void CheckCl(int code)
 
 {
@@ -9111,8 +9039,6 @@ void CheckCl(int code)
 	op(code);
 
 }
-
-
 
 void Shxd(int code)
 
@@ -9218,8 +9144,6 @@ varreg:
 
 #endif
 
-
-
 			KillVar(hstok.name);
 
 				outseg(&hstok,3);
@@ -9273,8 +9197,6 @@ varreg:
 	if(next)nexttok();
 
 }
-
-
 
 void FpuType1(unsigned int addrm)
 
@@ -9355,8 +9277,6 @@ int oscan=scanlexmode;
 	}
 
 }
-
-
 
 void FpuType2(unsigned int addrm,unsigned int addrm2)
 
@@ -9470,15 +9390,11 @@ int oscan=scanlexmode;
 
 }
 
-
-
 void FpuType3(unsigned int opcode,unsigned int addrm)
 
 {
 
 int oscan=scanlexmode;
-
-
 
 	scanlexmode=ASMLEX;
 
@@ -9514,13 +9430,9 @@ int oscan=scanlexmode;
 
 		if(tok!=tk_fpust||itok.number!=0)fpu0expected();
 
-
-
 	}
 
 }
-
-
 
 void FpuType4(unsigned int opcode,unsigned int addrm)
 
@@ -9595,8 +9507,6 @@ void FpuType4(unsigned int opcode,unsigned int addrm)
 	}
 
 }
-
-
 
 void  FpuType5(unsigned int opcode,unsigned int addrm)
 
@@ -9676,8 +9586,6 @@ int i=4;
 
 }
 
-
-
 void FpuType6(unsigned int opcode,unsigned int addrm)
 
 {
@@ -9750,8 +9658,6 @@ int i=0;
 
 }
 
-
-
 void FpuType7(unsigned int addrm)
 
 {
@@ -9784,8 +9690,6 @@ void FpuType7(unsigned int addrm)
 
 }
 
-
-
 void FpuType8(unsigned int opcode,unsigned int addrm)
 
 {
@@ -9814,11 +9718,7 @@ void FpuType8(unsigned int opcode,unsigned int addrm)
 
 }
 
-
-
 /* ***************** start of some quick codes ****************** */
-
-
 
 int  short_ok(long thenumber,int reg32)
 
@@ -9839,8 +9739,6 @@ int  short_ok(long thenumber,int reg32)
 	return(0);
 
 }
-
-
 
 void cbw()
 
@@ -9866,8 +9764,6 @@ void cbw()
 
 }
 
-
-
 void stosb()
 
 {
@@ -9877,8 +9773,6 @@ void stosb()
 	ClearReg(DI);
 
 }
-
-
 
 void stosw()
 
@@ -9891,8 +9785,6 @@ void stosw()
 	ClearReg(DI);
 
 }
-
-
 
 void stosd()
 
@@ -9908,8 +9800,6 @@ void stosd()
 
 }
 
-
-
 void movsb()
 
 {
@@ -9921,8 +9811,6 @@ void movsb()
 	ClearReg(SI);
 
 }
-
-
 
 void movsw()
 
@@ -9937,8 +9825,6 @@ void movsw()
 	ClearReg(SI);
 
 }
-
-
 
 void movsd()
 
@@ -9956,8 +9842,6 @@ void movsd()
 
 }
 
-
-
 void pushds()  /* produce PUSH DS */
 
 {
@@ -9967,8 +9851,6 @@ void pushds()  /* produce PUSH DS */
 	op(0x1E);
 
 }
-
-
 
 void pushss()
 
@@ -9980,8 +9862,6 @@ void pushss()
 
 }
 
-
-
 void popes()	 /* produce POP ES */
 
 {
@@ -9991,8 +9871,6 @@ void popes()	 /* produce POP ES */
 	op(0x07);
 
 }
-
-
 
 void ret()		/* produce RET */
 
@@ -10004,8 +9882,6 @@ void ret()		/* produce RET */
 
 }
 
-
-
 void retf() 	/* produce RETF */
 
 {
@@ -10016,13 +9892,9 @@ void retf() 	/* produce RETF */
 
 }
 
-
-
 void jumploc(long loc)		 /* produce JUMP # */
 
 {
-
-
 
 	loc=loc-outptr-3;
 
@@ -10072,8 +9944,6 @@ void jumploc(long loc)		 /* produce JUMP # */
 
 }
 
-
-
 void callloc(long loc)	 /* produce CALL # */
 
 {
@@ -10088,8 +9958,6 @@ void callloc(long loc)	 /* produce CALL # */
 
 }
 
-
-
 void xorAHAH()	 /* produce XOR AH,AH */
 
 {
@@ -10099,8 +9967,6 @@ void xorAHAH()	 /* produce XOR AH,AH */
 	ConstToReg(0,AH,r8);
 
 }
-
-
 
 void xorAXAX()	 /* produce XOR AX,AX */
 
@@ -10113,8 +9979,6 @@ void xorAXAX()	 /* produce XOR AX,AX */
 	ConstToReg(0,AX,r16);
 
 }
-
-
 
 void xorEAXEAX()	 /* produce XOR EAX,EAX */
 
@@ -10130,8 +9994,6 @@ void xorEAXEAX()	 /* produce XOR EAX,EAX */
 
 }
 
-
-
 void ZeroReg(int reg, int razr)
 
 {
@@ -10146,8 +10008,6 @@ void ZeroReg(int reg, int razr)
 
 }
 
-
-
 void fwait()
 
 {
@@ -10155,8 +10015,6 @@ void fwait()
 	op(0x9B);
 
 }
-
-
 
 void cwdq(int razr)
 
@@ -10182,8 +10040,6 @@ void cwdq(int razr)
 
 }
 
-
-
 void  nextexpecting2(int want)
 
 {
@@ -10194,8 +10050,6 @@ void  nextexpecting2(int want)
 
 }
 
-
-
 void expecting2(int want)
 
 {
@@ -10205,8 +10059,6 @@ void expecting2(int want)
 	nexttok();
 
 }
-
-
 
 void CheckIP()
 
@@ -10222,8 +10074,6 @@ void CheckIP()
 
 }
 
-
-
 void jumploc0()
 
 {
@@ -10236,8 +10086,6 @@ void jumploc0()
 
 }
 
-
-
 void callloc0()
 
 {
@@ -10249,8 +10097,6 @@ void callloc0()
 	if(am32!=FALSE)outword(0);
 
 }
-
-
 
 void Leave()
 
@@ -10267,8 +10113,6 @@ void Leave()
 	else op(0xC9);
 
 }
-
-
 
 void  tobedefined(int callkind,int expectedreturn)
 
@@ -10296,8 +10140,6 @@ void  tobedefined(int callkind,int expectedreturn)
 
 }
 
-
-
 void  addlocaljump(int callkind)
 
 {
@@ -10307,8 +10149,6 @@ void  addlocaljump(int callkind)
 	addacall(secondcallnum++,(char)callkind);
 
 }
-
-
 
 unsigned long SaveNumber(int type,int tok4,char *name)
 
@@ -10327,8 +10167,6 @@ unsigned long SaveNumber(int type,int tok4,char *name)
 	return t;
 
 }
-
-
 
 void Swap2tok(int *tok4, ITOK *itok4, char **buf4, SINFO *strinf4, int *tok6,
 
@@ -10369,8 +10207,6 @@ SINFO hstr;
 	*strinf6=hstr;
 
 }
-
-
 
 int iTest(int mode)
 
@@ -10822,8 +10658,6 @@ testbyte:
 
 }
 
-
-
 void mmxiii(int type)
 
 {
@@ -10920,8 +10754,6 @@ int xmm=FALSE;
 
 }
 
-
-
 void prefetch(int code,int type)
 
 {
@@ -10980,8 +10812,6 @@ int i=1;
 
 }
 
-
-
 void pextrw()
 
 {
@@ -11023,8 +10853,6 @@ int xmm=FALSE;
 	if(xmm&&cpu<9)cpu=9;
 
 }
-
-
 
 void pinsrw()
 
@@ -11111,8 +10939,6 @@ int xmm=FALSE;
 	if(xmm&&cpu<9)cpu=9;
 
 }
-
-
 
 void pshufw()
 
@@ -11205,8 +11031,6 @@ int i=1;
 	op(doconstdwordmath());
 
 }
-
-
 
 void xmminstr(int type,int sec,int op1,int op2)
 
@@ -11312,8 +11136,6 @@ int num1,i=1;
 
 }
 
-
-
 void xmm3instr(int type,int sec)	//xmm,xmm/mem,i8
 
 {
@@ -11414,8 +11236,6 @@ SINFO hstr;
 
 }
 
-
-
 void xmm2xmm(int code,int code2,int type)
 
 {
@@ -11451,8 +11271,6 @@ int num;
 	op(rm_mod11+itok.number+num*8);
 
 }
-
-
 
 void movxmm3(int code,int code2,int type)
 
@@ -11540,8 +11358,6 @@ SINFO hstr;
 
 }
 
-
-
 void movxmm4(int code,int code2)
 
 {
@@ -11603,8 +11419,6 @@ int num;
 	}
 
 }
-
-
 
 void movxmm(int code,int code2,int addc)
 
@@ -11752,8 +11566,6 @@ SINFO hstr;
 
 }
 
-
-
 void movxmm2(int code,int code2)
 
 {
@@ -11888,8 +11700,6 @@ SINFO hstr;
 
 }
 
-
-
 void shiftxmm(int rm)	//rxmm,i8
 
 {
@@ -11917,8 +11727,6 @@ int num;
 	op(doconstdwordmath());
 
 }
-
-
 
 void DDDW(int faradd)
 
@@ -12024,8 +11832,6 @@ unsigned long hnumber;
 
 }
 
-
-
 void AADM(int code)
 
 {
@@ -12041,8 +11847,6 @@ void AADM(int code)
 	ClearReg(AX);
 
 }
-
-
 
 int Push(ITOK *wtok)
 
@@ -12265,6 +12069,4 @@ push:
 }
 
 /* end of TOKR.C */
-
-
 

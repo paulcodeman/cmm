@@ -10,8 +10,6 @@
 
 #define USED_DIN_VAR 4
 
-
-
 #define r_undef 0
 
 #define r8 1
@@ -24,8 +22,6 @@
 
 #define r128 16
 
-
-
 #define CODE16 0x100
 
 #define CODE32 0x200
@@ -37,8 +33,6 @@
 #define THIS_NEW   0x500
 
 #define THIS_ZEROSIZE 0x600
-
-
 
 enum{
 
@@ -54,8 +48,6 @@ enum{
 
 };
 
-
-
 enum{
 
 	STDLEX,
@@ -70,8 +62,6 @@ enum{
 
 };
 
-
-
 enum{
 
 	zero_term,
@@ -84,8 +74,6 @@ enum{
 
 };
 
-
-
 enum{
 
 	NOTINITVAR,
@@ -97,8 +85,6 @@ enum{
 	INITUSEVAR
 
 };
-
-
 
 enum{
 
@@ -130,8 +116,6 @@ enum{
 
 };
 
-
-
 enum{
 
 	stdcompr,
@@ -149,8 +133,6 @@ enum{
 	cxnzcompr=0x18
 
 };
-
-
 
 enum{
 
@@ -175,8 +157,6 @@ enum{
 	tk_lessequal,   tk_oror,        tk_andand,      tk_openbrace,   tk_closebrace,
 
 	tk_openbracket, tk_closebracket,tk_openblock,   tk_closeblock,  tk_colon,
-
-
 
 	tk_semicolon,   tk_camma,       tk_period,      tk_at,          tk_numsign,
 
@@ -260,8 +240,6 @@ enum{
 
 };
 
-
-
 // 16-bit word regs
 
 #define	AX		0
@@ -279,8 +257,6 @@ enum{
 #define	SI		6
 
 #define	DI		7
-
-
 
 // 8-bit byte regs
 
@@ -300,8 +276,6 @@ enum{
 
 #define	BH		7
 
-
-
 // 386+ 32-bit regs
 
 #define	EAX		0
@@ -320,8 +294,6 @@ enum{
 
 #define	EDI		7
 
-
-
 //я┐╜я┐╜я┐╜роля┐╜ разя┐╜я┐╜шеня┐╜я┐╜ регя┐╜я┐╜я┐╜ров
 
 #define dEAX 1
@@ -339,8 +311,6 @@ enum{
 #define dESI 64
 
 #define dEDI 128
-
-
 
 #define	ES		0
 
@@ -376,8 +346,6 @@ enum{
 
 #define	CR7		7
 
-
-
 // 386+ test regs
 
 #define	TR0		0
@@ -395,8 +363,6 @@ enum{
 #define	TR6		6
 
 #define	TR7		7
-
-
 
 // 386+ debug regs
 
@@ -416,8 +382,6 @@ enum{
 
 #define	DR7		7
 
-
-
 //я┐╜я┐╜ремя┐╜я┐╜я┐╜я┐╜я┐╜, укая┐╜я┐╜теля┐╜, я┐╜я┐╜я┐╜ьния┐╜ укая┐╜я┐╜теля┐╜,сегя┐╜я┐╜я┐╜я┐╜я┐╜ укая┐╜я┐╜теля┐╜.
 
 #define	variable	0
@@ -425,8 +389,6 @@ enum{
 #define	pointer		1
 
 //#define	farpointer	2
-
-
 
 // define exit codes
 
@@ -460,8 +422,6 @@ enum{
 
 #define	e_manyinclude	16
 
-
-
 #define	rm_mod00	0
 
 #define	rm_mod01	64
@@ -494,8 +454,6 @@ enum{
 
 #define	rm_EBP		5
 
-
-
 // posttype values for call or jump types or post variables
 
 enum{
@@ -518,8 +476,6 @@ BREAK_NEAR,	// 6
 
 CONTINUE_NEAR,	// 7
 
-
-
 CALL_32,	//8
 
 //CALL_32D,
@@ -540,11 +496,7 @@ CALL_EXT,	// 14
 
 EXT_VAR,	// 15
 
-
-
 CALL_32I,	// 16
-
-
 
 POST_VAR,	// 17
 
@@ -552,15 +504,11 @@ FIX_VAR,	// 18
 
 FIX_CODE,	// 19
 
-
-
 POST_VAR32,	// 20
 
 FIX_VAR32,	// 21
 
 FIX_CODE32,	// 22
-
-
 
 POST_FLOATNUM,	// 23
 
@@ -571,8 +519,6 @@ DATABLOCK_VAR32,	//25
 DIN_VAR,	//26
 
 DIN_VAR32,	 //27
-
-
 
 CODE_SIZE,
 
@@ -590,8 +536,6 @@ STACK_SIZE,
 
 STACK_SIZE32,
 
-
-
 FIX_CODE_ADD,
 
 //DATABLOCK_STRING,	// 26
@@ -600,13 +544,9 @@ FIX_CODE_ADD,
 
 };
 
-
-
 #define POINTER 0x8000
 
 #define NOTPOINTER (~POINTER)
-
-
 
 // format of output file
 
@@ -626,17 +566,11 @@ FIX_CODE_ADD,
 
 #define file_bin  7
 
-
-
 //типя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
 
 #define	TINY		0
 
 #define	SMALL		1
-
-
-
-
 
 //флая┐╜я┐╜
 
@@ -666,11 +600,7 @@ FIX_CODE_ADD,
 
 #define fs_destructor 0x8000
 
-
-
 #define f_useidx 0x10000	//я┐╜я┐╜ремя┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜споя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ []
-
-
 
 //типя┐╜ я┐╜я┐╜цедя┐╜я┐╜
 
@@ -682,23 +612,17 @@ FIX_CODE_ADD,
 
 #define	tp_fastcall	6
 
-
-
 //типя┐╜ я┐╜ызоя┐╜я┐╜ API я┐╜я┐╜цедя┐╜я┐╜
 
 #define	API_FAST	1
 
 #define	API_JMP		2
 
-
-
 #define USEALLREG    8//0
 
 //#define USEFIRST4REG 1
 
 //#define USEONLY_AX   2
-
-
 
 //я┐╜умея┐╜я┐╜я┐╜ списка я┐╜я┐╜ректив
 
@@ -713,8 +637,6 @@ enum{
 	d_stm,   d_fca,  d_suv,    d_us,   d_ib,
 
 	d_end1,
-
-
 
 	d_align=d_end1, d_aligner,d_alignw,   //d_beep,
 
@@ -734,35 +656,21 @@ enum{
 
 	d_pragma,d_inline, d_if,    d_elif,   d_end};
 
-
-
 enum{
 
 	a_add,a_or, a_adc,a_sbb,a_and, a_sub, a_xor, a_cmp,
 
 	a_not,a_neg,a_mul,a_div=a_mul+2,a_idiv,
 
-
-
 	a_rol,a_ror,a_rcl,a_rcr,a_shl, a_shr, a_sar=a_shr+2,
-
-
 
 	a_bt, a_bts,a_btr,a_btc,
 
-
-
 	a_inc,a_dec,
-
-
 
 	a_test,a_imul,
 
-
-
 	a_shld,a_shrd,
-
-
 
 	a_daa,a_das,a_aaa,a_aas,a_aam, a_aad,
 
@@ -770,11 +678,7 @@ enum{
 
 	a_bswap,a_xlat,
 
-
-
 	a_bsf,a_bsr,
-
-
 
 	a_cmpxchg,a_cmpxchg8b,a_xadd,
 
@@ -790,15 +694,9 @@ enum{
 
 	a_xchg,a_mov,a_lea,
 
-
-
   a_lfs,a_lgs,a_lss,
 
-
-
 	a_les,a_lds,
-
-
 
 	a_adrsiz,
 
@@ -812,19 +710,13 @@ enum{
 
 	a_jcxz,a_jecxz,a_loop,a_loopd,a_loopz,a_loopnz,
 
-
-
 	a_jo,a_jno,a_jc,a_jnc,a_jz,a_jnz,a_jna,a_ja,
 
 	a_js,a_jns,a_jp,a_jnp,a_jl,a_jnl,a_jng,a_jg,
 
-
-
 	a_seto,a_setno,a_setc,a_setnc,a_setz,a_setnz,a_setna,a_seta,
 
 	a_sets,a_setns,a_setp,a_setnp,a_setl,a_setnl,a_setng,a_setg,
-
-
 
 	/*a_jmps,a_jmpn,a_jmpf,*/a_jmp,
 
@@ -834,11 +726,7 @@ enum{
 
 	a_sldt,a_str,a_lldt,a_ltr,a_verr,a_verw,
 
-
-
 	a_lar,a_lsl,
-
-
 
 	a_sgdt,a_sidt,a_lgdt,a_lidt,a_smsw,a_lmsw,a_clts,
 
@@ -847,8 +735,6 @@ enum{
 	a_wrmsr,a_cpuid,a_rdmsr,a_rdtsc,a_rsm,
 
 	a_rdpmc,a_ud2,/*a_emmx,a_setalc,*/
-
-
 
 	a_punpcklbw,a_punpcklwd,a_punpckldq,
 
@@ -898,8 +784,6 @@ enum{
 
 	a_paddb,a_paddw,a_paddd,
 
-
-
 	a_db,a_dw,a_dd,a_invlpg,a_loadall,a_opsiz,
 
 	a_f2xm1,a_fabs,a_fadd,a_faddp,a_fbld,a_fbstp,a_fchs,a_fclex,a_fcom,
@@ -928,13 +812,9 @@ enum{
 
 	a_fxrstor,a_fxsave,a_fndisi,a_fneni,a_fnsetpm,
 
-
-
 	a_cmovo,a_cmovno,a_cmovc,a_cmovnc,a_cmovz,a_cmovnz,a_cmovna,a_cmova,
 
 	a_cmovs,a_cmovns,a_cmovp,a_cmovnp,a_cmovl,a_cmovnl,a_cmovng,a_cmovg,
-
-
 
 //MMX Pentium III extention
 
@@ -963,8 +843,6 @@ enum{
 	a_shufps,   a_sqrtps,  a_sqrtss,  a_stmxcsr, a_subps,   a_subss,
 
 	a_ucomiss,  a_unpckhps,a_unpcklps,a_xorps,
-
-
 
 // Pentium IV
 
@@ -1006,11 +884,7 @@ enum{
 
 	a_movshdup,a_movsldup,  a_pause,
 
-
-
 	a_end};
-
-
 
 enum{
 
@@ -1021,6 +895,4 @@ enum{
 	p66
 
 };
-
-
 

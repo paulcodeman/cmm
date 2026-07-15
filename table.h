@@ -12,8 +12,6 @@
 
 #define BASE(a)   ((a)&7)
 
-
-
 typedef union{
 
   struct{
@@ -27,8 +25,6 @@ typedef union{
   unsigned long dword;
 
 }WORD32;
-
-
 
 /* prototypes */
 
@@ -59,6 +55,4 @@ void floating_point(int );
 void percent(char , char );
 
 void undata(unsigned ofs,unsigned long len,unsigned int type);
-
-
 

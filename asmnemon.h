@@ -1,7 +1,5 @@
 /* Этот файл сгенерирован программой 'FASTLIST.EXE' */
 
-
-
 unsigned short ofsmnem[26]={
 
 	0x0000,0x0082,	//A B
@@ -29,8 +27,6 @@ unsigned short ofsmnem[26]={
 	0x1083,0x109A,	//W X
 
 	0xFFFF,0xFFFF};	//Y Z
-
-
 
 unsigned char asmMnem[]={
 

@@ -1,7 +1,5 @@
 /* Этот файл сгенерирован программой 'FASTLIST.EXE' */
 
-
-
 unsigned short ofsdir[27]={
 
 	0x0000,0x000F,	//D a
@@ -31,8 +29,6 @@ unsigned short ofsdir[27]={
 	0xFFFF,0xFFFF,	//x y
 
 	0xFFFF};	//z 
-
-
 
 unsigned char dirlist[]={
 

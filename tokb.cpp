@@ -2,8 +2,6 @@
 
 #include "tok.h"
 
-
-
 char badadr[]="Bad outrm value in outaddress();";
 
 char CXandDX[]="CX and DX";
@@ -22,8 +20,6 @@ char *pbuf;
 
 SINFO pstr;
 
-
-
 LISTFLOAT *floatnum=NULL;	//список float я┐╜я┐╜я┐╜я┐╜таня┐╜
 
 unsigned int numfloatconst=0;
@@ -35,8 +31,6 @@ unsigned int maxnumfloatconst;
 unsigned int ofsfloatlist=0;
 
 unsigned char idxregs[5]={ESI,EDI,EBX,EDX,255};
-
-
 
 int expandvar();
 
@@ -80,8 +74,6 @@ void getinto_reg(int gtok,ITOK *gstok,char *&gbuf,SINFO *gstr,int razr,int reg);
 
 void intinstack(int addop);
 
-
-
 extern void warningoptnum();
 
 extern void segoperror();
@@ -106,8 +98,6 @@ extern void DevideZero();
 
 extern void wordnotoper();
 
-
-
 unsigned long long li[]={0x1,0x2,0x4,0x8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,
 
 0x800,0x1000,0x2000,0x4000,0x8000,0x10000,0x20000,0x40000,0x80000,0x100000,
@@ -130,13 +120,9 @@ unsigned long long li[]={0x1,0x2,0x4,0x8,0x10,0x20,0x40,0x80,0x100,0x200,0x400,
 
 ,0x1000000000000000LL,0x2000000000000000LL,0x4000000000000000LL,0x8000000000000000LL};
 
-
-
 unsigned long leanum[24]={3,5,9,15,25,27,45,81,75,125,135,225,243,405,729,
 
 		375,675,1215,2187,625,1125,2025,3645,6561};
-
-
 
 unsigned int numleamul[24][4]={
 
@@ -147,8 +133,6 @@ unsigned int numleamul[24][4]={
 	{9,9,9,0},{5,5,5,3},{5,5,9,3},{9,9,5,3},{9,9,9,3},{5,5,5,5},{9,5,5,5},
 
 	{9,9,5,5},{9,9,9,5},{9,9,9,9}};
-
-
 
 int RmEqualReg(int reg,int rm,int sib)
 
@@ -254,8 +238,6 @@ int reg1=-1,reg2=-1;
 
 }
 
-
-
 void startmul(int razr)
 
 {
@@ -273,8 +255,6 @@ void startmul(int razr)
 	}
 
 }
-
-
 
 void lshiftmul(int num,int razr,int reg=AX)
 
@@ -358,8 +338,6 @@ void lshiftmul(int num,int razr,int reg=AX)
 
 }
 
-
-
 void submul(int razr)
 
 {
@@ -376,8 +354,6 @@ void submul(int razr)
 
 }
 
-
-
 void addmul(int razr)
 
 {
@@ -393,8 +369,6 @@ void addmul(int razr)
 	}
 
 }
-
-
 
 int leamul32(unsigned long num,int reg,int razr)
 
@@ -462,8 +436,6 @@ int vop=0,i=8*reg+4;
 
 }
 
-
-
 int speedmul32(unsigned long num,int reg,int razr)
 
 {
@@ -521,8 +493,6 @@ int i;
 	return FALSE;
 
 }
-
-
 
 int speedmul(unsigned long num, int razr)	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ умня┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜
 
@@ -721,8 +691,6 @@ int first,second;
 	return FALSE;
 
 }
-
-
 
 void CheckRegForLea(int reg,int *idx,int *base, int *zoom,unsigned long *val,
 
@@ -926,8 +894,6 @@ con1:
 
 }
 
-
-
 int OutLea(int reg,int idx,int base, int zoom,unsigned long val,
 
 	unsigned int rflag,ITOK *posttok)
@@ -1067,8 +1033,6 @@ int q;
 	return TRUE;
 
 }
-
-
 
 int Reg32ToLea2(int reg)	//я┐╜я┐╜тимя┐╜я┐╜я┐╜я┐╜я┐╜ слоя┐╜я┐╜я┐╜я┐╜я┐╜ 32-я┐╜я┐╜я┐╜я┐╜я┐╜ регя┐╜я┐╜я┐╜ров я┐╜ LEA
 
@@ -1310,8 +1274,6 @@ retfalse:
 
 }
 
-
-
 int RegEqualToLea(int reg)
 
 {
@@ -1467,8 +1429,6 @@ retfalse:
 	return TRUE;
 
 }
-
-
 
 int Reg32ToLea(int reg)	//я┐╜я┐╜тимя┐╜я┐╜я┐╜я┐╜я┐╜ слоя┐╜я┐╜я┐╜я┐╜я┐╜ 32-я┐╜я┐╜я┐╜я┐╜я┐╜ регя┐╜я┐╜я┐╜ров я┐╜ LEA
 
@@ -1778,8 +1738,6 @@ retfalse:
 
 }
 
-
-
 void CheckRegForLea16(int reg,int *idx,int *base,unsigned long *val,unsigned int *rflag,ITOK *posttok)
 
 {
@@ -1900,8 +1858,6 @@ int endloop=FALSE;
 
 }
 
-
-
 void OutLea16(int reg,int idx,int base,unsigned int val,int rflag,ITOK *posttok)
 
 {
@@ -1943,8 +1899,6 @@ int rm;
 	}
 
 }
-
-
 
 int Reg16ToLea(int reg)	//я┐╜я┐╜тимя┐╜я┐╜я┐╜я┐╜я┐╜ слоя┐╜я┐╜я┐╜я┐╜я┐╜ 16-я┐╜я┐╜я┐╜я┐╜я┐╜ регя┐╜я┐╜я┐╜ров я┐╜ LEA
 
@@ -2114,8 +2068,6 @@ retfalse:
 
 }
 
-
-
 int Reg16ToLea2(int reg)	//я┐╜я┐╜тимя┐╜я┐╜я┐╜я┐╜я┐╜ слоя┐╜я┐╜я┐╜я┐╜я┐╜ 16-я┐╜я┐╜я┐╜я┐╜я┐╜ регя┐╜я┐╜я┐╜ров я┐╜ LEA
 
 {
@@ -2247,8 +2199,6 @@ retfalse:
 	return FALSE;
 
 }
-
-
 
 int OptimNum()	//я┐╜я┐╜тимя┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ровя┐╜я┐╜ я┐╜я┐╜я┐╜раня┐╜я┐╜я┐╜
 
@@ -2496,8 +2446,6 @@ LL1:
 
 }
 
-
-
 int expandvar()
 
 {
@@ -2543,8 +2491,6 @@ en:
 	return TRUE;
 
 }
-
-
 
 void RegMulNum(int reg,unsigned long num,int razr,int sign,int *expand,int flag)
 
@@ -2846,11 +2792,7 @@ num_imul:
 
 }
 
-
-
 /* --------------- byte, char, word, int math starts ----------------- */
-
-
 
 long long CalcNumber(int sign)
 
@@ -2895,8 +2837,6 @@ long long hold;
 	return hold;
 
 }
-
-
 
 int OnlyNumber(int sign)
 
@@ -2959,8 +2899,6 @@ int otype2=itok2.type;
 	return FALSE;
 
 }
-
-
 
 void MultiAssignFloat(int type,int npointr=0)
 
@@ -3093,8 +3031,6 @@ int numpointr=0;
 	}
 
 }
-
-
 
 int MultiAssign(int razr,int usereg,int npointr)
 
@@ -3649,8 +3585,6 @@ int numpointr=0;
 	return hnumber;
 
 }
-
-
 
 int do_d_wordvar(int sign,int razr,int terminater)	//signed or unsigned 16 or 32 bit memory variable
 
@@ -4928,8 +4862,6 @@ defxor:
 
 							outaddress(&wtok);
 
-
-
 							CheckAllMassiv(bufrm,razr,&strinf);
 
 							op66(razr);
@@ -4953,8 +4885,6 @@ defxor:
 							op(wtok.rm);
 
 							outaddress(&wtok);
-
-
 
 							break;
 
@@ -5275,8 +5205,6 @@ defxor:
 	return retrez;
 
 }
-
-
 
 int dobytevar(int sign,int terminater)	 // byte, char
 
@@ -6126,8 +6054,6 @@ num:
 
 }
 
-
-
 void  getinto_reg(int gtok,ITOK *gstok,char *&gbuf,SINFO *gstr,int razr,int reg)
 
 {
@@ -6195,8 +6121,6 @@ longvar:
 	}
 
 }
-
-
 
 void  getinto_e_ax(int sign,int gtok,ITOK *gstok,char *&gbuf,SINFO *gstr,int razr,int useAX)
 
@@ -6770,8 +6694,6 @@ movxr:
 
 }
 
-
-
 int caselong(unsigned long val)
 
 {
@@ -6794,8 +6716,6 @@ unsigned long num;
 
 }
 
-
-
 int caselonglong(unsigned long long val)
 
 {
@@ -6817,8 +6737,6 @@ unsigned long long num;
 	return vop;
 
 }
-
-
 
 int do_e_axmath(int sign,int razr,char **ofsstr)
 
@@ -7198,8 +7116,6 @@ contloop:
 
 }
 
-
-
 void do_e_axmath2(int sign,int razr,int expand)
 
 {
@@ -7239,8 +7155,6 @@ unsigned char oaddstack;
 			if(itok.type==tp_stopper||tok==tk_eof||itok.type==tp_compare)break;
 
 		}
-
-
 
 		if(tok2==tk_number)optnum=OptimNum();
 
@@ -8581,8 +8495,6 @@ rrminus:
 
 }
 
-
-
 void  getintoal(int gtok,ITOK *gstok,char *&gbuf,SINFO *gstr) // AH may also be changed
 
 {
@@ -8815,8 +8727,6 @@ beg1:
 
 }
 
-
-
 int doalmath(int sign,char **ofsstr)
 
 {
@@ -8948,8 +8858,6 @@ int rettype=tk_beg;
 	return rettype;
 
 }
-
-
 
 void  doalmath2(int sign)
 
@@ -10121,11 +10029,7 @@ llminus:
 
 }
 
-
-
 /* =============== doreg_32(), dobeg(), doseg() ===============*/
-
-
 
 int doreg_32(int reg,int razr,int terminater)
 
@@ -11327,8 +11231,6 @@ divreg:
 
 }
 
-
-
 int optnumadd(unsigned long num,int reg,int razr,int vop)
 
 {
@@ -11594,8 +11496,6 @@ int nrazr=0;
 	return FALSE;
 
 }
-
-
 
 int dobeg(int beg,int terminater)
 
@@ -12125,8 +12025,6 @@ shiftbeg:
 
 }
 
-
-
 void doseg(int seg)
 
 {
@@ -12357,8 +12255,6 @@ segax:
 
 }
 
-
-
 void PushSeg(int seg)
 
 {
@@ -12381,8 +12277,6 @@ void PushSeg(int seg)
 
 }
 
-
-
 void PopSeg(int seg)
 
 {
@@ -12403,11 +12297,7 @@ void PopSeg(int seg)
 
 }
 
-
-
 // =============== doregmath_32(), dobegmath() ===============
-
-
 
 void doregmath_32(int reg,int razr,int sign,char **ofsstr,int fdiv)  // math done is on all regs except AX
 
@@ -13503,8 +13393,6 @@ divcalc:
 
 }
 
-
-
 void  dobegmath(int beg)  // math done is on all begs except AL
 
 // all other registers preserved
@@ -13921,11 +13809,7 @@ int vop,i,optnum=FALSE,negflag=FALSE;
 
 }
 
-
-
 // ============= getintoreg_32(), getintobeg() ============
-
-
 
 int getintoreg_32(int reg,int razr,int sign,char **ofsstr,int useloop)	// get into word reg (except AX) with enum
 
@@ -13979,8 +13863,6 @@ int loop=0,otok;
 
 loopswitch:
 
-
-
 	if(uselea){
 
 		if(razr==r32){
@@ -14006,8 +13888,6 @@ loopswitch:
 	}
 
 loopswitch1:
-
-
 
 #ifdef OPTVARCONST
 
@@ -14629,8 +14509,6 @@ dwordvar:
 
 }
 
-
-
 int getintobeg(int beg,char **ofsstr)	// get into beg (CL,DL,BL not others) with enum
 
 {
@@ -14973,8 +14851,6 @@ int rettype=tk_beg;
 
 }
 
-
-
 void  outaddress(ITOK *outtok)
 
 {
@@ -15086,8 +14962,6 @@ int rm=outtok->rm;
 	}
 
 }
-
-
 
 /*-----------------05.01.00 23:37-------------------
 
@@ -15621,8 +15495,6 @@ endequals1:
 
 						}
 
-
-
 						if(vop==0x38){	// div 22.12.05 22:10
 
 							vop=8;	//mult
@@ -15632,8 +15504,6 @@ endequals1:
 							else itok.dnumber=1/itok.dnumber;
 
 						}
-
-
 
 						op66(r32);
 
@@ -16345,8 +16215,6 @@ endequals1:
 
 }
 
-
-
 void fildq2_stack(int size)
 
 {
@@ -16377,8 +16245,6 @@ void fildq2_stack(int size)
 
 }
 
-
-
 void fildq_stack()
 
 {
@@ -16386,8 +16252,6 @@ void fildq_stack()
 	fildq2_stack(localsize+8);
 
 }
-
-
 
 void fistp2_stack(int size)
 
@@ -16417,8 +16281,6 @@ void fistp2_stack(int size)
 
 }
 
-
-
 void fistp_stack(int addop)
 
 {
@@ -16428,8 +16290,6 @@ void fistp_stack(int addop)
 	fistp2_stack(localsize+4+addop);
 
 }
-
-
 
 void fld_stack(int size)
 
@@ -16459,8 +16319,6 @@ void fld_stack(int size)
 
 }
 
-
-
 void FloatToNumer(int addop)
 
 //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ float я┐╜ я┐╜сло
@@ -16486,8 +16344,6 @@ void FloatToNumer(int addop)
 	if(cpu<3)cpu=3;
 
 }
-
-
 
 void Float2reg32(int reg,int addop,int reg1,int reg2)
 
@@ -16528,8 +16384,6 @@ void Float2reg32(int reg,int addop,int reg1,int reg2)
 	RestoreBP();
 
 }
-
-
 
 void  byteinstack(int *numstak,int *nums)
 
@@ -16578,8 +16432,6 @@ void  byteinstack(int *numstak,int *nums)
 	fld_stack(*nums+*numstak);
 
 }
-
-
 
 void  reginstack(int *numstak,int *nums)
 
@@ -16657,8 +16509,6 @@ void  reginstack(int *numstak,int *nums)
 
 }
 
-
-
 void wordinstack(int *numstak,int *nums)
 
 {
@@ -16707,8 +16557,6 @@ void wordinstack(int *numstak,int *nums)
 
 }
 
-
-
 void intinstack(int addop)
 
 {
@@ -16728,8 +16576,6 @@ void intinstack(int addop)
 	outaddress(&itok);
 
 }
-
-
 
 int doeaxfloatmath(int itreturn,int reg,int addop)
 
@@ -17091,8 +16937,6 @@ num1:
 
 						op(0xd8+(itok.rm==tk_float?0:4));
 
-
-
 						if(vop==0x38){	// div 22.12.05 22:10
 
 							vop=8;	//mult
@@ -17104,8 +16948,6 @@ num1:
 						}
 
 						if(/*vop==0x38||*/vop==0x28)vop-=8;
-
-
 
 						op((am32==FALSE?0x06:0x05)+vop);
 
@@ -17397,8 +17239,6 @@ num1:
 
 }
 
-
-
 void float2stack(int num)
 
 {
@@ -17422,8 +17262,6 @@ void float2stack(int num)
 	}
 
 }
-
-
 
 void dofloatstack(int num)
 
@@ -17535,8 +17373,6 @@ int vop=0;
 
 }
 
-
-
 void RestoreBP()
 
 {
@@ -17550,8 +17386,6 @@ void RestoreBP()
 	}
 
 }
-
-
 
 void CheckInitBP()
 
@@ -17568,8 +17402,6 @@ void CheckInitBP()
 	}
 
 }
-
-
 
 void AddReloc(int segm)
 
@@ -17603,8 +17435,6 @@ void AddReloc(int segm)
 
 }
 
-
-
 void fwait3()
 
 {
@@ -17612,8 +17442,6 @@ void fwait3()
 	if(chip<4&&tok2!=tk_floatvar&&tok2!=tk_doublevar&&tok2!=tk_float&&tok2!=tk_double)op(0x9B);
 
 }
-
-
 
 void AddFloatConst(long long fnumber,int type)
 
@@ -17685,8 +17513,6 @@ endp:
 
 }
 
-
-
 void setwordext(long *id)
 
 {
@@ -17704,8 +17530,6 @@ void setwordext(long *id)
 	posts++;
 
 }
-
-
 
 void setwordpost(ITOK *stok)						/* for post word num setting */
 
@@ -17740,8 +17564,6 @@ void setwordpost(ITOK *stok)						/* for post word num setting */
 	posts++;
 
 }
-
-
 
 void MovRegNum(int razr,int relocf,unsigned long number,int reg)
 
@@ -17947,8 +17769,6 @@ stdmov:
 
 }
 
-
-
 void NegReg(int razr,int reg)
 
 {
@@ -17980,8 +17800,6 @@ void NegReg(int razr,int reg)
 	ClearReg(reg);
 
 }
-
-
 
 int RshiftReg(int razr,int reg,int sign)
 
@@ -18061,8 +17879,6 @@ rshift:
 
 }
 
-
-
 int CheckMinusNum()
 
 {
@@ -18084,8 +17900,6 @@ int CheckMinusNum()
 	return FALSE;
 
 }
-
-
 
 int MulReg(int reg,int razr)
 
@@ -18320,8 +18134,6 @@ defmul:
 	return next;
 
 }
-
-
 
 void DivMod(int vop,int sign,int razr,int expand)
 
@@ -18569,8 +18381,6 @@ defal:
 
 divin:
 
-
-
 							if(!expand)ClearDX(razr,sign);
 
 							DivNum2(itok.number,razr,sign);
@@ -18807,8 +18617,6 @@ defdiv:
 
 }
 
-
-
 void DivNum(unsigned long num,int razr,int sign)
 
 {
@@ -18893,8 +18701,6 @@ stddiv:*/
 
 }
 
-
-
 void ClearDX(int razr,int sign)
 
 {
@@ -18915,8 +18721,6 @@ void ClearDX(int razr,int sign)
 
 }
 
-
-
 void DivNum2(unsigned long num,int razr,int sign)
 
 {
@@ -18936,8 +18740,6 @@ void DivNum2(unsigned long num,int razr,int sign)
 	ClearReg(AX);
 
 }
-
-
 
 int getintoreg(int reg,int razr,int sign,char **ofsstr)
 
@@ -19231,8 +19033,6 @@ COM_MOD *bmod;
 
 }
 
-
-
 void dobits()
 
 {
@@ -19470,8 +19270,6 @@ axtobit:
 	seminext();
 
 }
-
-
 
 void bits2reg(int reg,int razr)
 
@@ -19823,8 +19621,6 @@ int reg1=idxregs[0],reg2=idxregs[1];
 
 }
 
-
-
 void num2bits(ITOK *gtok,unsigned long num,int razr)
 
 {
@@ -19950,8 +19746,6 @@ unsigned int j,mask;
 	}
 
 }
-
-
 
 void reg2bits(ITOK *gtok,int razr)
 
@@ -20085,8 +19879,6 @@ int i,j,mask;
 
 }
 
-
-
 void getoperand(int reg)
 
 {
@@ -20118,8 +19910,6 @@ unsigned int numpointr=0;
 	CheckMinusNum();
 
 }
-
-
 
 void cpointr(int reg,int numpointr)
 
@@ -20185,8 +19975,6 @@ void cpointr(int reg,int numpointr)
 
 }
 
-
-
 void cwpointr(ITOK *wtok,char *&wbuf,SINFO *wstr,int *otok,int npointr,int ureg)
 
 {
@@ -20250,8 +20038,6 @@ void cwpointr(ITOK *wtok,char *&wbuf,SINFO *wstr,int *otok,int npointr,int ureg)
 	}
 
 }
-
-
 
 int CheckAddOnly()
 
@@ -20432,8 +20218,6 @@ newloop:
 	return retval;
 
 }
-
-
 
 int doqwordvar(int terminater)	//64 bit memory variable
 
@@ -21831,8 +21615,6 @@ divcont:
 
 }
 
-
-
 void Select2FreeReg(int r1,int r2,int *reg1,int *reg2)
 
 {
@@ -21887,8 +21669,6 @@ void Select2FreeReg(int r1,int r2,int *reg1,int *reg2)
 
 }
 
-
-
 void doreg64(int reg,int terminater)
 
 {
@@ -21932,8 +21712,6 @@ int numpointr=0;
 			nexttok();
 
 			/*-----------------31.08.05 18:39-------------------
-
-
 
 			--------------------------------------------------*/
 
@@ -22006,8 +21784,6 @@ int numpointr=0;
 			}
 
 			/*-----------------31.08.05 18:39-------------------
-
-
 
 			--------------------------------------------------*/
 
@@ -23261,8 +23037,6 @@ sdiv:
 
 }
 
-
-
 void optnumadd64(unsigned long long num,int r1,int r2,int vop)
 
 {
@@ -23544,8 +23318,6 @@ int i,reg;
 	setzeroflag=TRUE;
 
 }
-
-
 
 void doregmath64(int reg)
 
@@ -24547,8 +24319,6 @@ sdiv:
 
 }
 
-
-
 void getintoreg64(int reg)
 
 {
@@ -25174,8 +24944,6 @@ movreg64:
 	if(next)nexttok();
 
 }
-
-
 
 void CallExternProc(char *name)
 

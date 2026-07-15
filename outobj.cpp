@@ -1,7 +1,5 @@
 #include "tok.h"
 
-
-
 void  obj_outrecord(int recordtype,unsigned int recordlength,unsigned char *data);
 
 void outeachPUBDEF(struct idrec *ptr);
@@ -10,11 +8,7 @@ void  obj_outLEDATA(unsigned int segm,unsigned int offset,unsigned int recordlen
 
 			 unsigned char *data);
 
-
-
 #define MAXNUMEXTNAME 1024;
-
-
 
 int *numextname;
 
@@ -24,11 +18,7 @@ unsigned int lenextstr=0;	//длина строки с внешними имен
 
 int numextern=0;
 
-
-
 int postseg,stackseg;
-
-
 
 unsigned int findextname(int extnum)
 
@@ -43,8 +33,6 @@ unsigned int findextname(int extnum)
 	return 0;
 
 }
-
-
 
 int MakeObj()
 
@@ -136,8 +124,6 @@ unsigned int count,sizeblock;
 
 		i=2;
 
-
-
 		if(comfile==file_exe&&modelmem==SMALL){
 
 			string2[0]=(unsigned char)0x48;
@@ -154,8 +140,6 @@ unsigned int count,sizeblock;
 
 		}
 
-
-
 		postseg=i;
 
 		string2[0]=(unsigned char)0x48;
@@ -169,8 +153,6 @@ unsigned int count,sizeblock;
 		obj_outrecord(0x98,6,string2);
 
 		i++;
-
-
 
 		if(comfile==file_exe&&modelmem==SMALL){
 
@@ -248,8 +230,6 @@ unsigned int count,sizeblock;
 
 		i++;*/
 
-
-
 		postseg=i;
 
 		string2[0]=(unsigned char)0xA9;
@@ -264,11 +244,7 @@ unsigned int count,sizeblock;
 
 		i++;
 
-
-
 		obj_outrecord(0x96,11,(unsigned char *)"\005STACK\004FLAT");//9,10
-
-
 
 		if(comfile!=file_w32){
 
@@ -287,8 +263,6 @@ unsigned int count,sizeblock;
 		}
 
 		string2[0]=10;
-
-
 
 		obj_outrecord(0x9A,1,string2);	//GRPDEF Group: FLAT
 
@@ -414,8 +388,6 @@ restart:
 
 				if((postbuf+j)->type>=POST_VAR32&&(postbuf+j)->type<=FIX_CODE32){
 
-
-
 				}
 
 				else if((postbuf+j)->type==CALL_EXT){
@@ -534,8 +506,6 @@ restart:
 
 }
 
-
-
 void  obj_outLEDATA(unsigned int segm,unsigned int offset,unsigned int recordlength,unsigned char *data)
 
 {
@@ -586,8 +556,6 @@ unsigned char buf[8];
 
 }
 
-
-
 void  obj_outrecord(int recordtype,unsigned int recordlength,unsigned char *data)
 
 // Outputs an OBJ record.
@@ -621,8 +589,6 @@ unsigned int i;
 	fwrite(&checksum,1,1,hout);
 
 }
-
-
 
 void outeachPUBDEF(struct idrec *ptr)
 
@@ -765,6 +731,4 @@ endp:
 	}
 
 }
-
-
 

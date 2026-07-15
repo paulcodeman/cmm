@@ -1,10 +1,6 @@
 #define _REGOPT_
 
-
-
 #include "tok.h"
-
-
 
 unsigned char optinitreg=TRUE;
 
@@ -13,8 +9,6 @@ int OptNameIDX(char *name,char *nam,int size);
 int getnumber(char *buf,unsigned long *num,int *typenum=NULL);
 
 int convertrazr(int *reg,int razr);
-
-
 
 enum{
 
@@ -28,8 +22,6 @@ enum{
 
 };
 
-
-
 enum{
 
 	razr_8l,
@@ -42,11 +34,7 @@ enum{
 
 };
 
-
-
 REGISTERSTAT *regstat;
-
-
 
 #ifdef OPTVARCONST
 
@@ -59,8 +47,6 @@ BLVIC *BakLVIC();
 void CopyLVIC(BLVIC *bak);
 
 #endif
-
-
 
 void KillRegLec(int reg)
 
@@ -79,8 +65,6 @@ void KillRegLec(int reg)
 	}
 
 }
-
-
 
 void ClearReg(int reg)
 
@@ -111,8 +95,6 @@ REGEQVAR *curv,*nextv;
 	KillRegLec(reg);
 
 }
-
-
 
 void clearregstat(int regs)
 
@@ -148,8 +130,6 @@ REGEQVAR *curv,*nextv;
 
 }
 
-
-
 void initregstat()
 
 {
@@ -161,8 +141,6 @@ void initregstat()
 	clearregstat();
 
 }
-
-
 
 void deinitregstat()
 
@@ -179,8 +157,6 @@ void deinitregstat()
 	regstat=NULL;
 
 }
-
-
 
 REGISTERSTAT *BakRegStat()
 
@@ -234,8 +210,6 @@ REGEQVAR *cur,*news;
 
 }
 
-
-
 void CopyRegStat(REGISTERSTAT *bak)
 
 {
@@ -282,8 +256,6 @@ REGEQVAR *cur,*news;
 
 }
 
-
-
 void ClearRegBak(int reg,REGISTERSTAT *regst)
 
 {
@@ -307,8 +279,6 @@ REGEQVAR *curv,*nextv;
 	(regst+reg)->next=NULL;
 
 }
-
-
 
 void AddRegVar(int reg, int razr,ITOK *itok4)
 
@@ -339,8 +309,6 @@ REGEQVAR *cur,*news;
 	}
 
 }
-
-
 
 int GetRegVar(ITOK *itok4)
 
@@ -376,8 +344,6 @@ REGEQVAR *cur;
 
 }
 
-
-
 void FreeStat(REGISTERSTAT *bak)
 
 {
@@ -399,8 +365,6 @@ void FreeStat(REGISTERSTAT *bak)
 	free(bak);
 
 }
-
-
 
 void CompareRegStat(REGISTERSTAT *bak)
 
@@ -427,8 +391,6 @@ void CompareRegStat(REGISTERSTAT *bak)
 	}
 
 }
-
-
 
 int convertrazr(int *reg,int razr)
 
@@ -458,8 +420,6 @@ int nr;
 
 }
 
-
-
 void ConstToReg(unsigned long num,int reg,int razr)
 
 {
@@ -475,8 +435,6 @@ char buf[64];
 	}
 
 }
-
-
 
 void GenRegToReg(int regd,int regs,int razr)
 
@@ -507,8 +465,6 @@ void GenRegToReg(int regd,int regs,int razr)
 	}
 
 }
-
-
 
 int CheckIDZReg(char *name,int reg,int razr)
 
@@ -616,8 +572,6 @@ REGEQVAR *cur;
 
 }
 
-
-
 void IDZToReg(char *name,int reg,int razr)
 
 /*
@@ -646,8 +600,6 @@ int nr;
 
 }
 
-
-
 int GetRegNumber(int reg,unsigned long *num,int razr)
 
 {
@@ -671,8 +623,6 @@ int nr;
 	return NOINREG;
 
 }
-
-
 
 int GetNumberR(int sreg,unsigned long *num,int razr,unsigned long number)
 
@@ -740,8 +690,6 @@ unsigned long nnum;
 
 }
 
-
-
 int getnumber(char *buf,unsigned long *num,int *typenum)
 
 {
@@ -779,8 +727,6 @@ int retcode=FALSE;
 	return retcode;
 
 }
-
-
 
 char *GetLecsem(int stop1,int stop2,int type)
 
@@ -908,8 +854,6 @@ int pinptr;
 
 }
 
-
-
 void GetEndLex(int stop1,int stop2,int type)
 
 {
@@ -978,8 +922,6 @@ int oscanlexmode;
 
 }
 
-
-
 void IDXToReg(char *name,int size,int reg)
 
 /*
@@ -1015,8 +957,6 @@ char nam[SIZEIDREG];
 	KillRegLec(reg);
 
 }
-
-
 
 int OptNameIDX(char *name,char *nam,int size)
 
@@ -1065,8 +1005,6 @@ int maxlen=SIZEIDREG;
 	return TRUE;
 
 }
-
-
 
 int CheckIDXReg(char *name,int size,int reg)
 
@@ -1150,8 +1088,6 @@ REGEQVAR *cur;
 
 }
 
-
-
 int RegToReg(int regd,int regs,int razr)
 
 {
@@ -1208,8 +1144,6 @@ REGEQVAR *cur,*news;
 
 }
 
-
-
 int RegSwapReg(int reg1,int reg2,int razr)
 
 {
@@ -1257,8 +1191,6 @@ noreg:
 	return NOINREG;;
 
 }
-
-
 
 void KillVar(char *name)
 
@@ -1374,8 +1306,6 @@ REGEQVAR *cur,*prev;
 
 }
 
-
-
 /*-----------------16.06.05 23:45-------------------
 
  Замена переменных константами
@@ -1384,23 +1314,17 @@ REGEQVAR *cur,*prev;
 
 #ifdef OPTVARCONST
 
-
-
 BLVIC *mainvic;
 
 unsigned char replasevar=TRUE;
 
 //void updnum(int tok4,long long *num);
 
-
-
 #define MAXSIZEVIC 64
 
 int cursizevic=0;
 
 LVIC *listvic=NULL;
-
-
 
 void CreateMainLVIC()
 
@@ -1414,8 +1338,6 @@ void CreateMainLVIC()
 
 }
 
-
-
 void KillMainLVIC()
 
 {
@@ -1427,8 +1349,6 @@ void KillMainLVIC()
 	listvic=NULL;
 
 }
-
-
 
 BLVIC *BakLVIC()
 
@@ -1449,8 +1369,6 @@ BLVIC *bakvic;
 	return bakvic;
 
 }
-
-
 
 void CopyLVIC(BLVIC *bak)
 
@@ -1476,8 +1394,6 @@ void CopyLVIC(BLVIC *bak)
 
 }
 
-
-
 void FreeLVIC(BLVIC *bak)
 
 {
@@ -1489,8 +1405,6 @@ void FreeLVIC(BLVIC *bak)
 	free(bak);
 
 }
-
-
 
 void CompareLVIC(BLVIC *bak)
 
@@ -1528,8 +1442,6 @@ LVIC *bvic;
 
 }
 
-
-
 void ClearLVIC()
 
 {
@@ -1543,8 +1455,6 @@ void ClearLVIC()
 		linenumber);*/
 
 }
-
-
 
 int Const2Var(ITOK *itok4,long long num,int typenum)
 
@@ -1636,8 +1546,6 @@ int freevic=-1;
 
 }
 
-
-
 void Const2VarRec(LVIC *varconst)
 
 {
@@ -1706,8 +1614,6 @@ int freevic=-1;
 
 }
 
-
-
 void ClearVarByNum(ITOK *itok4)
 
 {
@@ -1737,8 +1643,6 @@ void ClearVarByNum(ITOK *itok4)
 	}
 
 }
-
-
 
 int UpdVarConst(ITOK *itok4,long long num,int typenum,int operand)
 
@@ -1860,8 +1764,6 @@ int i;
 
 }
 
-
-
 void FreeGlobalConst()
 
 {
@@ -1885,8 +1787,6 @@ void FreeGlobalConst()
 	}
 
 }
-
-
 
 int CheckRegToConst(int reg,ITOK *itok4,int razr)
 
@@ -1922,8 +1822,6 @@ int nr;
 
 }
 
-
-
 int CheckUpdRegToConst(int reg,ITOK *itok4,int operand,int razr)
 
 {
@@ -1951,8 +1849,6 @@ int nr;
 	return FALSE;
 
 }
-
-
 
 int SwapVarConst(ITOK *itok2,ITOK *itok4)
 
@@ -2005,8 +1901,6 @@ LVIC tempvic;
 	return TRUE;
 
 }
-
-
 
 int SwapVarRegConst(int reg,ITOK *itok4,int razr)
 
@@ -2128,8 +2022,6 @@ int numinreg=FALSE;
 
 }
 
-
-
 int CheckConstVar(ITOK *itok4)
 
 {
@@ -2152,8 +2044,6 @@ int CheckConstVar(ITOK *itok4)
 
 				return TRUE;
 
-
-
 			}
 
 		}
@@ -2163,8 +2053,6 @@ int CheckConstVar(ITOK *itok4)
 	return FALSE;
 
 }
-
-
 
 int CheckConstVar2(ITOK *itok4,long long *num,int *typenum)
 
@@ -2186,8 +2074,6 @@ int CheckConstVar2(ITOK *itok4,long long *num,int *typenum)
 
 				return TRUE;
 
-
-
 			}
 
 		}
@@ -2197,8 +2083,6 @@ int CheckConstVar2(ITOK *itok4,long long *num,int *typenum)
 	return FALSE;
 
 }
-
-
 
 /*
 
@@ -2232,15 +2116,11 @@ void updnum(int tok4,long long *num)
 
 			break;
 
-
-
 	}
 
 }
 
  */
-
-
 
 void CheckConstVar3(int *tok4,ITOK *itok4,int razr)
 
@@ -2284,8 +2164,6 @@ int rm;
 
 					break;
 
-
-
 			}
 
 //			updnum(*tok4,&itok4->lnumber);
@@ -2321,8 +2199,6 @@ int rm;
 	}
 
 }
-
-
 
 #endif
 

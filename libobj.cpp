@@ -2,8 +2,6 @@
 
 #include "coff.h"
 
-
-
 char *meserr="Plese, send this obj and sources files to me (sheker@mail.ru)";
 
 struct LISTINCLFILE{
@@ -16,8 +14,6 @@ struct LISTINCLFILE{
 
 };
 
-
-
 enum{
 
 	s_extern,
@@ -29,8 +25,6 @@ enum{
 	s_bss
 
 };
-
-
 
 struct LISTNAMESYMBOL{
 
@@ -48,11 +42,7 @@ struct LISTNAMESYMBOL{
 
 }*listnamesymbol;
 
-
-
 char *curobjname;
-
-
 
 int numobj=0,numname;
 
@@ -60,15 +50,11 @@ LISTINCLFILE *listobj;
 
 unsigned int adr_end;
 
-
-
 void LoadObj();
 
 void AddPost(unsigned long loc,int type,unsigned int num);
 
 int searchtree2(idrec *fptr,ITOK *itok4,int *tok4,unsigned char *string4);
-
-
 
 int GetSegm(int seg)
 
@@ -90,8 +76,6 @@ OBJECT_ENTRY *obj;
 
 }
 
-
-
 int GetOffSec(int seg)
 
 {
@@ -111,8 +95,6 @@ OBJECT_ENTRY *obj;
 	return seg;
 
 }
-
-
 
 void AddNameObj(char *name,int typefind,int type)
 
@@ -135,8 +117,6 @@ int len;
 	numobj++;
 
 }
-
-
 
 void AddObj()
 
@@ -168,8 +148,6 @@ int hold;
 
 }
 
-
-
 int GetAlighSize(long flag)
 
 {
@@ -185,8 +163,6 @@ int align=0;
 	return align;
 
 }
-
-
 
 void ConvertName(char *name)
 
@@ -258,8 +234,6 @@ char c;
 
 }
 
-
-
 void AddPost(unsigned long loc,int type,unsigned int num)
 
 {
@@ -275,8 +249,6 @@ void AddPost(unsigned long loc,int type,unsigned int num)
 	posts++;
 
 }
-
-
 
 void ScanSection(int numobj)
 
@@ -349,8 +321,6 @@ long flag;
 	}
 
 }
-
-
 
 void AddLstName(int numname)
 
@@ -461,8 +431,6 @@ dproc:
 	outptrdata=ooutptrdata;
 
 }
-
-
 
 int ScanName(COFF_HEADER *head)
 
@@ -689,8 +657,6 @@ idrec *rec;
 	return j;
 
 }
-
-
 
 void LoadObj()
 

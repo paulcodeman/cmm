@@ -1,10 +1,6 @@
 #define _NEW_TYPE_
 
-
-
 #include "tok.h"
-
-
 
 void convert_type(int *sign,int *rettype,int *pointr,int reg)
 

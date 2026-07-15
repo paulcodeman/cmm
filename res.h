@@ -46,13 +46,9 @@
 
 #define CRT_NEWDIALOG (CRT_DIALOG|CRT_NEWRESOURCE)
 
-
-
 #define TOTALTYPERES 22
 
 #define NUMMENUPOPUP 8
-
-
 
 struct RES{
 
@@ -72,13 +68,9 @@ struct RES{
 
 };
 
-
-
 #define DRESNUM 100
 
 #define SIZERESBUF 2048
-
-
 
 struct _STRINGS_{
 
@@ -87,8 +79,6 @@ struct _STRINGS_{
 	short val;
 
 };
-
-
 
 _STRINGS_ typemem[7]={
 
@@ -108,8 +98,6 @@ _STRINGS_ typemem[7]={
 
 };
 
-
-
 _STRINGS_ typeclass[6]={
 
 	"BUTTON",   0x80,
@@ -125,8 +113,6 @@ _STRINGS_ typeclass[6]={
 	"COMBOBOX", 0x85
 
 };
-
-
 
 _STRINGS_ typemenu[NUMMENUPOPUP]={
 
@@ -148,8 +134,6 @@ _STRINGS_ typemenu[NUMMENUPOPUP]={
 
 };
 
-
-
 _STRINGS_ typeacceler[5]={
 
 	"VIRTKEY",  0x01,
@@ -164,11 +148,7 @@ _STRINGS_ typeacceler[5]={
 
 };
 
-
-
 enum {v_fv=1,v_pv,v_ffm,v_ff,v_fo,v_ft,v_fs};
-
-
 
 _STRINGS_ typeversion[7]={
 
@@ -187,8 +167,6 @@ _STRINGS_ typeversion[7]={
 	(char *)"FILESUBTYPE",v_fs
 
 };
-
-
 
 enum{
 
@@ -211,8 +189,6 @@ rc_stringtable, rc_style,          rc_version,     rc_versioninfo,    rc_begin,
 rc_end,         rc_language
 
 };
-
-
 
 struct{
 
@@ -294,10 +270,6 @@ struct{
 
 };
 
-
-
-
-
 union NameOrdinal
 
 {
@@ -307,10 +279,6 @@ union NameOrdinal
 	unsigned short ordinal[2];
 
 };
-
-
-
-
 
 struct _DBH_	//структура диалога
 
@@ -342,8 +310,6 @@ struct _DBH_	//структура диалога
 
 };
 
-
-
 struct _CD_	//контрольные данные диалога
 
 {
@@ -370,8 +336,6 @@ struct _CD_	//контрольные данные диалога
 
 };
 
-
-
 struct _ICOHEAD_
 
 {
@@ -385,8 +349,6 @@ struct _ICOHEAD_
 //	unsigned short res2;
 
 };
-
-
 
 struct _RESDIR_
 
@@ -411,8 +373,6 @@ struct _RESDIR_
 //	unsigned short res2;
 
 };
-
-
 
 struct _CURDIR_
 

@@ -1,7 +1,5 @@
 #define NUM_ASM_MODIF 12
 
-
-
 char *asmmodif[]={
 
 	"FAR",  "SHORT",  "NEAR", "DUP",   "INT","WORD","LONG","DWORD",
@@ -36,15 +34,11 @@ char *asmmodif[]={
 
 #define m_double  2048
 
-
-
 //конроль разрушения регистров
 
 #define d1par 256	//по первому операнду
 
 #define d2par 512	//по 2 операнду
-
-
 
 struct ASMPAR
 
@@ -1131,6 +1125,4 @@ struct ASMPAR
 	0,9,0,0	//a_pause
 
 };
-
-
 

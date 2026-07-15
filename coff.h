@@ -16,15 +16,11 @@
 
 //      IMAGE_SCN_TYPE_COPY                  0x00000010  // Reserved.
 
-
-
 #define IMAGE_SCN_CNT_CODE                   0x00000020  // Section contains code.
 
 #define IMAGE_SCN_CNT_INITIALIZED_DATA       0x00000040  // Section contains initialized data.
 
 #define IMAGE_SCN_CNT_UNINITIALIZED_DATA     0x00000080  // Section contains uninitialized data.
-
-
 
 #define IMAGE_SCN_LNK_OTHER                  0x00000100  // Reserved.
 
@@ -55,8 +51,6 @@
 #define IMAGE_SCN_MEM_LOCKED                 0x00040000
 
 #define IMAGE_SCN_MEM_PRELOAD                0x00080000
-
-
 
 #define IMAGE_SCN_ALIGN_1BYTES               0x00100000  //
 
@@ -90,8 +84,6 @@
 
 #define IMAGE_SCN_ALIGN_MASK                 0x00F00000
 
-
-
 #define IMAGE_SCN_LNK_NRELOC_OVFL            0x01000000  // Section contains extended relocations.
 
 #define IMAGE_SCN_MEM_DISCARDABLE            0x02000000  // Section can be discarded.
@@ -107,8 +99,6 @@
 #define IMAGE_SCN_MEM_READ                   0x40000000  // Section is readable.
 
 #define IMAGE_SCN_MEM_WRITE                  0x80000000  // Section is writeable.
-
-
 
 //
 
@@ -134,8 +124,6 @@
 
 #define IMAGE_REL_I386_REL32    0x0014  //PC-relative 32-bit reference to the symbols virtual address
 
-
-
 typedef struct _COFF_HEADER_
 
 {
@@ -155,8 +143,6 @@ typedef struct _COFF_HEADER_
   short Characteristics;
 
 }COFF_HEADER;
-
-
 
 typedef struct _IMAGE_SYMBOL
 
@@ -190,8 +176,6 @@ typedef struct _IMAGE_SYMBOL
 
 }IMAGE_SYMBOL;
 
-
-
 typedef struct _IMAGE_RELOCATION {
 
 	union {
@@ -207,6 +191,4 @@ typedef struct _IMAGE_RELOCATION {
 	unsigned short Type;
 
 }IMAGE_RELOCATION;
-
-
 

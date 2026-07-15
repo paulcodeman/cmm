@@ -1,16 +1,10 @@
 #define _CLASS_
 
-
-
 #include "tok.h"
-
-
 
 structteg *searchteg=NULL;
 
 int destructor=FALSE;
-
-
 
 void notclassname(char *name)
 
@@ -28,8 +22,6 @@ char buf[90];
 
 }
 
-
-
 void notclassproc(char *classname, char* procname)
 
 {
@@ -41,8 +33,6 @@ char buf[160];
 	preerror(buf);
 
 }
-
-
 
 void AddThis()
 
@@ -61,8 +51,6 @@ void AddThis()
 	paramsize+=lsize;
 
 }
-
-
 
 void doclassproc(unsigned int tproc)
 
@@ -103,8 +91,6 @@ char classname[IDLENGTH];
 		strcpy(name,itok.name);
 
 		if((tn=strchr(name,'@'))!=NULL)*tn=0;
-
-
 
 		if(strcmp(classname,name)==0&&(flag&fs_destructor)==0)flag|=fs_constructor;
 

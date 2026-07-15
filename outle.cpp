@@ -2,11 +2,7 @@
 
 #include "le.h"
 
-
-
 #define _OUTLE_
-
-
 
 unsigned short swapshort(unsigned int var)
 
@@ -21,8 +17,6 @@ unsigned short h,l;
 	return l|h;
 
 }
-
-
 
 int MakeBin32()
 
@@ -45,8 +39,6 @@ int MakeBin32()
 	return 0;
 
 }
-
-
 
 unsigned int EntryParamStr()
 
@@ -75,8 +67,6 @@ unsigned char *buf=(unsigned char *)"__bufcomstr";
 	return btok.number;
 
 }
-
-
 
 int MakeMEOS()
 
@@ -119,8 +109,6 @@ MEOSheader hdr;
 	return 0;
 
 }
-
-
 
 int MakeLE()
 
@@ -196,8 +184,6 @@ errwrite:
 
 	}
 
-
-
 	ot[0].Virtual_Segment_Size=outptr+postsize;//hdr.Initial_ESP;
 
 	ot[0].Relocation_Base_Address=0x10000;
@@ -222,8 +208,6 @@ errwrite:
 
 	hdr.Object_Page_Map_Table_Offset=headsize+=sizeof(Object_Table)*2;
 
-
-
 	sizeb=sizeof(Page_Map_Table)*hdr.Number_Of_Memory_Pages;
 
 	pmt=(Page_Map_Table *)MALLOC(sizeb);
@@ -244,8 +228,6 @@ errwrite:
 
 	hdr.Resource_Table_Offset=hdr.Resident_Names_Table_Offset=headsize+=sizeb;
 
-
-
 	i=strlen(rawfilename);
 
 	string2[0]=(unsigned char)i;
@@ -255,8 +237,6 @@ errwrite:
 	*(long *)&string2[i+2]=0;
 
 	if(fwrite(string2,i+5,1,hout)!=1)goto errwrite;
-
-
 
 	hdr.Entry_Table_Offset=headsize+=i+4;
 
@@ -279,8 +259,6 @@ errwrite:
 	if(fwrite(fpto,sizeb,1,hout)!=1)goto errwrite;
 
 	headsize+=sizeb;
-
-
 
 //Fixup_Record_Table
 
@@ -344,8 +322,6 @@ int sizefixpage=0;
 
 	headsize+=sizefixpage;
 
-
-
 //Imported_Procedure_Name_Table
 
 	hdr.Imported_Module_Names_Table_Offset=
@@ -358,10 +334,6 @@ int sizefixpage=0;
 
 	headsize++;
 
-
-
-
-
 	hdr.Fixup_Section_Size=headsize-hdr.Fixup_Page_Table_Offset;//9+sizefixpage;
 
 	hdr.Loader_Section_Size=headsize-sizeof(LE_Header);
@@ -372,8 +344,6 @@ int sizefixpage=0;
 
 	ChSize(hdr.Data_Pages_Offset);
 
-
-
 	fseek(hout,headerofs,SEEK_SET);
 
 	if(fwrite(&hdr,sizeof(LE_Header),1,hout)!=1)goto errwrite;
@@ -383,8 +353,6 @@ int sizefixpage=0;
 	if(fwrite(fpto,sizeof(unsigned long)*(hdr.Number_Of_Memory_Pages+1),1,hout)!=1)goto errwrite;
 
 	free(fpto);
-
-
 
 	fseek(hout,0,SEEK_END);
 

@@ -1,7 +1,5 @@
 /* Этот файл сгенерирован программой 'FASTLIST.EXE' */
 
-
-
 unsigned short ofsres[26]={
 
 	0x0000,0x003B,	//a b
@@ -29,8 +27,6 @@ unsigned short ofsres[26]={
 	0xFFFF,0xFFFF,	//w x
 
 	0xFFFF,0xFFFF};	//y z
-
-
 
 unsigned char resMnem[]={
 

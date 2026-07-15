@@ -1,18 +1,10 @@
 #define _SWITCH_
 
-
-
 #include "tok.h"
-
-
 
 extern int lastcommand;	//последний оператор в блоке
 
-
-
 #define MAXCASE 1024
-
-
 
 FSWI *swtables;	//таблица информаций об switch
 
@@ -25,8 +17,6 @@ char mesCASE[]="CASE";
 int numexpandcase;
 
 int numberbreak=0;
-
-
 
 void CheckJmpSW(int line,int endsw,int startsw,int shortjmp,char *mes)
 
@@ -53,8 +43,6 @@ int size=startsw-endsw;
 	}
 
 }
-
-
 
 void CmpRegNum(int tokr,unsigned long value,int reg)
 
@@ -134,8 +122,6 @@ void CmpRegNum(int tokr,unsigned long value,int reg)
 
 }
 
-
-
 int ScanSwitch(int *numcase,ISW *caseinf,COM_MOD *startmod)
 
 {
@@ -149,8 +135,6 @@ int dtok,line,oinptr,i,otok2;
 unsigned char *oinput;
 
 int oendinptr;
-
-
 
 ITOK otok;
 
@@ -197,8 +181,6 @@ int retcode=TRUE;
 		inptr++;
 
 	}
-
-
 
 	if(SkipParam()){
 
@@ -380,13 +362,9 @@ int retcode=TRUE;
 
 	endinptr=oendinptr;
 
-
-
 	return retcode;
 
 }
-
-
 
 void doswitch()
 
@@ -743,8 +721,6 @@ unsigned oaddESP=addESP;
 						size0=size1;
 
 						if(am32==FALSE)reg=BX;
-
-
 
 					}
 

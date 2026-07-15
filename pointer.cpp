@@ -1,10 +1,6 @@
 #define _POINTER_
 
-
-
 #include "tok.h"
-
-
 
 void dopointerproc()
 
@@ -28,13 +24,9 @@ SINFO wstr;
 
 	if((FixUp)
 
-
-
 	&&((itok.rm==rm_d32&&am32)||(itok.rm==rm_d16&&am32==0)))//16.07.04 16:01
 
 	//18.08.04 18:03  itok.rm==rm_d32 was itok.rm==CODE32
-
-
 
 	itok.flag|=f_reloc;
 
@@ -94,8 +86,6 @@ int reg=BX;
 
 }
 
-
-
 void dopointer()
 
 {
@@ -127,8 +117,6 @@ int razr=r16;
 	do_d_wordvar(0,razr);
 
 }
-
-
 
 void getpointeradr(ITOK *gstok,char *&gbuf,SINFO *gstr,int numpointer,int razr, int reg)
 
@@ -257,8 +245,6 @@ nomov:
 	}
 
 }
-
-
 
 void dovalpointer()
 
@@ -549,6 +535,4 @@ ITOK otok=itok;
 	else unuseableinput();
 
 }
-
-
 

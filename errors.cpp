@@ -2,8 +2,6 @@
 
 #include "tok.h"
 
-
-
 void warningprint(char *str,int line,int file);
 
 WARNACT wact[WARNCOUNT]={
@@ -14,11 +12,7 @@ WARNACT wact[WARNCOUNT]={
 
 	warningprint,1,warningprint,1,warningprint,1,warningprint,1,warningprint,1};
 
-
-
 int	maxerrors = 16; 				// number of errors to stop at
-
-
 
 void warningprint(char *str,int line,int file);
 
@@ -26,17 +20,11 @@ unsigned char mapfile=FALSE;
 
 FILE *hmap=NULL;
 
-
-
 char shorterr[]="SHORT jump distance too large";
 
 char buferr[128];
 
-
-
 /* ================== error messages start =========================== */
-
-
 
 void FindStopTok()
 
@@ -53,8 +41,6 @@ void FindStopTok()
 //	}
 
 }
-
-
 
 void SkipBlock2()
 
@@ -76,8 +62,6 @@ void SkipBlock2()
 
 }
 
-
-
 void FindEndLex()
 
 {
@@ -86,8 +70,6 @@ void FindEndLex()
 
 }
 
-
-
 void  preerror(char *str) /* error on currentline with line number and file name */
 
 {
@@ -95,8 +77,6 @@ void  preerror(char *str) /* error on currentline with line number and file name
 	preerror3(str,linenumber);
 
 }
-
-
 
 void  preerror3(char *str,unsigned int line,unsigned int file)//error message at a different than current line
 
@@ -119,8 +99,6 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 	else exit(e_toomanyerrors);
 
 }
-
-
 
 void internalerror (char *str)// serious internal compiler error message
 
@@ -145,8 +123,6 @@ char buf[200];
 	exit(e_internalerror);
 
 }
-
-
 
 char *getnumoperand(int type,char *name)
 
@@ -190,8 +166,6 @@ char *getnumoperand(int type,char *name)
 
 }
 
-
-
 void  expected (char ch)
 
 {
@@ -203,8 +177,6 @@ char holdstr[80];
 	preerror(holdstr);
 
 }
-
-
 
 void numexpected(int type)
 
@@ -218,8 +190,6 @@ char buf[40];
 
 }
 
-
-
 void varexpected(int type)
 
 {
@@ -232,8 +202,6 @@ char buf[45];
 
 }
 
-
-
 void stringexpected()
 
 {
@@ -241,8 +209,6 @@ void stringexpected()
 	preerror("string expected");
 
 }
-
-
 
 void valueexpected()
 
@@ -252,8 +218,6 @@ void valueexpected()
 
 }
 
-
-
 void wordvalexpected()
 
 {
@@ -261,8 +225,6 @@ void wordvalexpected()
 	preerror("word value expected");
 
 }
-
-
 
 void dwordvalexpected()
 
@@ -272,8 +234,6 @@ void dwordvalexpected()
 
 }
 
-
-
 void qwordvalexpected()
 
 {
@@ -281,8 +241,6 @@ void qwordvalexpected()
 	preerror("qword value expected");
 
 }
-
-
 
 void codeexpected()
 
@@ -292,8 +250,6 @@ void codeexpected()
 
 }
 
-
-
 void operatorexpected()
 
 {
@@ -301,8 +257,6 @@ void operatorexpected()
 	preerror("operator identifier expected");
 
 }
-
-
 
 void unexpectedeof()
 
@@ -312,8 +266,6 @@ void unexpectedeof()
 
 }
 
-
-
 void swaperror()
 
 {
@@ -322,8 +274,6 @@ void swaperror()
 
 }
 
-
-
 void notexternfun()
 
 {
@@ -331,8 +281,6 @@ void notexternfun()
 	preerror("Do not insert extern function");
 
 }
-
-
 
 void idalreadydefined()
 
@@ -349,8 +297,6 @@ char holdstr[80];
 //	nexttok();
 
 }
-
-
 
 void  jumperror(unsigned int line,char *type)
 
@@ -370,8 +316,6 @@ char buf[80];
 
 }
 
-
-
 void unknowncompop()
 
 {
@@ -379,8 +323,6 @@ void unknowncompop()
 	preerror("unknown comparison operator");
 
 }
-
-
 
 void maxoutputerror()
 
@@ -391,8 +333,6 @@ void maxoutputerror()
 	exit( e_outputtoobig );
 
 }
-
-
 
 void unableopenfile(char *name)
 
@@ -406,8 +346,6 @@ char holdstr[256];
 
 }
 
-
-
 void shortjumptoolarge()
 
 {
@@ -415,8 +353,6 @@ void shortjumptoolarge()
 	preerror(shorterr);
 
 }
-
-
 
 void thisundefined(char *str,int next)
 
@@ -428,13 +364,9 @@ char holdstr[80];
 
 	preerror(holdstr);
 
-
-
 	if(next)FindStopTok();
 
 }
-
-
 
 void datatype_expected(int type)
 
@@ -450,8 +382,6 @@ char buf[45];
 
 }
 
-
-
 void illegalfloat()
 
 {
@@ -459,8 +389,6 @@ void illegalfloat()
 	preerror("illegal use of float point");
 
 }
-
-
 
 void tobigpost()
 
@@ -472,8 +400,6 @@ void tobigpost()
 
 }
 
-
-
 void unuseableinput()
 
 {
@@ -484,8 +410,6 @@ void unuseableinput()
 
 }
 
-
-
 void ManyLogicCompare()
 
 {
@@ -494,8 +418,6 @@ void ManyLogicCompare()
 
 }
 
-
-
 void ZeroMassiv()
 
 {
@@ -503,8 +425,6 @@ void ZeroMassiv()
 	preerror("size massiv unknown or zero");
 
 }
-
-
 
 void maxdataerror()
 
@@ -515,8 +435,6 @@ void maxdataerror()
 	exit( e_outputtoobig );
 
 }
-
-
 
 void errorreadingfile(char *name)
 
@@ -530,8 +448,6 @@ char buf[256];
 
 }
 
-
-
 void badinfile(char *name)
 
 {
@@ -543,8 +459,6 @@ char buf[256];
 	preerror(buf);
 
 }
-
-
 
 void edpip(int num)
 
@@ -560,8 +474,6 @@ char buf[64];
 
 }
 
-
-
 void CompareOr()
 
 {
@@ -569,8 +481,6 @@ void CompareOr()
 	preerror("compare logic OR or AND to big distance");
 
 }
-
-
 
 void dynamiclabelerror()
 
@@ -580,8 +490,6 @@ void dynamiclabelerror()
 
 }
 
-
-
 void OnlyComFile()
 
 {
@@ -589,8 +497,6 @@ void OnlyComFile()
 	preerror("this option only for COM output files");
 
 }
-
-
 
 void redeclare(char *name)
 
@@ -604,8 +510,6 @@ char buf[120];
 
 }
 
-
-
 void retvoid()
 
 {
@@ -613,8 +517,6 @@ void retvoid()
 	preerror("function has return type of void");
 
 }
-
-
 
 void extraparam(char *name)
 
@@ -628,8 +530,6 @@ char buf[120];
 
 }
 
-
-
 void blockerror()
 
 {
@@ -637,8 +537,6 @@ void blockerror()
 	preerror("illegal syntax within [ ]");
 
 }
-
-
 
 void block16_32error()
 
@@ -648,8 +546,6 @@ void block16_32error()
 
 }
 
-
-
 void notstructname()
 
 {
@@ -657,8 +553,6 @@ void notstructname()
 	preerror("unique struct name expected");
 
 }
-
-
 
 void badtoken()
 
@@ -676,8 +570,6 @@ char buf[80];
 
 }
 
-
-
 void expectederror(char *str)
 
 {
@@ -694,8 +586,6 @@ char holdstr[80];
 
 }
 
-
-
 void declareanonim()
 
 {
@@ -703,8 +593,6 @@ void declareanonim()
 	preerror("Error declare anonimus union");
 
 }
-
-
 
 void declareunion()
 
@@ -724,8 +612,6 @@ void not_union_static()
 
 } */
 
-
-
 void segoperror()
 
 {
@@ -733,8 +619,6 @@ void segoperror()
 	preerror("only '=' or '><' operands valid with segment register");
 
 }
-
-
 
 void segbyteerror()
 
@@ -744,8 +628,6 @@ void segbyteerror()
 
 }
 
-
-
 void regmathoperror()
 
 {
@@ -753,8 +635,6 @@ void regmathoperror()
 	preerror("invalid operation for non-AX register math");
 
 }
-
-
 
 void begmathoperror()
 
@@ -764,8 +644,6 @@ void begmathoperror()
 
 }
 
-
-
 void negregerror()
 
 {
@@ -773,8 +651,6 @@ void negregerror()
 	preerror("negative non-constant invalid for non-AX register math");
 
 }
-
-
 
 void regbyteerror()
 
@@ -784,8 +660,6 @@ void regbyteerror()
 
 }
 
-
-
 void begworderror()
 
 {
@@ -793,8 +667,6 @@ void begworderror()
 	preerror("specified 16 bit operand invalid for non-AL register math");
 
 }
-
-
 
 void regshifterror()
 
@@ -804,8 +676,6 @@ void regshifterror()
 
 }
 
-
-
 void regmatherror()
 
 {
@@ -813,8 +683,6 @@ void regmatherror()
 	preerror("invalid operand for non-AX register math");
 
 }
-
-
 
 void DevideZero()
 
@@ -824,8 +692,6 @@ void DevideZero()
 
 }
 
-
-
 void wordnotoper()
 
 {
@@ -833,8 +699,6 @@ void wordnotoper()
 	preerror("word or int operands invalid for non-EAX register math");
 
 }
-
-
 
 void regexpected(int type)
 
@@ -848,8 +712,6 @@ char buf[50];
 
 }
 
-
-
 void bytevalexpected(int type)
 
 {
@@ -862,8 +724,6 @@ char buf[50];
 
 }
 
-
-
 void shortjumperror()
 
 {
@@ -871,8 +731,6 @@ void shortjumperror()
 	preerror("invalid operand for SHORT jump");
 
 }
-
-
 
 void invalidfarjumpitem()
 
@@ -882,8 +740,6 @@ void invalidfarjumpitem()
 
 }
 
-
-
 void invalidfarcallitem()
 
 {
@@ -891,8 +747,6 @@ void invalidfarcallitem()
 	preerror("invalid operand for FAR call");
 
 }
-
-
 
 void begexpected(int type)
 
@@ -906,8 +760,6 @@ char buf[50];
 
 }
 
-
-
 void reg32expected(int type)
 
 {
@@ -919,8 +771,6 @@ char buf[50];
 	preerror(buf);
 
 }
-
-
 
 void reg32regexpected(int type)
 
@@ -934,8 +784,6 @@ char buf[50];
 
 }
 
-
-
 void regBXDISIBPexpected()
 
 {
@@ -943,8 +791,6 @@ void regBXDISIBPexpected()
 	preerror("use only one of BX, DI, SI or BP register");
 
 }
-
-
 
 void bytedxexpected()
 
@@ -954,8 +800,6 @@ void bytedxexpected()
 
 }
 
-
-
 void axalexpected()
 
 {
@@ -963,8 +807,6 @@ void axalexpected()
 	preerror("EAX, AX or AL expected");
 
 }
-
-
 
 void invalidoperand(int type)
 
@@ -978,8 +820,6 @@ char buf[25];
 
 }
 
-
-
 void mmxregexpected(int type)
 
 {
@@ -991,8 +831,6 @@ char buf[50];
 	preerror(buf);
 
 }
-
-
 
 void xmmregexpected(int type)
 
@@ -1006,8 +844,6 @@ char buf[50];
 
 }
 
-
-
 void xmmregorvarexpected(int type)
 
 {
@@ -1019,8 +855,6 @@ char buf[60];
 	preerror(buf);
 
 }
-
-
 
 void mmxregordwordexpected(int type)
 
@@ -1034,8 +868,6 @@ char buf[60];
 
 }
 
-
-
 void clornumberexpected()
 
 {
@@ -1043,8 +875,6 @@ void clornumberexpected()
 	preerror("CL or constant expected");
 
 }
-
-
 
 void fpuvarexpected(int type)
 
@@ -1058,8 +888,6 @@ char buf[70];
 
 }
 
-
-
 void fpustakexpected(int type)
 
 {
@@ -1072,8 +900,6 @@ char buf[40];
 
 }
 
-
-
 void fpu0expected()
 
 {
@@ -1081,8 +907,6 @@ void fpu0expected()
 	preerror("2-nd expected only st(0) fpu register");
 
 }
-
-
 
 void fpustdestroed()
 
@@ -1092,8 +916,6 @@ void fpustdestroed()
 
 }
 
-
-
 void errstruct()
 
 {
@@ -1101,8 +923,6 @@ void errstruct()
 	preerror("illegal use of struct");
 
 }
-
-
 
 void tegnotfound()
 
@@ -1112,8 +932,6 @@ void tegnotfound()
 
 }
 
-
-
 void ErrWrite()
 
 {
@@ -1121,8 +939,6 @@ void ErrWrite()
 	//fprintf(stderr,"unable to write output file.\n");
 	printf("unable to write output file.\n");
 }
-
-
 
 void ErrReadStub()
 
@@ -1132,8 +948,6 @@ void ErrReadStub()
 	printf("unable to read stubfile\n");
 }
 
-
-
 void InvOperComp()
 
 {
@@ -1141,8 +955,6 @@ void InvOperComp()
 	preerror("invalid operation for compare");
 
 }
-
-
 
 void mmxormem(int type)
 
@@ -1156,8 +968,6 @@ char buf[60];
 
 }
 
-
-
 void reg32orword(int type)
 
 {
@@ -1169,8 +979,6 @@ char buf[60];
 	preerror(buf);
 
 }
-
-
 
 void undefclass(char *name)
 
@@ -1184,8 +992,6 @@ char buf[30+IDLENGTH];
 
 }
 
-
-
 void unknowntype()
 
 {
@@ -1194,8 +1000,6 @@ void unknowntype()
 
 }
 
-
-
 void destrdestreg()
 
 {
@@ -1203,8 +1007,6 @@ void destrdestreg()
 	preerror("destroyed destination register");
 
 }
-
-
 
 void unknownstruct (char *name,char *sname)
 
@@ -1218,8 +1020,6 @@ char buf[IDLENGTH*2+30];
 
 }
 
-
-
 void unknowntagstruct(char *name)
 
 {
@@ -1231,8 +1031,6 @@ char buf[IDLENGTH+16];
 	preerror(buf);
 
 }
-
-
 
 void unknownobj(char *name)
 
@@ -1248,7 +1046,6 @@ char buf[IDLENGTH+32];
 
 void q();
 
-
 void unknownpragma(char *name)
 
 {
@@ -1261,15 +1058,11 @@ char buf[IDLENGTH+32];
 
 }
 
-
-
 /*-----------------08.08.00 22:49-------------------
 
  Предупреждения
 
 	--------------------------------------------------*/
-
-
 
 void warningoptnum()
 
@@ -1278,8 +1071,6 @@ void warningoptnum()
 	if(wact[0].usewarn)wact[0].fwarn("Optimize numerical expressions",linenumber,currentfileinfo);
 
 }
-
-
 
 void  warningreg(char *str2)
 
@@ -1295,8 +1086,6 @@ char buf[50];
 	}
 
 }
-
-
 
 void  warningjmp(char *str2,int line,int file)
 
@@ -1314,8 +1103,6 @@ char buf[50];
 
 }
 
-
-
 void warningstring()
 
 {
@@ -1330,8 +1117,6 @@ void warningstring()
 
 }
 
-
-
 void warningexpand()
 
 {
@@ -1340,8 +1125,6 @@ void warningexpand()
 
 }
 
-
-
 void warningretsign()
 
 {
@@ -1349,8 +1132,6 @@ void warningretsign()
 	if(wact[5].usewarn)wact[5].fwarn("Signed value returned",linenumber,currentfileinfo);
 
 }
-
-
 
 void warningprint(char *str,unsigned int line,unsigned int file)
 
@@ -1367,8 +1148,6 @@ void warningprint(char *str,unsigned int line,unsigned int file)
 	}
 }
 
-
-
 void  warningdefined(char *name)
 
 {
@@ -1384,8 +1163,6 @@ char buf[IDLENGTH+30];
 	}
 
 }
-
-
 
 void warningnotused(char *name,int type)
 
@@ -1407,8 +1184,6 @@ char *typenames[]={"Variable","Structure","Function","Local variable",
 
 }
 
-
-
 void warningusenotintvar(char *name)
 
 {
@@ -1425,8 +1200,6 @@ char buf[IDLENGTH+50];
 
 }
 
-
-
 void warningdestroyflags()
 
 {
@@ -1434,8 +1207,6 @@ void warningdestroyflags()
 	if(wact[9].usewarn)wact[9].fwarn("Return flag was destroyed",linenumber,currentfileinfo);
 
 }
-
-
 
 void warningunreach()
 
@@ -1445,8 +1216,6 @@ void warningunreach()
 
 }
 
-
-
 void warninline()
 
 {
@@ -1455,8 +1224,6 @@ void warninline()
 
 }
 
-
-
 void warnsize()
 
 {
@@ -1464,8 +1231,6 @@ void warnsize()
 	if(wact[12].usewarn)wact[12].fwarn("Sources size exceed destination size",linenumber,currentfileinfo);
 
 }
-
-
 
 void waralreadinit(char *reg)
 
@@ -1483,8 +1248,6 @@ char buf[IDLENGTH+50];
 
 }
 
-
-
 void waralreadinitreg(char *reg,char *reg2)
 
 {
@@ -1501,8 +1264,6 @@ char buf[IDLENGTH+50];
 
 }
 
-
-
 void warpragmapackpop()
 
 {
@@ -1510,8 +1271,6 @@ void warpragmapackpop()
 	if(wact[13].usewarn)wact[13].fwarn("Pragma pack pop with no matching pack push",linenumber,currentfileinfo);
 
 }
-
-
 
 void missingpar(char *name)
 
@@ -1530,8 +1289,6 @@ char buf[120];
 //	preerror(buf);
 
 }
-
-
 
 void warreplasevar(char *name)
 
@@ -1555,8 +1312,6 @@ char buf[120];
 
 }
 
-
-
 void waralreadinitvar(char *name,unsigned int num)
 
 {
@@ -1579,8 +1334,6 @@ char buf[120];
 
 }
 
-
-
 void warcompneqconst()
 
 {
@@ -1588,8 +1341,6 @@ void warcompneqconst()
 	warningprint("Comparison not equal constant. Skipped code",linenumber,currentfileinfo);
 
 }
-
-
 
 void warcompeqconst()
 
@@ -1599,8 +1350,6 @@ void warcompeqconst()
 
 }
 
-
-
 void warpointerstruct()
 
 {
@@ -1608,8 +1357,6 @@ void warpointerstruct()
 	warningprint("Compiler not support pointers on structure",linenumber,currentfileinfo);
 
 }
-
-
 
 void warESP()
 
@@ -1619,11 +1366,7 @@ void warESP()
 
 }
 
-
-
 /* *****************   map file *************** */
-
-
 
 void OpenMapFile()
 
@@ -1636,8 +1379,6 @@ char buf[256];
 	hmap=fopen(buf,"w+t");
 
 }
-
-
 
 char *GetRetType(int type,int flag)
 
@@ -1750,8 +1491,6 @@ char *retcode;
 	return retcode;;
 
 }
-
-
 
 char *GetTypeProc(int flag)
 
@@ -1869,8 +1608,6 @@ char *t;
 
 }
 
-
-
 char *GetFunParam(unsigned char c,unsigned char c2,unsigned char c3)
 
 {
@@ -1941,8 +1678,6 @@ char *GetFunParam(unsigned char c,unsigned char c2,unsigned char c3)
 
 }
 
-
-
 char *GetName(char *name,int flag)
 
 {
@@ -1966,8 +1701,6 @@ char iname[IDLENGTH];
 	return (char *)string3;
 
 }
-
-
 
 char *GetSizeVar(int type,int adr)
 
@@ -1999,8 +1732,6 @@ char *sign;
 
 }
 
-
-
 void GetRangeUsed(char *buf,localinfo *ptr)
 
 {
@@ -2012,8 +1743,6 @@ void GetRangeUsed(char *buf,localinfo *ptr)
 	else sprintf(buf,"%d-%d",ptr->usedfirst,ptr->usedlast);
 
 }
-
-
 
 void mapfun(int line)
 
@@ -2096,6 +1825,4 @@ char buf[32];
 	fputs("\n",hmap);
 
 }
-
-
 

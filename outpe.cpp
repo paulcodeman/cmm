@@ -2,11 +2,7 @@
 
 #include "coff.h"
 
-
-
 #define _OUTPE_
-
-
 
 /* -----------------------------------------------------------------------
 
@@ -18,8 +14,6 @@
 
 #define STRVERS 0x20	//смещение текста с номером версии
 
-
-
 unsigned char stub[]={0x4D,0x5A,0x50,0x00,0x02,0x00,0x00,0x00,
 
              0x04,0x00,0x0F,0x00,0xFF,0xFF,0x00,0x00,
@@ -27,8 +21,6 @@ unsigned char stub[]={0x4D,0x5A,0x50,0x00,0x02,0x00,0x00,0x00,
 						 0xB8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 
              0x40,0x00,0x1A,0x00,0x00,0x00,0x00,0x00,
-
-
 
 						 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 
@@ -38,8 +30,6 @@ unsigned char stub[]={0x4D,0x5A,0x50,0x00,0x02,0x00,0x00,0x00,
 
 						 0x00,0x00,0x00,0x00,0x60,0x00,0x00,0x00,
 
-
-
 						 0xBA,0x0E,0x00,0x0E,0x1F,0xB4,0x09,0xCD,
 
              0x21,0xB8,0x01,0x4C,0xCD,0x21,0x46,0x6F,
@@ -47,8 +37,6 @@ unsigned char stub[]={0x4D,0x5A,0x50,0x00,0x02,0x00,0x00,0x00,
 						 0x72,0x20,0x57,0x69,0x6E,0x33,0x32,0x20,
 
 						 0x6F,0x6E,0x6C,0x79,0x21,0x0D,0x0A,0x24};
-
-
 
 #define SIZESTUB2 12
 
@@ -72,15 +60,11 @@ unsigned long FILEALIGN=0;//512;	// выравнивание секций в ф�
 
 int filingzerope;
 
-
-
 struct listexport *lexport=NULL;
 
 static unsigned long sizestub;
 
 static unsigned long numrs=1;
-
-
 
 unsigned long  Align(unsigned long size,unsigned long val)
 
@@ -94,13 +78,9 @@ unsigned long  Align(unsigned long size,unsigned long val)
 
 }
 
-
-
 /*
 
 #include <conio.h>
-
-
 
 void PrintMem(void *mem)
 
@@ -142,8 +122,6 @@ int i,j;
 
 }
 
-
-
 void CheckMem()
 
 {
@@ -161,8 +139,6 @@ idrec *rec=listapi->recapi;
 	}
 
 } */
-
-
 
 void AddJmpApi()
 
@@ -281,8 +257,6 @@ void AddJmpApi()
 	outptrdata=outptr;
 
 }
-
-
 
 int MakePE()
 
@@ -512,8 +486,6 @@ unsigned int resnum=0;	//номер секции ресурсов
 
 		importblock[startimportname++]=0;
 
-
-
 		if(!WinMonoBlock){	//если не единый блок
 
 			strcpy((objentry+importnum)->name,".idata"); //имя секции
@@ -642,8 +614,6 @@ unsigned int resnum=0;	//номер секции ресурсов
 
 	}
 
-
-
 	if(numres){	//секция ресурсов
 
 		if(WinMonoBlock==FALSE){	//если не единый блок
@@ -677,8 +647,6 @@ unsigned int resnum=0;	//номер секции ресурсов
 		else sizeres=Align(curposbuf,4);
 
 	}
-
-
 
 //секция таблиц перемещения
 
@@ -1044,8 +1012,6 @@ errwrite:
 
 }
 
-
-
 void ChSize(long size)
 
 {
@@ -1071,8 +1037,6 @@ long delta,ssave;
 	}
 
 }
-
-
 
 int AlignCD(char segm,int val)	//выравнять данные или код
 
@@ -1101,8 +1065,6 @@ unsigned int a;
 	return a;
 
 }
-
-
 
 void CreatWinStub()
 
@@ -1155,8 +1117,6 @@ void CreatWinStub()
 	vsizeheader=Align(numrs*sizeof(OBJECT_ENTRY)+sizeof(PE_HEADER)+sizestub,0x1000);
 
 }
-
-
 
 void ImportName(char *name)
 
@@ -1323,8 +1283,6 @@ errread:
 
 	listapi=newdll->list;
 
-
-
 	for(i=0;i<numobj;i++){
 
 		fseek(infile,posdll+nameadr,SEEK_SET);
@@ -1416,8 +1374,6 @@ errread:
 	fclose(infile);
 
 }
-
-
 
 void CreatStub(char *name)
 
@@ -1559,8 +1515,6 @@ errstub:
 
 }
 
-
-
 #define MAXLISTNAME 1024
 
 #define MAXNUMSYMBOL 128
@@ -1568,8 +1522,6 @@ errstub:
 #define MAXSIZESYMBOL MAXNUMSYMBOL*sizeof(IMAGE_SYMBOL)
 
 #define MAXNUMRELOC 256
-
-
 
 char *ListName;
 
@@ -1585,8 +1537,6 @@ extern int numextern;
 
 IMAGE_RELOCATION *treloc;
 
-
-
 struct NAMEID{
 
 	int num;
@@ -1595,11 +1545,7 @@ struct NAMEID{
 
 }*NameId;
 
-
-
 #define MAXSIZENAMEID MAXNUMSYMBOL*sizeof(NAMEID)
-
-
 
 void AddName(char *name,unsigned long size)
 
@@ -1618,8 +1564,6 @@ void AddName(char *name,unsigned long size)
 	sizelistName+=size+1;
 
 }
-
-
 
 void CreatSymbolTable(idrec *ptr)
 
@@ -1729,8 +1673,6 @@ nameext:
 
 }
 
-
-
 void FreeCoffBuf()
 
 {
@@ -1749,8 +1691,6 @@ void FreeCoffBuf()
 
 }
 
-
-
 void IncReloc()
 
 {
@@ -1766,8 +1706,6 @@ void IncReloc()
 	}
 
 }
-
-
 
 void CreatRelocTable()
 
@@ -1833,13 +1771,9 @@ void CreatRelocTable()
 
 		}
 
-
-
 	}
 
 }
-
-
 
 int MakeCoff()
 

@@ -100,8 +100,6 @@ char *Mnemonics[]={
 
 	//MMX INSTRUCTIONS
 
-
-
 	"PUNPCKLBW","PUNPCKLWD","PUNPCKLDQ", //UNPACK LOW ORDER 60 -
 
 	"PACKSSWB",
@@ -114,33 +112,21 @@ char *Mnemonics[]={
 
 	"PACKSSDW",		 //PACK MMX REG WITH SIGNED SATURATION  - 6B
 
-
-
 	"PSRLW","PSRLD","PSRLQ",
 
 	"PSRAW","PSRAD",
 
 	"PSLLW","PSLLD","PSLLQ",
 
-
-
 	"PCMPEQB","PCMPEQW","PCMPEQD",//74-76
 
 	"PMULLW",	//d5
 
-
-
 	"MOVD","MOVQ",			 //MOVE MMX REG
-
-
 
 	"PSUBUSB","PSUBUSW",//d8-d9
 
-
-
 	"EMMS",
-
-
 
 	"PAND",	//db
 
@@ -164,13 +150,7 @@ char *Mnemonics[]={
 
 	"PADDB","PADDW","PADDD", //ADD MMX REG WITH WRAP-AROUND fc-fe
 
-
-
-
-
 	"DB","DW","DD","INVLPG","LOADALL","OPSIZE",
-
-
 
 	"F2XM1","FABS","FADD","FADDP","FBLD","FBSTP","FCHS","FCLEX","FCOM",
 
@@ -198,8 +178,6 @@ char *Mnemonics[]={
 
 	"FXRSTOR","FXSAVE", "FNDISI", "FNENI", "FNSETPM",
 
-
-
 	"CMOVO","CMOVNO","CMOVB/MOVNAE/MOVC","CMOVAE/MOVNB/MOVNC","CMOVE/MOVZ",
 
 	"CMOVNE/MOVNZ","CMOVBE/MOVNA","CMOVA/MOVNBE","CMOVS","CMOVNS",
@@ -207,8 +185,6 @@ char *Mnemonics[]={
 	"CMOVP/MOVPE","CMOVNP/MOVPO","CMOVL/MOVNGE","CMOVGE/MOVNL",
 
 	"CMOVLE/MOVNG","CMOVG/MOVNLE",
-
-
 
 //MMX Pentium III extention
 
@@ -237,8 +213,6 @@ char *Mnemonics[]={
 	"SHUFPS",   "SQRTPS",  "SQRTSS",  "STMXCSR", "SUBPS",   "SUBSS",
 
 	"UCOMISS",  "UNPCKHPS","UNPCKLPS","XORPS",
-
-
 
 // Pentium IV
 
@@ -280,9 +254,5 @@ char *Mnemonics[]={
 
 	"MOVSHDUP","MOVSLDUP",  "PAUSE",
 
-
-
 	NULL};
-
-
 
