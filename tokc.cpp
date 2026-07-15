@@ -7516,9 +7516,9 @@ struct idrec *ptrs;
 					vartype=tok;
 					getoperand();
 				}
-				else if(tok==tk_openbracket){
+				else if(tok==tk_openbracket&&tok2>=tk_char&&tok2<=tk_double){
 					nexttok();
-					if(tok>=tk_char&&tok<=tk_double)vartype=tok;
+					vartype=tok;
 					nexttok();
 					expectingoperand(tk_closebracket);
 				}
@@ -9592,7 +9592,6 @@ int line=linenumber;
 char *ofsstr=NULL;
 int i;
 unsigned int oaddESP=addESP;
-	if(tok2==tk_openbracket)nexttok();
 	if((ofsstr=GetLecsem(tk_closebracket,tk_semicolon))){
 		int retreg;
 		int razr=getrazr(returntype);
