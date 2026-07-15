@@ -4,7 +4,7 @@ char *asmmodif[]={
 	"FAR",  "SHORT",  "NEAR", "DUP",   "INT","WORD","LONG","DWORD",
 	"TBYTE","LDOUBLE","QWORD","DOUBLE"
 };
-//б«®ў  ¬®¤ЁдЁЄ в®ал
+//слова модификаторы
 #define m_far   1
 #define m_short 2
 #define m_near  4
@@ -18,18 +18,18 @@ char *asmmodif[]={
 #define m_qword   1024
 #define m_double  2048
 
-//Є®­а®«м а §агиҐ­Ёп аҐЈЁбва®ў
-#define d1par 256	//Ї® ЇҐаў®¬г ®ЇҐа ­¤г
-#define d2par 512	//Ї® 2 ®ЇҐа ­¤г
+//конроль разрушения регистров
+#define d1par 256	//по первому операнду
+#define d2par 512	//по 2 операнду
 
 struct ASMPAR
 {
-	unsigned char num;  //зЁб«® ®ЇҐа ­¤®ў ¬« ¤иЁҐ 4 ЎЁв  ¬Ё­Ё¬ «м­®Ґ зЁб«®,
-	                    // бв аиЁҐ 4 ¬ ЄбЁ¬ «м­®Ґ, Ґб«Ё 0, в® в®«мЄ® ¬« ¤иҐҐ,
-                            // Ґб«Ё 15, в® ­Ґ®Ја ­ЁзҐ­®
-	unsigned char chip; // ­Ґ®Ўе®¤Ё¬л© cpu
-	unsigned short reg; // а §аги Ґ¬лҐ аҐЈЁбвал
-	unsigned short mod; // б«®ў®-¬®¤ЁдЁЄ в®а
+	unsigned char num;  //число операндов младшие 4 бита минимальное число,
+	                    // старшие 4 максимальное, если 0, то только младшее,
+                            // если 15, то неограничено
+	unsigned char chip; // необходимый cpu
+	unsigned short reg; // разрушаемые регистры
+	unsigned short mod; // слово-модификатор
 }asmpar[]={
 	2,0,d1par,0,	//a_add
 	2,0,d1par,0,	//a_or

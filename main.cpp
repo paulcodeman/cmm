@@ -1,8 +1,8 @@
 #define _MAIN_
 
 #ifdef _UNIX_
-#define DIV_PATH ':'			//делитель путей в переменной окружения PATH
-#define DIV_FOLD '/'			//этим символом разделяются папки в пути к файлу
+#define DIV_PATH ':'			//фхышЄхы№ яєЄхщ т яхЁхьхээющ юъЁєцхэш  PATH
+#define DIV_FOLD '/'			//¤Єшь ёшьтюыюь Ёрчфхы ■Єё  яряъш т яєЄш ъ Їрщыє
 #endif
 
 #ifdef _WIN32_
@@ -42,7 +42,7 @@ FILE *hout=NULL;
 const char *namestartupfile="startup.h--";
 
 char outext[4] = "com";
-short extflag=TRUE;//расширение можно присвоить
+short extflag=TRUE;//Ёрё°шЁхэшх ьюцэю яЁшётюшЄ№
 //int scrsize;
 unsigned char gwarning=FALSE;
 unsigned char sobj=FALSE;
@@ -61,15 +61,15 @@ char meinfo[]=
 time_t systime;
 struct tm timeptr;
 char comsymbios=FALSE;
-char fobj=FALSE;	//признак генерации obj
+char fobj=FALSE;	//яЁшчэръ ухэхЁрЎшш obj
 unsigned int	startptr = 0x100; 			// start address
-unsigned char wconsole=FALSE;	//признак генерации консольного приложения windows
-unsigned char optstr=FALSE;	//оптимизация строковых констант
+unsigned char wconsole=FALSE;	//яЁшчэръ ухэхЁрЎшш ъюэёюы№эюую яЁшыюцхэш  windows
+unsigned char optstr=FALSE;	//юяЄшьшчрЎш  ёЄЁюъют√ї ъюэёЄрэЄ
 unsigned char crif=TRUE;	//check reply include file
-unsigned char idasm=FALSE;	//ассемблерные инструкции считать идентификаторами
-unsigned char wbss=2;	//пост переменные в отдельную секцию
-unsigned char use_env=FALSE;	//переменная окружения
-int numrel=0;	//число элементов в таблице перемещений
+unsigned char idasm=FALSE;	//рёёхьсыхЁэ√х шэёЄЁєъЎшш ёўшЄрЄ№ шфхэЄшЇшърЄюЁрьш
+unsigned char wbss=2;	//яюёЄ яхЁхьхээ√х т юЄфхы№эє■ ёхъЎш■
+unsigned char use_env=FALSE;	//яхЁхьхээр  юъЁєцхэш 
+int numrel=0;	//ўшёыю ¤ыхьхэЄют т ЄрсышЎх яхЁхьх∙хэшщ
 unsigned char useordinal=FALSE;
 unsigned char useDOS4GW=FALSE;
 unsigned char clearpost=FALSE;
@@ -194,7 +194,7 @@ enum {
 #endif
 	c_map,   c_we,      c_ext,   c_opath, c_end};
 
-#define NUMEXT 6	//число разрешенных расширений компилируемого файла
+#define NUMEXT 6	//ўшёыю ЁрчЁх°хээ√ї Ёрё°шЁхэшщ ъюьяшышЁєхьюую Їрщыр
 char extcompile[NUMEXT][4]={"c--","cmm","c","h--","hmm","h"};
 
 #ifdef _KOS_
@@ -202,8 +202,8 @@ char __pgmname[256];
 char __cmdline[256];
 #endif
 
-char *bufstr=NULL;	//буфер для строк из процедур
-int sbufstr=SIZEBUF;	//начальный размер этого буфера
+char *bufstr=NULL;	//сєЇхЁ фы  ёЄЁюъ шч яЁюЎхфєЁ
+int sbufstr=SIZEBUF;	//эрўры№э√щ ЁрчьхЁ ¤Єюую сєЇхЁр
 
 void compile();
 void PrintInfo(char **str);
@@ -220,7 +220,7 @@ int writeoutput();
 void BadCommandLine(char *str);
 void  CheckExtenshions();
 void ImportName(char *name);
-void WarnUnusedVar();//предупреждения о неиспользованных процедурах и переменных
+void WarnUnusedVar();//яЁхфєяЁхцфхэш  ю эхшёяюы№чютрээ√ї яЁюЎхфєЁрї ш яхЁхьхээ√ї
 void MakeExeHeader(EXE_DOS_HEADER *exeheader);
 void CheckPageCode(unsigned int ofs);
 int MakePE();
@@ -299,7 +299,7 @@ unsigned char pari=FALSE;
 		rawfilename=rawext=NULL;
 		LoadIni((char *)"c--.ini");	 
 		
-		for(count=1;count<argc;count++){ //обработка командной строки
+		for(count=1;count<argc;count++){ //юсЁрсюЄър ъюьрэфэющ ёЄЁюъш
 			if(argv[count][0]=='/'||argv[count][0]=='-'){
 			//if(argv[count][0]=='-'){
 				if(SelectComand(argv[count]+1,&count)==c_end) BadCommandLine(argv[count]);
@@ -309,7 +309,7 @@ unsigned char pari=FALSE;
 					rawfilename=argv[count];
 					pari=TRUE;
 					if((rawext=strrchr(rawfilename,'.'))!=NULL){
-						if(stricmp(rawext,".ini")==0){	//указан ini файл
+						if(stricmp(rawext,".ini")==0){	//єърчрэ ini Їрщы
 							rawfilename=NULL;
 							rawext=NULL;
 							LoadIni(argv[count]);
@@ -336,7 +336,7 @@ unsigned char pari=FALSE;
 		PrintInfo((char **)usage);
 		exit( e_noinputspecified );
 	}
-	time(&systime); //текущее время
+	time(&systime); //Єхъє∙хх тЁхь 
 	memcpy(&timeptr,localtime(&systime),sizeof(tm));
 	InitDefineConst();
 	compile();
@@ -364,11 +364,11 @@ union{
 	long longhold;
 	void *nextstr;
 };
-//создать имя файла с предупреждениями и если он есть удалить
+//ёючфрЄ№ шь  Їрщыр ё яЁхфєяЁхцфхэш ьш ш хёыш юэ хёЄ№ єфрышЄ№
 	errfile.name=(char *)MALLOC(strlen(rawfilename)+5);
 	sprintf(errfile.name,"%s.err",rawfilename);
 	if(stat(errfile.name,(struct stat *)string2)==0)remove(errfile.name);
-//если есть имя файла для предупреждений проверить его существование и удалить.
+//хёыш хёЄ№ шь  Їрщыр фы  яЁхфєяЁхцфхэшщ яЁютхЁшЄ№ хую ёє∙хёЄтютрэшх ш єфрышЄ№.
 	if(wartype.name!=NULL){
 		if(stat(wartype.name,(struct stat *)string2)==0)remove(wartype.name);
 	}
@@ -388,7 +388,7 @@ union{
 #ifdef __NEWLEX__
 	inittokn();
 #endif
-	compilefile((char *)string,2); //собственно разборка и компиляция
+	compilefile((char *)string,2); //ёюсёЄтхээю ЁрчсюЁър ш ъюьяшы Ўш 
 	puts("Link . . .");
 	if(comfile==file_w32&&wbss==2){
 		wbss=FALSE;
@@ -397,10 +397,10 @@ union{
 	if(notdoneprestuff==TRUE)doprestuff();	//startup code
 	if(endifcount>=0)preerror("?endif expected before end of file");
 	AddObj();
-	docalls();	//добавить внешние процедуры
+	docalls();	//фюсртшЄ№ тэх°эшх яЁюЎхфєЁ√
 	addinitvar();
 	CheckUndefClassProc();
-	if(undefoffstart!=NULL){	//выдать список неизвестных ссылок
+	if(undefoffstart!=NULL){	//т√фрЄ№ ёяшёюъ эхшчтхёЄэ√ї ёё√ыюъ
 		UNDEFOFF *curptr=undefoffstart;
 		for(;;){
 			char holdstr[80];
@@ -425,11 +425,11 @@ union{
 		liststring=nextstr;
 	}
 	free(bufstr);
-	if(warning==TRUE&&wact[7].usewarn)WarnUnusedVar();//предупреждения о неиспользованных процедурах и переменных
-	if(numstrtbl)CreatStrTabRes();	//завершить создание ресурсов
+	if(warning==TRUE&&wact[7].usewarn)WarnUnusedVar();//яЁхфєяЁхцфхэш  ю эхшёяюы№чютрээ√ї яЁюЎхфєЁрї ш яхЁхьхээ√ї
+	if(numstrtbl)CreatStrTabRes();	//чртхЁ°шЄ№ ёючфрэшх ЁхёєЁёют
 	if(fobj==FALSE){
 		if(comfile==file_w32&&error==0){
-			AddJmpApi();	//косвенные вызовы API
+			AddJmpApi();	//ъюётхээ√х т√чют√ API
 			CreatWinStub();
 		}
 		longhold=outptr;
@@ -475,7 +475,7 @@ union{
 		}
 		else longhold+=(long)postsize+(long)(stacksize);
 		if(am32==0&&longhold>65535L&&!(modelmem==TINY&&(!resizemem)))preerror("Code, data and stack total exceeds 64k");
-		if(posts>0)doposts();  //Установить адреса вызовов процедур и переходов
+		if(posts>0)doposts();  //╙ёЄрэютшЄ№ рфЁхёр т√чютют яЁюЎхфєЁ ш яхЁхїюфют
 		if(resizemem&&comfile==file_com){
 			segments_required=(outptr+postsize+stacksize+15)/16;
 			*(short *)&output[resizesizeaddress]=(short)segments_required;
@@ -605,8 +605,8 @@ void strbtrim(char *st)
 int i;
 char *p,*q;
 	p=q=st;
-	while(isspace(*p))p++;	//пока незначащие символы
-	while(*p)*q++=*p++;     //переместить строку
+	while(isspace(*p))p++;	//яюър эхчэрўр∙шх ёшьтюы√
+	while(*p)*q++=*p++;     //яхЁхьхёЄшЄ№ ёЄЁюъє
 	*q='\0';
 	for(i=strlen(st)-1;isspace(st[i])&&i>=0;i--);
 	st[i+1]='\0';
@@ -651,14 +651,14 @@ int i;
 unsigned char neg=FALSE;
 char *ptr;
 int len;
-	if((ptr=strchr(pptr,';'))!=NULL)*ptr=0;// ищем комментарий отсекаем все после него
-        if((ptr=strchr(pptr,'='))!=NULL){ // ищем знак равенства
-		*ptr=0; // делим
+	if((ptr=strchr(pptr,';'))!=NULL)*ptr=0;// ш∙хь ъюььхэЄрЁшщ юЄёхърхь тёх яюёых эхую
+        if((ptr=strchr(pptr,'='))!=NULL){ // ш∙хь чэръ ЁртхэёЄтр
+		*ptr=0; // фхышь
 		ptr++;
-	  strbtrim(ptr);	//убрать лишние пробелы
+	  strbtrim(ptr);	//єсЁрЄ№ ыш°эшх яЁюсхы√
 	}
-  strbtrim(pptr);	//убрать лишние пробелы
-	if(*pptr==0)return c_end+1;	//пустая строка
+  strbtrim(pptr);	//єсЁрЄ№ ыш°эшх яЁюсхы√
+	if(*pptr==0)return c_end+1;	//яєёЄр  ёЄЁюър
 	if((i=strlen(pptr))>1&&pptr[i-1]=='-'){
 		neg=TRUE;
 		pptr[i-1]=0;
@@ -897,7 +897,7 @@ nexpardll:
 					break;
 				case c_scd:
 /*-----------------13.08.00 23:01-------------------
- будет введена после доработки динамических процедур
+ сєфхЄ ттхфхэр яюёых фюЁрсюЄъш фшэрьшўхёъшї яЁюЎхфєЁ
 	--------------------------------------------------*/
 					splitdata=(unsigned char)1^neg;
 					if(modelmem==SMALL)splitdata=TRUE;
@@ -1065,7 +1065,7 @@ nexpardll:
 #endif
 				case c_ext:     //***lev***
 					strcpy(outext,BackString(ptr)); //***lev***
-					extflag=FALSE; //чтобы расширение не перезабивалось другими ключами, если они идут позже
+					extflag=FALSE; //ўЄюс√ Ёрё°шЁхэшх эх яхЁхчрсштрыюё№ фЁєушьш ъы■ўрьш, хёыш юэш шфєЄ яючцх
 					break;  //***lev***
                 case c_opath:
                     strcpy(opath,BackString(ptr));
@@ -1181,7 +1181,7 @@ char m1[256];
 			
 /*****************************************************************************
 * .NAME   : MALLOC
-* .TITLE  : Выделяет память с обработкой ошибок.
+* .TITLE  : ┬√фхы хЄ ярь Є№ ё юсЁрсюЄъющ ю°шсюъ.
 *****************************************************************************/
 void OutMemory()
 {
@@ -1252,11 +1252,11 @@ unsigned long addvalue,i,addval,addvalw32=0,addvalbss=0;
 	}
 	else{
 		if((outptrdata%2)==1){	/* alignment of entire post data block manditory */
-			addvalue++;	//начало неиниц.данных
+			addvalue++;	//эрўрыю эхшэшЎ.фрээ√ї
 			postsize++;
 		}
 /*		if(am32&&(outptrdata%4)==2){
-			addvalue+=2;	//начало неиниц.данных
+			addvalue+=2;	//эрўрыю эхшэшЎ.фрээ√ї
 			postsize+=2;
 		}*/
 	}
@@ -1297,7 +1297,7 @@ unsigned long addvalue,i,addval,addvalw32=0,addvalbss=0;
 				break;
 		}
 	}
-	ooutptr=addvalue;	//сохранить начало post для debug;
+	ooutptr=addvalue;	//ёюїЁрэшЄ№ эрўрыю post фы  debug;
 }
 
 void GetMemExeDat()
@@ -1526,7 +1526,7 @@ void warnunused(struct idrec *ptr)
 	}
 }
 
-void WarnUnusedVar()//предупреждения о неиспользованных процедурах и переменных
+void WarnUnusedVar()//яЁхфєяЁхцфхэш  ю эхшёяюы№чютрээ√ї яЁюЎхфєЁрї ш яхЁхьхээ√ї
 {
 	warnunused(treestart);
 	for(unsigned int i=0;i<totalmodule;i++)warnunused((startfileinfo+i)->stlist);
@@ -1535,7 +1535,7 @@ void WarnUnusedVar()//предупреждения о неиспользован
 void addinitvar()
 {
 unsigned int i;
-	if(numfloatconst){	//вставить константы float и привязать их
+	if(numfloatconst){	//тёЄртшЄ№ ъюэёЄрэЄ√ float ш яЁшт чрЄ№ шї
 		if(alignword||optimizespeed)AlignCD(DS,chip>5?16:4);
 		for(i=0;i<posts;i++){
 			if((postbuf+i)->type==POST_FLOATNUM){
@@ -1562,12 +1562,12 @@ unsigned int i;
 		numfloatconst=0;
 		floatnum=NULL;
 	}
-	for(i=0;i<(unsigned int)numswtable;i++){	//создать и вставить таблицы switch
+	for(i=0;i<(unsigned int)numswtable;i++){	//ёючфрЄ№ ш тёЄртшЄ№ ЄрсышЎ√ switch
 		int j;
 		FSWI *swt=swtables+i;
 		if(alignword)AlignCD(DS,swt->type);
 		if(dbg&2)AddDataNullLine((char)swt->type,"switch table address");
-		if(am32==FALSE){	//вставить в код адрес таблицы
+		if(am32==FALSE){	//тёЄртшЄ№ т ъюф рфЁхё ЄрсышЎ√
 			*(unsigned short *)&output[swt->ptb]=(unsigned short)outptrdata;
 		}
 		else *(unsigned long *)&output[swt->ptb]=outptrdata;
@@ -1576,7 +1576,7 @@ unsigned int i;
 
 		unsigned long val=swt->defal;
 		int oline=outptrdata;
-		for(j=0;j<swt->sizetab;j++){	//заполнить таблицу значениями по умолчанию
+		for(j=0;j<swt->sizetab;j++){	//чряюыэшЄ№ ЄрсышЎє чэрўхэш ьш яю єьюыўрэш■
 //			if((swt->info+jj)->type==singlcase)
 			AddReloc(DS);
 			if(am32)outdwordd(val);
@@ -1584,14 +1584,14 @@ unsigned int i;
 		}
 		if(swt->mode==2){
 			if(dbg&2)AddDataNullLine((char)swt->razr,"switch table value");
-			if(oam32==FALSE){	//вставить в код адрес таблицы
+			if(oam32==FALSE){	//тёЄртшЄ№ т ъюф рфЁхё ЄрсышЎ√
 				*(unsigned short *)&output[swt->ptv]=(unsigned short)outptrdata;
 			}
 			else *(unsigned long *)&output[swt->ptv]=outptrdata;
 		}
-		int ii=0;	//счетчик case
+		int ii=0;	//ёўхЄўшъ case
 		for(int jj=0;jj<swt->numcase;jj++){
-			j=(swt->info+jj)->value;	//значение
+			j=(swt->info+jj)->value;	//чэрўхэшх
 			val=(swt->info+jj)->postcase;
 			if((swt->info+jj)->type==singlcase){
 				if(swt->mode==1){
@@ -1666,7 +1666,7 @@ unsigned char bcha;
 unsigned int oline,ofile;
 char *ostartline;
 	if(alignword){
-		if(ptr->rectok==tk_structvar)alignersize+=AlignCD(DS,2);	//выровнять
+		if(ptr->rectok==tk_structvar)alignersize+=AlignCD(DS,2);	//т√Ёютэ Є№
 		else alignersize+=AlignCD(DS,GetVarSize(ptr->rectok));
 	}
 //	printf("loc=%08X out=%08X num=%08X\n",*(unsigned long *)&output[(postbuf+i)->loc],outptrdata,ptr->recnumber);

@@ -144,8 +144,8 @@ errwrite:
 int sizefixpage=0;
 	hdr.Fixup_Record_Table_Offset=headsize;
 	for(i=0;i<hdr.Number_Of_Memory_Pages;i++){
-		unsigned int startblc=i*4096;	// ¤аҐб ЇҐаў®Ј® Ў«®Є 
-		for(unsigned int j=0;j<posts;j++){	//®Ўе®¤Ё¬ ўбо в Ў«Ёжг post
+		unsigned int startblc=i*4096;	//адрес первого блока
+		for(unsigned int j=0;j<posts;j++){	//обходим всю таблицу post
 			if(((postbuf+j)->type==CALL_32I||
 	    ((postbuf+j)->type>=POST_VAR32&&(postbuf+j)->type<=FIX_CODE32))&&
 			(postbuf+j)->loc>=startblc&&(postbuf+j)->loc<(startblc+4096)){
