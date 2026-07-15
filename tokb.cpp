@@ -6814,8 +6814,6 @@ loopswitch:
 
 			rettype=(razr==r16?tk_reg:tk_reg32);
 
-			next=0;
-
 			goto contloop;
 
 		case tk_number:
@@ -7781,6 +7779,103 @@ tl_hmul2:
 
 						nexttok();
 
+						if(tok==tk_mult||tok==tk_div||tok==tk_mod||
+						   tok==tk_multminus||tok==tk_divminus||tok==tk_modminus){
+							int hneg=0,hvop=0;
+							if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
+							if(tok==tk_mod||tok==tk_modminus)hvop=1;
+							getoperand();
+							if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
+							if(tok==tk_div||tok==tk_divminus||tok==tk_mod||tok==tk_modminus){
+								DivMod(hvop,sign,razr,expand);
+								if(hvop==1&&setzeroflag==0){
+									op66(razr);
+									if(optimizespeed)outword(0xC28B);
+									else op(0x92);
+								}
+								expand=FALSE;
+							}else{
+								expand=expandvar();
+								if(tok==tk_number){
+									RegMulNum(AX,itok.number,razr,sign,&expand,itok.flag);
+								}else if(tok==tk_openbracket){
+									nexttok();
+									op66(razr);
+									op(0x50);
+									addESP+=razr==r16?2:4;
+									do_e_axmath(sign,razr,&ofsstr);
+									if(tok!=tk_closebracket)expected(')');
+									nexttok();
+									op66(razr);
+									op(0x58+EDX);
+									addESP-=razr==r16?2:4;
+									itok.number=EDX;
+									warningreg(regs[razr/2-1][EDX]);
+									op66(razr);
+									op(0xF7);
+									if(sign)op(0xE8+(unsigned int)itok.number);
+									else op(0xE0+(unsigned int)itok.number);
+									setzeroflag=FALSE;
+								}else{
+									outseg(&itok,2);
+									op(0xF7);
+									if(sign)op(0x28+itok.rm);
+									else op(0x20+itok.rm);
+									outaddress(&itok);
+									setzeroflag=FALSE;
+								}
+							}
+							while(!(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+							   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)?0:
+							   (nexttok(),1)){
+								hneg=0;hvop=0;
+								if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
+								if(tok==tk_mod||tok==tk_modminus)hvop=1;
+								getoperand();
+								if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
+								if(tok==tk_div||tok==tk_divminus||tok==tk_mod||tok==tk_modminus){
+									DivMod(hvop,sign,razr,expand);
+									if(hvop==1&&setzeroflag==0){
+										op66(razr);
+										if(optimizespeed)outword(0xC28B);
+										else op(0x92);
+									}
+									expand=FALSE;
+								}else{
+									expand=expandvar();
+									if(tok==tk_number){
+										RegMulNum(AX,itok.number,razr,sign,&expand,itok.flag);
+									}else if(tok==tk_openbracket){
+										nexttok();
+										op66(razr);
+										op(0x50);
+										addESP+=razr==r16?2:4;
+										do_e_axmath(sign,razr,&ofsstr);
+										if(tok!=tk_closebracket)expected(')');
+										nexttok();
+										op66(razr);
+										op(0x58+EDX);
+										addESP-=razr==r16?2:4;
+										itok.number=EDX;
+										warningreg(regs[razr/2-1][EDX]);
+										op66(razr);
+										op(0xF7);
+										if(sign)op(0xE8+(unsigned int)itok.number);
+										else op(0xE0+(unsigned int)itok.number);
+										setzeroflag=FALSE;
+									}else{
+										outseg(&itok,2);
+										op(0xF7);
+										if(sign)op(0x28+itok.rm);
+										else op(0x20+itok.rm);
+										outaddress(&itok);
+										setzeroflag=FALSE;
+									}
+								}
+							}
+							nexttok();
+						}
+
 						op66(razr);
 						op(0x58+EDX);
 						addESP-=razr==r16?2:4;
@@ -7936,40 +8031,40 @@ defxor:
 
 						break;
 
-					case tk_openbracket:
+									case tk_openbracket:
 
-						nexttok();
+										nexttok();
 
-						op66(razr);
-						op(0x50);
-						addESP+=razr==r16?2:4;
+										op66(razr);
+										op(0x50);
+									addESP+=razr==r16?2:4;
 
-						do_e_axmath(sign,razr,&ofsstr);
+										do_e_axmath(sign,razr,&ofsstr);
 
-						if(tok!=tk_closebracket)expected(')');
+										if(tok!=tk_closebracket)expected(')');
 
-						nexttok();
+										nexttok();
 
-						op66(razr);
-						op(0x58+EDX);
-						addESP-=razr==r16?2:4;
+										op66(razr);
+										op(0x58+EDX);
+										addESP-=razr==r16?2:4;
 
-						itok.number=EDX;
-						warningreg(regs[razr/2-1][EDX]);
+										itok.number=EDX;
+										warningreg(regs[razr/2-1][EDX]);
 
-						next=0;
+										next=0;
 
-						goto mulreg32;
+										goto mulreg32;
 
-					case tk_qwordvar:
+									case tk_qwordvar:
 
-					case tk_longvar:
+									case tk_longvar:
 
-					case tk_dwordvar:
+									case tk_dwordvar:
 
-						i=2;
+										i=2;
 
-					case tk_intvar:
+									case tk_intvar:
 
 					case tk_wordvar:
 
@@ -12503,6 +12598,31 @@ fold_done2:
 
 										break;
 
+									case tk_openbracket:
+
+										nexttok();
+
+										op66(razr);
+										op(0x50);
+										addESP+=razr==r16?2:4;
+
+										do_e_axmath(sign,razr,ofsstr);
+
+										if(tok!=tk_closebracket)expected(')');
+
+										nexttok();
+
+										op66(razr);
+										op(0x58+EDX);
+										addESP-=razr==r16?2:4;
+
+										itok.number=EDX;
+										warningreg(regs[razr/2-1][EDX]);
+
+										next=0;
+
+										goto tl_hmulreg;
+
 									case tk_qwordvar:
 
 									case tk_longvar:
@@ -12753,9 +12873,9 @@ tl_hmul2:
 
 						if((itok.flag&f_reloc)==0&&optnumadd(itok.number,reg,razr,vop))break;
 
-					case tk_postnumber:
-
 					case tk_undefofs:
+
+					case tk_postnumber:
 
 						op66(razr);
 
@@ -12826,6 +12946,77 @@ tl_hmul2:
 						itok.number=reg2s;
 
 						goto defreg32;
+
+					case tk_openbracket:
+
+						nexttok();
+
+						op66(razr);
+						op(0x50+reg);
+						addESP+=razr==r16?2:4;
+
+						do_e_axmath(sign,razr,ofsstr);
+
+						if(tok!=tk_closebracket)expected(')');
+
+						nexttok();
+
+						while(tok==tk_mult||tok==tk_div||tok==tk_mod||
+						   tok==tk_multminus||tok==tk_divminus||tok==tk_modminus){
+							int hneg=0,hvop=0,hexpand=divexpand;
+							if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
+							if(tok==tk_mod||tok==tk_modminus)hvop=1;
+							getoperand();
+							if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
+							if(tok==tk_div||tok==tk_divminus||tok==tk_mod||tok==tk_modminus){
+								DivMod(hvop,sign,razr,hexpand);
+								if(hvop==1&&setzeroflag==0){
+									op66(razr);
+									if(optimizespeed)outword(0xC28B);
+									else op(0x92);
+								}
+								hexpand=FALSE;
+							}else{
+								hexpand=expandvar();
+								if(tok==tk_number){
+									RegMulNum(AX,itok.number,razr,sign,&hexpand,itok.flag);
+								}else if(tok==tk_openbracket){
+									nexttok();
+									op66(razr);
+									op(0x50);
+									addESP+=razr==r16?2:4;
+									do_e_axmath(sign,razr,ofsstr);
+									if(tok!=tk_closebracket)expected(')');
+									nexttok();
+									op66(razr);
+									op(0x58+EDX);
+									addESP-=razr==r16?2:4;
+									itok.number=EDX;
+									warningreg(regs[razr/2-1][EDX]);
+									op66(razr);
+									op(0xF7);
+									if(sign)op(0xE8+(unsigned int)itok.number);
+									else op(0xE0+(unsigned int)itok.number);
+									setzeroflag=FALSE;
+								}else{
+									outseg(&itok,2);
+									op(0xF7);
+									if(sign)op(0x28+itok.rm);
+									else op(0x20+itok.rm);
+									outaddress(&itok);
+									setzeroflag=FALSE;
+								}
+							}
+							if(!(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+							   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus))break;
+							nexttok();
+						}
+
+						op66(razr);
+						op(0x58+reg);
+						addESP-=razr==r16?2:4;
+
+						goto addax;
 
 					case tk_reg:
 
