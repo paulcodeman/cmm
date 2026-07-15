@@ -13,21 +13,21 @@
 #include "port.h"
 #include "res.h"
 
-RES *listres;	//таблица ресурсов
-int numres=0;	//текущее число ресурсов
-int maxres=0;	//максимальное число ресурсов
+RES *listres;	//в Ў«Ёж  аҐбгаб®ў
+int numres=0;	//вҐЄгйҐҐ зЁб«® аҐбгаб®ў
+int maxres=0;	//¬ ЄбЁ¬ «м­®Ґ зЁб«® аҐбгаб®ў
 
-unsigned short *sortidx;	//масив отсортированых индексов ресурсов
-RES *curtres;	//текущая таблица ресурсов
+unsigned short *sortidx;	//¬ бЁў ®вб®авЁа®ў ­ле Ё­¤ҐЄб®ў аҐбгаб®ў
+RES *curtres;	//вҐЄгй п в Ў«Ёж  аҐбгаб®ў
 
 unsigned char *resbuf;
 unsigned int cursizeresbuf;
 unsigned int curposbuf=0;
-unsigned int iconcount=0;	//число иконок
-unsigned int cursorcount=0;	//число курсоров
-unsigned int numidres;	//число ресурсов с разным id
-unsigned int numlangres=0;	//число ресурсов с языками
-unsigned int numhlangres=0;	//число узлов с языками
+unsigned int iconcount=0;	//зЁб«® ЁЄ®­®Є
+unsigned int cursorcount=0;	//зЁб«® Єгаб®а®ў
+unsigned int numidres;	//зЁб«® аҐбгаб®ў б а §­л¬ id
+unsigned int numlangres=0;	//зЁб«® аҐбгаб®ў б п§лЄ ¬Ё
+unsigned int numhlangres=0;	//зЁб«® г§«®ў б п§лЄ ¬Ё
 unsigned short langdef=0;
 unsigned short numzerotype=0;
 
@@ -37,10 +37,10 @@ int numstrtbl=0;
 struct TUSE{
 	unsigned short id;
 	unsigned short count;
-	char *tname;	//имя типа
+	char *tname;	//Ё¬п вЁЇ 
 }*tuse=NULL;
 
-unsigned int numtyperes=0;	//число типов ресурсов
+unsigned int numtyperes=0;	//зЁб«® вЁЇ®ў аҐбгаб®ў
 
 void AddType(unsigned short type,char *tname=NULL)
 {
@@ -71,10 +71,10 @@ static char idname[IDLENGTH];
 static char resname[IDLENGTH];
 static int restok;
 
-void InitBufRes();	//инициализировать буфер для ресурса
-void CheckResBuf(unsigned int size);	//проверить и если надо увеличить буфер
-void AddWString(unsigned char *name); //добавить строку в ресурс
-void AddNumOrd(unsigned char *name);	//добавить ординал/строку
+void InitBufRes();	//Ё­ЁжЁ «Ё§Ёа®ў вм ЎгдҐа ¤«п аҐбгаб 
+void CheckResBuf(unsigned int size);	//Їа®ўҐаЁвм Ё Ґб«Ё ­ ¤® гўҐ«ЁзЁвм ЎгдҐа
+void AddWString(unsigned char *name); //¤®Ў ўЁвм бва®Єг ў аҐбгаб
+void AddNumOrd(unsigned char *name);	//¤®Ў ўЁвм ®а¤Ё­ «/бва®Єг
 void r_Accelerators();
 void r_Dialog();
 void r_Icon();
@@ -136,7 +136,7 @@ void input_res()
 	while(tok!=tk_eof){
 		while(tok==tk_semicolon||tok==tk_endline)nexttok();
 		while(tok==tk_question){
-			directive();//обработка директив
+			directive();//®Ўа Ў®вЄ  ¤ЁаҐЄвЁў
 			while(tok==tk_semicolon||tok==tk_endline)nexttok();
 		}
 		if(scanlexmode!=RESLEX||tok==tk_eof)break;
@@ -234,12 +234,12 @@ void GetResBlock()
 	if(numres==0){
 		maxres=DRESNUM;
 		listres=(RES *)MALLOC(DRESNUM*sizeof(RES));
-		memset(listres,0,DRESNUM*sizeof(RES));//очистить таблицу
+		memset(listres,0,DRESNUM*sizeof(RES));//®зЁбвЁвм в Ў«Ёжг
 	}
 	else{
 		if((numres+1)==maxres){
 			listres=(RES *)REALLOC(listres,sizeof(RES)*(maxres+DRESNUM));
-			memset(listres+maxres,0,DRESNUM*sizeof(RES));//очистить таблицу
+			memset(listres+maxres,0,DRESNUM*sizeof(RES));//®зЁбвЁвм в Ў«Ёжг
 			maxres+=DRESNUM;
 		}
 	}
@@ -340,7 +340,7 @@ NameOrdinal Temp;
 void InitBufRes()
 {
 	resbuf=(unsigned char *)MALLOC(SIZERESBUF);
-	memset(resbuf,0,SIZERESBUF);//очистить таблицу
+	memset(resbuf,0,SIZERESBUF);//®зЁбвЁвм в Ў«Ёжг
 	curposbuf=0;
 	cursizeresbuf=SIZERESBUF;
 }
@@ -349,7 +349,7 @@ void CheckResBuf(unsigned int size)
 {
 	while((size+curposbuf)>=cursizeresbuf){
 		resbuf=(unsigned char *)REALLOC(resbuf,cursizeresbuf+SIZERESBUF);
-		memset(resbuf+cursizeresbuf,0,SIZERESBUF);//очистить таблицу
+		memset(resbuf+cursizeresbuf,0,SIZERESBUF);//®зЁбвЁвм в Ў«Ёжг
 		cursizeresbuf+=SIZERESBUF;
 	}
 }
@@ -391,7 +391,7 @@ int num;
 int j;
 	if(strinfo==NULL)strinfo=(_STRINGS_ *)MALLOC(sizeof(_STRINGS_)*MAXSTRTABINFO);
 	while(tok!=tk_endline&&tok!=tk_eof)nexttok();
-	if(!OpenBlock())badformat("STRINGTABLE");	//добавить новую
+	if(!OpenBlock())badformat("STRINGTABLE");	//¤®Ў ўЁвм ­®ўго
 	do{
 		num=GetNumber(1);
 		for(j=0;j<numstrtbl;j++){
@@ -775,7 +775,7 @@ unsigned char *font=NULL;
 int sizefont=0,i;
 NameOrdinal Menu;
 NameOrdinal Class;
-unsigned int poscount;	//позиция счетчика элементов
+unsigned int poscount;	//Ї®§ЁжЁп бзҐвзЁЄ  н«Ґ¬Ґ­в®ў
 unsigned int exts=FALSE;
 //unsigned short id;
 	Menu.name=NULL;
@@ -791,14 +791,14 @@ unsigned int exts=FALSE;
 		*(unsigned long *)&resbuf[0]=0xFFFF0001;
 		curposbuf=8;
 		poscount=16;
-		*(unsigned long *)&resbuf[12]=0x80880000;//WS_POPUP|WS_BORDER|WS_SYSMENU;	//установки по умолчанию
+		*(unsigned long *)&resbuf[12]=0x80880000;//WS_POPUP|WS_BORDER|WS_SYSMENU;	//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 	}
 	else{
-		*(unsigned long *)&resbuf[0]=0x80880000;//WS_POPUP|WS_BORDER|WS_SYSMENU;	//установки по умолчанию
+		*(unsigned long *)&resbuf[0]=0x80880000;//WS_POPUP|WS_BORDER|WS_SYSMENU;	//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 		curposbuf=0;
 		poscount=8;
 	}
-	if(tok2!=tk_camma){	//пропускаем возможные первые два параметра
+	if(tok2!=tk_camma){	//Їа®ЇгбЄ Ґ¬ ў®§¬®¦­лҐ ЇҐаўлҐ ¤ў  Ї а ¬Ґва 
 		nexttok();
 		if(tok2!=tk_camma){
 			nexttok();
@@ -806,7 +806,7 @@ unsigned int exts=FALSE;
 		}
 	}
 	GetRectangle(&resbuf[curposbuf+10],1);
-	//определить место для IDHelp
+	//®ЇаҐ¤Ґ«Ёвм ¬Ґбв® ¤«п IDHelp
 	if(tok!=tk_endline&&exts)/**(unsigned long *)&resbuf[curposbuf]=*/GetNumber(0);
 	while(!OpenBlock()&&tok!=tk_eof){
 		if(tok!=tk_rescommand)expectedrescommand();
@@ -858,7 +858,7 @@ unsigned int exts=FALSE;
 		}
 		while(tok==tk_endline)nexttok();
 	}
-//доформировываем диалог
+//¤®д®а¬Ёа®ўлў Ґ¬ ¤Ё «®Ј
 	curposbuf=exts==TRUE?26:18;
 	AddNumOrd(Menu.name);
 	FreeOrdinal(Menu.name);
@@ -913,7 +913,7 @@ unsigned int exts=FALSE;
 				while(tok==tk_endline)nexttok();
 				GetRectangle(&resbuf[curposbuf+(exts==TRUE?4:8)],5);
 				if(exts&&tok==tk_number)*(unsigned long *)&resbuf[curposbuf-4]=GetNumber(9);
-				while(tok!=tk_endline&&tok!=tk_eof&&tok!=tk_rescommand)nexttok();	//пропуск излишних параметров
+				while(tok!=tk_endline&&tok!=tk_eof&&tok!=tk_rescommand)nexttok();	//Їа®ЇгбЄ Ё§«Ёи­Ёе Ї а ¬Ґва®ў
 				break;
 			case rc_auto3state:
 			case rc_autocheckbox:
@@ -951,7 +951,7 @@ unsigned int exts=FALSE;
 					}
 				}
 				if(exts&&tok==tk_number)*(unsigned long *)&resbuf[curposbuf-4]=GetNumber(i+9);
-				while(tok!=tk_endline&&tok!=tk_eof&&tok!=tk_rescommand)nexttok();	//пропуск излишних параметров
+				while(tok!=tk_endline&&tok!=tk_eof&&tok!=tk_rescommand)nexttok();	//Їа®ЇгбЄ Ё§«Ёи­Ёе Ї а ¬Ґва®ў
 				break;
 			case rc_icon:
 				GetOrdinal(&Menu.name,1);
@@ -1053,14 +1053,14 @@ unsigned char *bitobr;
 
 unsigned char *LoadBitmap()
 {
-//загрузить
+//§ Јаг§Ёвм
 unsigned char *bitobr=NULL;
 char name[80];
 	curposbuf=0;
 	name[0]=0;
 	GetFileName(name);
 	if(name[0]!=0)bitobr=LoadFileBin(name);
-	else if(tok==tk_endline){	//нет имени файла
+	else if(tok==tk_endline){	//­Ґв Ё¬Ґ­Ё д ©« 
 		InitBufRes();
 		if(!OpenBlock()){
 			badico();
@@ -1070,7 +1070,7 @@ char name[80];
 			inptr=inptr2;
 			cha=cha2;
 			if(tok!=tk_singlquote)badico();
-			whitespace(); //пропуск незначащих символов
+			whitespace(); //Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 			CheckResBuf(16);
 			displaytokerrors=1;
 			do{
@@ -1083,7 +1083,7 @@ char name[80];
 					nextchar();
 				}
 				resbuf[curposbuf++]=hold;
-				whitespace(); //пропуск незначащих символов
+				whitespace(); //Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 			}while(cha!='\''&&cha!=26);
 			inptr2=inptr;
 			cha2=cha;
@@ -1103,7 +1103,7 @@ unsigned int size;
 unsigned char *bitobr;
 	if((bitobr=LoadBitmap())==NULL)return;
 	size=curposbuf-14;
-	GetResBlock();	//битмар
+	GetResBlock();	//ЎЁв¬ а
 	curtres->type=CRT_BITMAP;
 	if(idname[0]==0)curtres->id=idnum;
 	else curtres->name=BackString(idname);
@@ -1141,7 +1141,7 @@ void r_Font()
 unsigned char *fontobr;
 	if((fontobr=LoadBitmap())==NULL)return;
 	if((unsigned short)curposbuf==*(unsigned short *)&fontobr[2]){
-		GetResBlock();	//фонт
+		GetResBlock();	//д®­в
 		curtres->type=CRT_FONT;
 		if(idname[0]==0)curtres->id=idnum;
 		else curtres->name=BackString(idname);
@@ -1155,28 +1155,28 @@ void r_Icon()
 {
 unsigned char *icoobr;
 unsigned long size;
-//загрузить иконку
+//§ Јаг§Ёвм ЁЄ®­Єг
 	if((icoobr=LoadBitmap())==NULL)return;
-	GetResBlock();	//группа икон
+	GetResBlock();	//ЈагЇЇ  ЁЄ®­
 	curtres->type=CRT_GROUP_ICON;
 	if(idname[0]==0)curtres->id=idnum;
 	else curtres->name=BackString(idname);
 	AddType(CRT_GROUP_ICON);
-unsigned int countico=*(unsigned short *)&icoobr[4];	//число иконок
+unsigned int countico=*(unsigned short *)&icoobr[4];	//зЁб«® ЁЄ®­®Є
 int sizeicohead=sizeof(_ICOHEAD_)+(sizeof(_RESDIR_)*countico);
 	curtres->size=sizeicohead;
 	curtres->res=(unsigned char *)MALLOC(sizeicohead);
 unsigned char *icohead=curtres->res;
 unsigned int i;
-	for(i=0;i<6;i++)icohead[i]=icoobr[i];	//заголовок
+	for(i=0;i<6;i++)icohead[i]=icoobr[i];	//§ Ј®«®ў®Є
 unsigned int ofs=6;
 unsigned int ofs2=6;
 	for(i=0;i<countico;i++){
 		int j;
-		for(j=0;j<12;j++)icohead[j+ofs]=icoobr[j+ofs2];	//описание иконки
+		for(j=0;j<12;j++)icohead[j+ofs]=icoobr[j+ofs2];	//®ЇЁб ­ЁҐ ЁЄ®­ЄЁ
 		iconcount++;
-		*(unsigned short *)&icohead[ofs+12]=(unsigned short)iconcount;	//ее номер
-		GetResBlock();	//образ иконки
+		*(unsigned short *)&icohead[ofs+12]=(unsigned short)iconcount;	//ҐҐ ­®¬Ґа
+		GetResBlock();	//®Ўа § ЁЄ®­ЄЁ
 		curtres->type=CRT_ICON;
 		curtres->id=iconcount;
 		curtres->size=size=*(unsigned long *)&icohead[ofs+8];
@@ -1194,20 +1194,20 @@ void r_Cursor()
 {
 unsigned char *curobr;
 unsigned long size;
-//загрузить курсор
+//§ Јаг§Ёвм Єгаб®а
 	if((curobr=LoadBitmap())==NULL)return;
-	GetResBlock();	//группа курсоров
+	GetResBlock();	//ЈагЇЇ  Єгаб®а®ў
 	curtres->type=CRT_GROUP_CURSOR;
 	if(idname[0]==0)curtres->id=idnum;
 	else curtres->name=BackString(idname);
 	AddType(CRT_GROUP_CURSOR);
-unsigned int countcur=*(unsigned short *)&curobr[4];	//число курсоров в файле
+unsigned int countcur=*(unsigned short *)&curobr[4];	//зЁб«® Єгаб®а®ў ў д ©«Ґ
 int sizecurhead=sizeof(_ICOHEAD_)+(sizeof(_CURDIR_)*countcur);
 	curtres->size=sizecurhead;
 	curtres->res=(unsigned char *)MALLOC(sizecurhead);
 unsigned char *curhead=curtres->res;
 unsigned int i;
-	for(i=0;i<6;i++)curhead[i]=curobr[i];	//заголовок
+	for(i=0;i<6;i++)curhead[i]=curobr[i];	//§ Ј®«®ў®Є
 unsigned int ofs=6;
 unsigned int ofs2=6;
 	for(i=0;i<countcur;i++){
@@ -1215,8 +1215,8 @@ unsigned int ofs2=6;
 		*(unsigned short *)&curhead[ofs]=curobr[ofs2];
 		*(unsigned short *)&curhead[ofs+2]=curobr[ofs2+1];
 		*(unsigned long *)&curhead[ofs+4]=0x10001;
-		*(unsigned short *)&curhead[ofs+12]=(unsigned short)cursorcount;	//ее номер
-		GetResBlock();	//образ курсора
+		*(unsigned short *)&curhead[ofs+12]=(unsigned short)cursorcount;	//ҐҐ ­®¬Ґа
+		GetResBlock();	//®Ўа § Єгаб®а 
 		curtres->type=CRT_CURSOR;
 		curtres->id=cursorcount;
 		curtres->size=size=*(unsigned long *)&curhead[ofs+8]=*(unsigned long *)&curobr[ofs2+8]+4;
@@ -1284,7 +1284,7 @@ void r_Accelerators()
 void SortRes()
 {
 int i,j,k;
-int sortpos=0;	//позиция в списке сортировки
+int sortpos=0;	//Ї®§ЁжЁп ў бЇЁбЄҐ б®авЁа®ўЄЁ
 	for(i=0;i<numtyperes;i++){
 		for(j=i+1;j<numtyperes;j++){
 			TUSE buf;
@@ -1328,13 +1328,13 @@ int sortpos=0;	//позиция в списке сортировки
 				else{
 					if(k==0)sortidx[sortpos++]=(unsigned short)j;
 					else{
-						int m=k;	//число элементов с данным типом
+						int m=k;	//зЁб«® н«Ґ¬Ґ­в®ў б ¤ ­­л¬ вЁЇ®¬
 						int n=sortpos-k;
 						do{
 							m--;
 							if((listres+j)->name==NULL&&(listres+sortidx[m+n])->name==NULL){
-								if((listres+j)->id>=(listres+sortidx[m+n])->id){//новый больше
-									if((listres+j)->id==(listres+sortidx[m+n])->id){	//равны
+								if((listres+j)->id>=(listres+sortidx[m+n])->id){//­®ўл© Ў®«миҐ
+									if((listres+j)->id==(listres+sortidx[m+n])->id){	//а ў­л
 										numidres--;
 										numlangres++;
 										if((listres+j)->lang==0){
@@ -1342,17 +1342,17 @@ int sortpos=0;	//позиция в списке сортировки
 											numhlangres++;
 										}
 										if((listres+j)->lang==(listres+sortidx[m+n])->lang)equalres();
-										if((listres+j)->lang>(listres+sortidx[m+n])->lang){	//у нового язык старше
-											sortidx[n+m+1]=(unsigned short)j;	//добавить в конец
+										if((listres+j)->lang>(listres+sortidx[m+n])->lang){	//г ­®ў®Ј® п§лЄ бв аиҐ
+											sortidx[n+m+1]=(unsigned short)j;	//¤®Ў ўЁвм ў Є®­Ґж
 											break;
 										}
 									}
 									else{
-										sortidx[n+m+1]=(unsigned short)j;	//добавить в конец
+										sortidx[n+m+1]=(unsigned short)j;	//¤®Ў ўЁвм ў Є®­Ґж
 										break;
 									}
 								}
-								sortidx[n+m+1]=sortidx[n+m];	//сдвинуть
+								sortidx[n+m+1]=sortidx[n+m];	//б¤ўЁ­гвм
 							}
 							else if((listres+j)->name==NULL&&(listres+sortidx[m+n])->name!=NULL){
 								sortidx[n+m+1]=(unsigned short)j;
@@ -1416,12 +1416,12 @@ LISTRELOC *listr=NULL;
 	InitBufRes();
 	numidres=numres;
 	SortRes();
-//создать корневой уровень
+//б®§¤ вм Є®а­Ґў®© га®ўҐ­м
 	*(unsigned short *)&resbuf[12]=(unsigned short)numzerotype;
 	*(unsigned short *)&resbuf[14]=(unsigned short)(numtyperes-numzerotype);
 	curposbuf=16;
 	nextofs=numtyperes*8+16;
-//расчет размеров уровней
+//а бзҐв а §¬Ґа®ў га®ў­Ґ©
 	startlang=curposbuf+numtyperes*24+numidres*8;
 	startofsdata=startlang+numhlangres*16+numlangres*8;
 	startdata=startofsdata+numres*16;
@@ -1449,12 +1449,12 @@ LISTRELOC *listr=NULL;
 		nextofs+=(tuse+i)->count*8+16;
 		curposbuf+=8;
 	}
-//расчет размеров уровней
+//а бзҐв а §¬Ґа®ў га®ў­Ґ©
 /*	startlang=curposbuf+numtyperes*16+numidres*8;
 	startofsdata=startlang+numhlangres*16+numlangres*8;
 	startdata=startofsdata+numres*16;
 	CheckResBuf(startdata-curposbuf);*/
-//создать уровень имен и языка
+//б®§¤ вм га®ўҐ­м Ё¬Ґ­ Ё п§лЄ 
 	curres=listres+sortidx[0];
 	for(j=0;j<numres;){
 		ofsback=curposbuf+12;
@@ -1462,7 +1462,7 @@ LISTRELOC *listr=NULL;
 		unsigned int type=curres->type;
 		while((unsigned int)curres->type==type){
 			int k=j;
-			if(curres->name){	//добавить имя
+			if(curres->name){	//¤®Ў ўЁвм Ё¬п
 				if(j<(numres-1)&&type==(unsigned int)(listres+sortidx[j+1])->type&&
 					(listres+sortidx[j+1])->name!=NULL)
 					while(strcmp(curres->name,(listres+sortidx[j+1])->name)==0)j++;
@@ -1483,14 +1483,14 @@ LISTRELOC *listr=NULL;
 //				startdata=Align(startdata,4);
 				free(curres->name);
 			}
-			else{	//добавить id
+			else{	//¤®Ў ўЁвм id
 				if(j<(numres-1)&&type==(unsigned int)(listres+sortidx[j+1])->type)
 					while(curres->id==(listres+sortidx[j+1])->id)j++;
 				*(unsigned short *)&resbuf[ofsback+2]=(unsigned short)(*(unsigned short *)&resbuf[ofsback+2]+1);
 				*(unsigned long *)&resbuf[curposbuf]=curres->id;
 			}
 			curposbuf+=4;
-			if(j!=k){	//несколько имен с разными языками
+			if(j!=k){	//­ҐбЄ®«мЄ® Ё¬Ґ­ б а §­л¬Ё п§лЄ ¬Ё
 				*(unsigned long *)&resbuf[curposbuf]=startlang|0x80000000;
 				*(unsigned long *)&resbuf[startlang+12]=j-k+1;
 				startlang+=16;
@@ -1502,7 +1502,7 @@ LISTRELOC *listr=NULL;
 				}
 			}
 			else{
-				if(curres->lang){//указан язык
+				if(curres->lang){//гЄ § ­ п§лЄ
 					*(unsigned long *)&resbuf[curposbuf]=startlang|0x80000000;
 					resbuf[startlang+14]=1;
 					startlang+=16;
@@ -1520,7 +1520,7 @@ LISTRELOC *listr=NULL;
 		}
 	}
 	curposbuf=startlang;
-//создать уровень смещений данных
+//б®§¤ вм га®ўҐ­м б¬ҐйҐ­Ё© ¤ ­­ле
 	for(i=0;i<numres;i++){
 		startdata=Align(startdata,4);
 		curres=listres+sortidx[i];

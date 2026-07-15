@@ -256,7 +256,7 @@ void GenRegToReg(int regd,int regs,int razr)
 
 int CheckIDZReg(char *name,int reg,int razr)
 /*
- name - адрес строки
+ name -  ¤аҐб бва®ЄЁ
  */
 {
 int nr;
@@ -310,7 +310,7 @@ REGEQVAR *cur;
 
 void IDZToReg(char *name,int reg,int razr)
 /*
- name - адрес строки
+ name -  ¤аҐб бва®ЄЁ
  */
 {
 int nr;
@@ -491,8 +491,8 @@ int oscanlexmode;
 
 void IDXToReg(char *name,int size,int reg)
 /*
- name - адрес начала
- size - размерность
+ name -  ¤аҐб ­ з « 
+ size - а §¬Ґа­®бвм
  */
 {
 int nr;
@@ -535,8 +535,8 @@ int maxlen=SIZEIDREG;
 
 int CheckIDXReg(char *name,int size,int reg)
 /*
- name - адрес начала
- size - размерность
+ name -  ¤аҐб ­ з « 
+ size - а §¬Ґа­®бвм
  */
 {
 int nr;
@@ -631,8 +631,8 @@ noreg:
 
 void KillVar(char *name)
 /*-----------------22.04.03 15:51-------------------
- поиск переменной в регистрах и если найдена, то
- убрать инициализацию регистра
+ Ї®ЁбЄ ЇҐаҐ¬Ґ­­®© ў аҐЈЁбва е Ё Ґб«Ё ­ ©¤Ґ­ , в®
+ гЎа вм Ё­ЁжЁ «Ё§ жЁо аҐЈЁбва 
 --------------------------------------------------*/
 {
 char *pstr,*nam;
@@ -688,7 +688,7 @@ REGEQVAR *cur,*prev;
 }
 
 /*-----------------16.06.05 23:45-------------------
- Замена переменных константами
+ ‡ ¬Ґ­  ЇҐаҐ¬Ґ­­ле Є®­бв ­в ¬Ё
 	--------------------------------------------------*/
 #ifdef OPTVARCONST
 
@@ -1019,8 +1019,8 @@ int numinreg=FALSE;
 			if(freevic==-1&&(listvic+i)->rec==NULL)freevic=i;
 		}
 		if(isdigit((regstat+reg)->id[0])){
-			if(getnumber((regstat+reg)->id,&num,&typenum)){	//цифра в регистре
-				if(i!=cursizevic)ConstToReg((listvic+i)->lnumber,reg,razr);	//новую в регистр
+			if(getnumber((regstat+reg)->id,&num,&typenum)){	//жЁда  ў аҐЈЁбваҐ
+				if(i!=cursizevic)ConstToReg((listvic+i)->lnumber,reg,razr);	//­®ўго ў аҐЈЁбва
 				else{
 					if(freevic==-1){
 						cursizevic+=MAXSIZEVIC;
@@ -1029,7 +1029,7 @@ int numinreg=FALSE;
 					}
 					else i=freevic;
 				}
-				(listvic+i)->rec=itok4->rec;	//цифру в переменную
+				(listvic+i)->rec=itok4->rec;	//жЁдаг ў ЇҐаҐ¬Ґ­­го
 				(listvic+i)->contype=typenum;
 				(listvic+i)->lnumber=num;
 				switch(itok4->type){
@@ -1054,10 +1054,10 @@ int numinreg=FALSE;
 					typenum);*/
 			}
 		}
-		else{	//нет цифры в регистре
-			if(i!=cursizevic){	//цифра в переменной
-				ConstToReg((listvic+i)->lnumber,reg,razr);	//теперь в регистре
-				(listvic+i)->rec=NULL;	//а впеременной уже нет
+		else{	//­Ґв жЁдал ў аҐЈЁбваҐ
+			if(i!=cursizevic){	//жЁда  ў ЇҐаҐ¬Ґ­­®©
+				ConstToReg((listvic+i)->lnumber,reg,razr);	//вҐЇҐам ў аҐЈЁбваҐ
+				(listvic+i)->rec=NULL;	//  ўЇҐаҐ¬Ґ­­®© г¦Ґ ­Ґв
 			}
 		}
 	}

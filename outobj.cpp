@@ -9,7 +9,7 @@ void  obj_outLEDATA(unsigned int segm,unsigned int offset,unsigned int recordlen
 
 int *numextname;
 int maxnumextname=MAXNUMEXTNAME;
-unsigned int lenextstr=0;	//длина строки с внешними именами
+unsigned int lenextstr=0;	//¤«Ё­  бва®ЄЁ б ў­Ґи­Ё¬Ё Ё¬Ґ­ ¬Ё
 int numextern=0;
 
 int postseg,stackseg;
@@ -36,7 +36,7 @@ unsigned int count,sizeblock;
 	*(short *)&string2[0]=0;
 	string2[2]=(unsigned char)i;
 	obj_outrecord(0x88,i+3,&string2[0]);// output the LNAMES
-	for(count=0;count<totalmodule;count++){	//имена включаемых файлов
+	for(count=0;count<totalmodule;count++){	//Ё¬Ґ­  ўЄ«оз Ґ¬ле д ©«®ў
 		*(struct ftime *)&string2[2]=(startfileinfo+count)->time;
 		strcpy((char *)&string2[7],(startfileinfo+count)->filename);
 		i=strlen((startfileinfo+count)->filename);
@@ -44,10 +44,10 @@ unsigned int count,sizeblock;
 		string2[6]=(unsigned char)i;
 		obj_outrecord(0x88,i+7,&string2[0]);// output the LNAMES
 	}
-	count=outptr-startptr;	//размер кода
-	unsigned char *data=output+startptr;	//начало данных
+	count=outptr-startptr;	//а §¬Ґа Є®¤ 
+	unsigned char *data=output+startptr;	//­ з «® ¤ ­­ле
 	*(short *)&string2[0]=0xE940;
-	obj_outrecord(0x88,2,&string2[0]);//конец коментарий
+	obj_outrecord(0x88,2,&string2[0]);//Є®­Ґж Є®¬Ґ­в аЁ©
 	if(!am32){
 		*(short *)&string2[0]=0xEA00;
 		string2[2]=1;
@@ -63,16 +63,16 @@ unsigned int count,sizeblock;
 	if(!am32){
 		string2[0]=(unsigned char)0x28;
 		*(short *)&string2[1]=(short)outptr;//count;// Set the length of the segment of DATA or CODE
-		string2[3]=0x02;	//имя сегмента _TEXT
-		*(short *)&string2[4]=0x0103;	//класс CODE Overlay NONE 1
+		string2[3]=0x02;	//Ё¬п бҐЈ¬Ґ­в  _TEXT
+		*(short *)&string2[4]=0x0103;	//Є« бб CODE Overlay NONE 1
 		obj_outrecord(0x98,6,string2);
 		i=2;
 
 		if(comfile==file_exe&&modelmem==SMALL){
 			string2[0]=(unsigned char)0x48;
 			*(short *)&string2[1]=outptrdata;// Set the length of the segment DATA
-			string2[3]=0x07;	//имя сегмента _DATA
-			*(short *)&string2[4]=0x0108;	//класс DATA Overlay NONE
+			string2[3]=0x07;	//Ё¬п бҐЈ¬Ґ­в  _DATA
+			*(short *)&string2[4]=0x0108;	//Є« бб DATA Overlay NONE
 			obj_outrecord(0x98,6,string2);
 			i++;
 		}
@@ -80,8 +80,8 @@ unsigned int count,sizeblock;
 		postseg=i;
 		string2[0]=(unsigned char)0x48;
 		*(short *)&string2[1]=(short)postsize;// Set the length of the segment BSS
-		string2[3]=0x04;	//имя сегмента _BSS
-		*(short *)&string2[4]=0x0105;	//класс BSS Overlay NONE
+		string2[3]=0x04;	//Ё¬п бҐЈ¬Ґ­в  _BSS
+		*(short *)&string2[4]=0x0105;	//Є« бб BSS Overlay NONE
 		obj_outrecord(0x98,6,string2);
 		i++;
 
@@ -89,12 +89,12 @@ unsigned int count,sizeblock;
 			obj_outrecord(0x96,6,(unsigned char *)"\005STACK");
 			string2[0]=0x74;
 			*(short *)&string2[1]=(short)stacksize;// Set the length of the segment STACK
-			string2[3]=0x09;	//имя сегмента STACK
-			*(short *)&string2[4]=0x0109;	//класс STACK Overlay NONE
+			string2[3]=0x09;	//Ё¬п бҐЈ¬Ґ­в  STACK
+			*(short *)&string2[4]=0x0109;	//Є« бб STACK Overlay NONE
 			obj_outrecord(0x98,6,string2);
 			stackseg=i;
 		}
-		string2[0]=6;	//имя DGROUP
+		string2[0]=6;	//Ё¬п DGROUP
 		if(comfile==file_exe&&modelmem==SMALL){
 			*(short *)&string2[1]=0x2FF;
 			*(short *)&string2[3]=0x3FF;//postseg*256+255;//0x3FF;
@@ -112,23 +112,23 @@ unsigned int count,sizeblock;
 	else{
 		string2[0]=(unsigned char)0xA9;
 		*(long *)&string2[1]=(long)outptr;//count;// Set the length of the segment of DATA or CODE
-		string2[5]=0x02;	//имя сегмента _TEXT
-		*(short *)&string2[6]=0x0103;	//класс CODE Overlay NONE
+		string2[5]=0x02;	//Ё¬п бҐЈ¬Ґ­в  _TEXT
+		*(short *)&string2[6]=0x0103;	//Є« бб CODE Overlay NONE
 		obj_outrecord(0x99,8,string2);
 		i=2;
 /*
 		string2[0]=(unsigned char)0xA9;
 		*(long *)&string2[1]=0;// Set the length of the segment DATA
-		string2[5]=0x07;	//имя сегмента _DATA
-		*(short *)&string2[6]=0x0108;	//класс DATA Overlay NONE
+		string2[5]=0x07;	//Ё¬п бҐЈ¬Ґ­в  _DATA
+		*(short *)&string2[6]=0x0108;	//Є« бб DATA Overlay NONE
 		obj_outrecord(0x99,8,string2);
 		i++;*/
 
 		postseg=i;
 		string2[0]=(unsigned char)0xA9;
 		*(long *)&string2[1]=(long)postsize;// Set the length of the segment BSS
-		string2[5]=0x04;	//имя сегмента _BSS
-		*(short *)&string2[6]=0x0105;	//класс BSS Overlay NONE
+		string2[5]=0x04;	//Ё¬п бҐЈ¬Ґ­в  _BSS
+		*(short *)&string2[6]=0x0105;	//Є« бб BSS Overlay NONE
 		obj_outrecord(0x99,8,string2);
 		i++;
 
@@ -137,15 +137,15 @@ unsigned int count,sizeblock;
 		if(comfile!=file_w32){
 			string2[0]=0x75;
 			*(long *)&string2[1]=(long)stacksize;// Set the length of the segment STACK
-			string2[5]=0x09;	//имя сегмента STACK
-			*(short *)&string2[6]=0x0109;	//класс STACK Overlay NONE
+			string2[5]=0x09;	//Ё¬п бҐЈ¬Ґ­в  STACK
+			*(short *)&string2[6]=0x0109;	//Є« бб STACK Overlay NONE
 			obj_outrecord(0x99,8,string2);
 			stackseg=i;
 		}
 		string2[0]=10;
 
 		obj_outrecord(0x9A,1,string2);	//GRPDEF Group: FLAT
-		string2[0]=6;	//имя DGROUP
+		string2[0]=6;	//Ё¬п DGROUP
 		i=1;
 //		*(short *)&string2[i]=0x2FF;	//DATA
 //		i+=2;
@@ -157,7 +157,7 @@ unsigned int count,sizeblock;
 		}
 		obj_outrecord(0x9A,i,string2);
 	}
-// вывод EXTDEF
+// ўлў®¤ EXTDEF
 	while(externnum>maxnumextname)maxnumextname+=MAXNUMEXTNAME;
 	numextname=(int *)MALLOC(maxnumextname*sizeof(int));
 // output the PUBDEF records for each exteral procedures (all procedures)
@@ -174,7 +174,7 @@ restart:
 			if((postbuf+j)->type>=CALL_EXT&&(postbuf+j)->type<=FIX_CODE32&&
 					(postbuf+j)->loc>=(i+startptr)&&(postbuf+j)->loc<(i+sizeblock+startptr)){
 				if((postbuf+j)->loc>(i+startptr+sizeblock-(am32==FALSE?2:4))){
-					sizeblock=(postbuf+j)->loc-i-startptr;//изменить размер блока
+					sizeblock=(postbuf+j)->loc-i-startptr;//Ё§¬Ґ­Ёвм а §¬Ґа Ў«®Є 
 					goto restart;
 				}
 			}
@@ -248,7 +248,7 @@ restart:
 	}
 	else{
 		count=EntryPoint();
-		*(short *)&string2[0]=0xC1;	//главный модуль имеет стартовый адрес котор нельзя менять.
+		*(short *)&string2[0]=0xC1;	//Ј« ў­л© ¬®¤г«м Ё¬ҐҐв бв ав®ўл©  ¤аҐб Є®в®а ­Ґ«м§п ¬Ґ­пвм.
 		*(short *)&string2[2]=0x101;
 		if(count<65536){
 			*(short *)&string2[4]=(short)count;
@@ -318,7 +318,7 @@ unsigned int i;
 		outeachPUBDEF(ptr->right);
 		if(ptr->rectok==tk_apiproc){
 			i=0;
-			for(unsigned int j=0;j<posts;j++){	//поиск использования процедуры
+			for(unsigned int j=0;j<posts;j++){	//Ї®ЁбЄ ЁбЇ®«м§®ў ­Ёп Їа®жҐ¤гал
 				if((postbuf+j)->num==(unsigned long)ptr->recnumber&&((postbuf+j)->type==CALL_32I||(postbuf+j)->type==CALL_32)){
 					i++;
 					(postbuf+j)->type=CALL_EXT;

@@ -9,17 +9,17 @@ unsigned char gotoendif=FALSE;
 
 unsigned char atex=FALSE;
 
-unsigned char usedirectiv=TRUE;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рабя┐╜тка я┐╜я┐╜рективя┐╜
+unsigned char usedirectiv=TRUE;	//пїЅпїЅпїЅпїЅ пїЅпїЅа ЎпїЅвЄ  пїЅпїЅаҐЄвЁўпїЅ
 
 unsigned char parsecommandline = 0; 	// parse command line flag
 
-unsigned char sdp_mode=FALSE;	//режя┐╜я┐╜ я┐╜ринудительноя┐╜ я┐╜я┐╜я┐╜узкя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ския┐╜ я┐╜я┐╜цедя┐╜я┐╜
+unsigned char sdp_mode=FALSE;	//аҐ¦пїЅпїЅ пїЅаЁ­г¤ЁвҐ«м­®пїЅ пїЅпїЅпїЅг§ЄпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅбЄЁпїЅ пїЅпїЅжҐ¤пїЅпїЅ
 
 unsigned int startexit;
 
 extern int	maxerrors; 				// number of errors to stop at
 
-unsigned int postnumflag;	//флая┐╜ я┐╜я┐╜слея┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜фикя┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜слея┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+unsigned int postnumflag;	//д« пїЅ пїЅпїЅб«ҐпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅдЁЄпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅб«ҐпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 int calcnumber=FALSE;
 
@@ -51,7 +51,7 @@ int dirmode;
 
 
 
-#define NUMIFDEF 32	//я┐╜я┐╜я┐╜симя┐╜я┐╜ьная┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ректив ifdef/ifndef
+#define NUMIFDEF 32	//пїЅпїЅпїЅбЁ¬пїЅпїЅм­ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅаҐЄвЁў ifdef/ifndef
 
 int	endifcount=-1; 		 // depth count of ?if
 
@@ -65,7 +65,7 @@ unsigned char startuptomain=FALSE;
 
 unsigned char dosstring=FALSE;
 
-unsigned char useelse[NUMIFDEF];	//флая┐╜я┐╜ я┐╜споя┐╜ьзоя┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рективя┐╜ else
+unsigned char useelse[NUMIFDEF];	//д« пїЅпїЅ пїЅбЇ®пїЅм§®пїЅпїЅпїЅпїЅпїЅ пїЅпїЅаҐЄвЁўпїЅ else
 
 unsigned char jumptomain = CALL_NEAR; // jump to the main()
 
@@ -83,7 +83,7 @@ unsigned int stackstartaddress;  /* location of SP assignment */
 
 /*-----------------18.09.98 23:20-------------------
 
- я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ SYS
+ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ SYS
 
 --------------------------------------------------*/
 
@@ -97,7 +97,7 @@ int sysnumcom=0;
 
 int syscom;
 
-//я┐╜я┐╜ремя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ции rom-bios
+//пїЅпїЅаҐ¬пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅжЁЁ rom-bios
 
 int unsigned romsize=0;
 
@@ -107,9 +107,9 @@ int dataseg=0x70;
 
 
 
-unsigned int numdomain=0;	//я┐╜сло я┐╜я┐╜цедя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ская┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ main
+unsigned int numdomain=0;	//пїЅб«® пїЅпїЅжҐ¤пїЅпїЅ пїЅпїЅпїЅпїЅбЄ пїЅпїЅпїЅпїЅ пїЅпїЅ main
 
-char *domain;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜цедя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ская┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ main
+char *domain;	//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅжҐ¤пїЅпїЅ пїЅпїЅпїЅпїЅбЄ пїЅпїЅпїЅпїЅ пїЅпїЅ main
 
 
 
@@ -787,7 +787,7 @@ long value;
 
 signed long doconstlongmath()
 
-//я┐╜я┐╜я┐╜слия┐╜я┐╜ я┐╜я┐╜ражя┐╜я┐╜я┐╜я┐╜
+//пїЅпїЅпїЅб«ЁпїЅпїЅ пїЅпїЅа ¦пїЅпїЅпїЅпїЅ
 
 {
 
@@ -1471,7 +1471,7 @@ void SwTok(int want)
 
 /*-----------------03.07.99 22:48-------------------
 
- я┐╜я┐╜я┐╜я┐╜реня┐╜я┐╜я┐╜ я┐╜я┐╜цедя┐╜я┐╜я┐╜
+ пїЅпїЅпїЅпїЅаҐ­пїЅпїЅпїЅ пїЅпїЅжҐ¤пїЅпїЅпїЅ
 
 	--------------------------------------------------*/
 
@@ -1495,7 +1495,7 @@ void  outprocedure(unsigned char *array,unsigned int length)
 
 unsigned char aabaner[]={
 
-	0x53,0x50,0x48,0x49,0x4E,0x58,0x43,0x2d,0x2d,ver1,ver2};	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ SPHINXC--ver
+	0x53,0x50,0x48,0x49,0x4E,0x58,0x43,0x2d,0x2d,ver1,ver2};	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ SPHINXC--ver
 
 
 
@@ -1525,7 +1525,7 @@ unsigned char aaEXP[]={
 
 void CallExitProcess()
 
-//я┐╜ызоя┐╜ я┐╜я┐╜цедя┐╜я┐╜я┐╜ ExitProcess
+//пїЅл§®пїЅ пїЅпїЅжҐ¤пїЅпїЅпїЅ ExitProcess
 
 {
 
@@ -1805,7 +1805,7 @@ int includeproc()
 
 /*-----------------18.01.99 22:42-------------------
 
- я┐╜я┐╜я┐╜ропя┐╜цедя┐╜я┐╜я┐╜
+ пїЅпїЅпїЅа®ЇпїЅжҐ¤пїЅпїЅпїЅ
 
  --------------------------------------------------*/
 
@@ -2061,19 +2061,19 @@ enout:
 
 				outword(0xFAD9);	//FSQRT
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_cos:
 
 				outword(0xFFD9);
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_sin:
 
 				outword(0xFED9);
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_atan2:
 
@@ -2089,13 +2089,13 @@ enout:
 
 				outword(0xF3D9);	//FPATAN
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_tan:
 
 				outdword(0xD8DDF2D9);	//FPTAN fstp st
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_log:
 
@@ -2103,7 +2103,7 @@ enout:
 
 				outdword(0xF1D9C9D9);	//fxch st1  fyl2x
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_log10:
 
@@ -2111,25 +2111,25 @@ enout:
 
 				outdword(0xF1D9C9D9);	//fxch st1  fyl2x
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_exp:
 
 				outprocedure(aaEXP,MMEXP);
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_atan:
 
 				outdword(0xF3D9E8D9);	//FLD1 FPATAN
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 			case m_fabs:
 
 				outword(0xE1D9);	//FABS
 
-				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
+				return tk_fpust;	//аҐ§пїЅпїЅпїЅпїЅ пїЅ пїЅвҐЄпїЅ fpu
 
 		}
 
@@ -2147,7 +2147,7 @@ enout:
 
 /*-----------------06.02.99 16:09-------------------
 
- я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜шнея┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜текя┐╜я┐╜
+ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅи­ҐпїЅ пїЅпїЅпїЅпїЅпїЅпїЅвҐЄпїЅпїЅ
 
 	--------------------------------------------------*/
 
@@ -2295,7 +2295,7 @@ int size;
 
 void addconsttotree(char *keystring,long long constvalue,int type)
 
-//я┐╜я┐╜тавя┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜таня┐╜я┐╜ я┐╜ я┐╜я┐╜ревя┐╜
+//пїЅпїЅв ўпїЅпїЅпїЅ пїЅпїЅпїЅпїЅв ­пїЅпїЅ пїЅ пїЅпїЅаҐўпїЅ
 
 {
 
@@ -2303,7 +2303,7 @@ struct idrec *ptr,*newptr;
 
 int cmpresult;
 
-	newptr=(struct idrec *)MALLOC(sizeof(struct idrec));//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜таня┐╜я┐╜
+	newptr=(struct idrec *)MALLOC(sizeof(struct idrec));//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅв ­пїЅпїЅ
 
 	ptr=definestart;
 
@@ -2391,7 +2391,7 @@ int cmpresult;
 
 
 
-void addtodefine(char *keystring)//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рокя┐╜ я┐╜ я┐╜я┐╜ревя┐╜ define
+void addtodefine(char *keystring)//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅа®ЄпїЅ пїЅ пїЅпїЅаҐўпїЅ define
 
 {
 
@@ -2399,15 +2399,15 @@ struct idrec *ptr,*newptr,*left=NULL,*right=NULL;
 
 int cmpresult;
 
-//я┐╜ыдея┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜
+//пїЅл¤ҐпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
 
 	newptr=(struct idrec *)MALLOC(sizeof(struct idrec));
 
-	ptr=definestart;	//я┐╜я┐╜чаля┐╜ я┐╜я┐╜ревя┐╜
+	ptr=definestart;	//пїЅпїЅз «пїЅ пїЅпїЅаҐўпїЅ
 
 	if(ptr==NULL)definestart=newptr;
 
-	else{	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рокя┐╜ я┐╜ я┐╜я┐╜ревя┐╜
+	else{	//пїЅпїЅпїЅпїЅ пїЅпїЅа®ЄпїЅ пїЅ пїЅпїЅаҐўпїЅ
 
 		while(((cmpresult=strcmp(ptr->recid,keystring))<0&&ptr->left!=NULL)||
 
@@ -2419,7 +2419,7 @@ int cmpresult;
 
 		}
 
-		if(cmpresult<0)ptr->left=newptr;	//я┐╜я┐╜рокя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+		if(cmpresult<0)ptr->left=newptr;	//пїЅпїЅа®ЄпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 		else if(cmpresult>0)ptr->right=newptr;
 
@@ -2441,7 +2441,7 @@ int cmpresult;
 
 	}
 
-	strcpy(newptr->recid,keystring);//скоя┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+	strcpy(newptr->recid,keystring);//бЄ®пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 	newptr->newid=NULL;
 
@@ -2507,7 +2507,7 @@ unsigned char get_directive_value()  //return the 0 or 1 value for directive
 
 	if(tok==tk_number){
 
-		if(doconstlongmath())return(1);//я┐╜сли я┐╜я┐╜я┐╜ченя┐╜я┐╜ я┐╜я┐╜ я┐╜улея┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ 1
+		if(doconstlongmath())return(1);//пїЅб«Ё пїЅпїЅпїЅзҐ­пїЅпїЅ пїЅпїЅ пїЅг«ҐпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 1
 
 		return(0);
 
@@ -3193,9 +3193,9 @@ int oscanlexmode;
 
 			holdid[0]=CS;
 
-		case d_align: //я┐╜споя┐╜ьзоя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜тавя┐╜я┐╜ я┐╜сли я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜
+		case d_align: //пїЅбЇ®пїЅм§®пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅв ўпїЅпїЅ пїЅб«Ё пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
-			if(notdoneprestuff==TRUE)doprestuff();	//я┐╜я┐╜чаля┐╜я┐╜ я┐╜я┐╜я┐╜
+			if(notdoneprestuff==TRUE)doprestuff();	//пїЅпїЅз «пїЅпїЅ пїЅпїЅпїЅ
 
 			i=2;
 
@@ -3217,13 +3217,13 @@ int oscanlexmode;
 
 			break;
 
-		case d_aligner://я┐╜я┐╜я┐╜ченя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜тавя┐╜я┐╜
+		case d_aligner://пїЅпїЅпїЅзҐ­пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅв ўпїЅпїЅ
 
 			nexttok();
 
 			if(tok==tk_number){
 
-				aligner=(unsigned char)doconstlongmath();//я┐╜я┐╜я┐╜слия┐╜я┐╜ я┐╜я┐╜я┐╜ченя┐╜я┐╜
+				aligner=(unsigned char)doconstlongmath();//пїЅпїЅпїЅб«ЁпїЅпїЅ пїЅпїЅпїЅзҐ­пїЅпїЅ
 
 				next=0;
 
@@ -3233,7 +3233,7 @@ int oscanlexmode;
 
 			break;
 
-		case d_alignw://я┐╜я┐╜равя┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜сов
+		case d_alignw://пїЅпїЅа ўпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅб®ў
 
 			alignword=get_directive_value();
 
@@ -3789,7 +3789,7 @@ endef:
 
 			break;
 
-		case d_com:	//список я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ SYS
+		case d_com:	//бЇЁб®Є пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ SYS
 
 			listcom=(LISTCOM *)MALLOC(sizeof(LISTCOM)*MAXSYSCOM);
 
@@ -3835,7 +3835,7 @@ endef:
 
 			break;
 
-		case d_sdp:	//я┐╜я┐╜я┐╜узия┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ския┐╜ я┐╜я┐╜цедя┐╜я┐╜я┐╜
+		case d_sdp:	//пїЅпїЅпїЅг§ЁпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅбЄЁпїЅ пїЅпїЅжҐ¤пїЅпїЅпїЅ
 
 			next=notdoneprestuff;
 
@@ -3867,13 +3867,13 @@ endef:
 
 			break;
 
-		case d_us:	//я┐╜споя┐╜ьзоя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ STARTUP
+		case d_us:	//пїЅбЇ®пїЅм§®пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ STARTUP
 
 			if(comfile==file_com)useStartup=TRUE;
 
 			break;
 
-		case d_suv:	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜чаля┐╜ я┐╜споя┐╜ьзоя┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜циая┐╜я┐╜я┐╜я┐╜ровя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ремя┐╜я┐╜я┐╜я┐╜
+		case d_suv:	//пїЅпїЅпїЅпїЅ пїЅпїЅз «пїЅ пїЅбЇ®пїЅм§®пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅжЁ пїЅпїЅпїЅпїЅа®ўпїЅпїЅпїЅпїЅ пїЅпїЅаҐ¬пїЅпїЅпїЅпїЅ
 
 			nexttok();
 
@@ -3897,7 +3897,7 @@ endef:
 
 			break;
 
-		case d_iav:	//я┐╜я┐╜я┐╜циая┐╜я┐╜я┐╜я┐╜ровя┐╜я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜ремя┐╜я┐╜я┐╜я┐╜
+		case d_iav:	//пїЅпїЅпїЅжЁ пїЅпїЅпїЅпїЅа®ўпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅаҐ¬пїЅпїЅпїЅпїЅ
 
 			notpost=get_directive_value();
 
@@ -3905,13 +3905,13 @@ endef:
 
 			break;
 
-		case d_atex:	//я┐╜я┐╜ханя┐╜я┐╜я┐╜ ATEXIT
+		case d_atex:	//пїЅпїЅе ­пїЅпїЅпїЅ ATEXIT
 
 			atex=TRUE;
 
 			break;
 
-		case d_dseg:	//сегя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ rom-bios
+		case d_dseg:	//бҐЈпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ rom-bios
 
 			nexttok();
 
@@ -3927,7 +3927,7 @@ endef:
 
 			break;
 
-		case d_rsize:	//разя┐╜я┐╜я┐╜ rom-bios
+		case d_rsize:	//а §пїЅпїЅпїЅ rom-bios
 
 			nexttok();
 
@@ -3943,7 +3943,7 @@ endef:
 
 			break;
 
-		case d_mdr:	//я┐╜я┐╜реня┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜  я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+		case d_mdr:	//пїЅпїЅаҐ­пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ  пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
 			splitdata=modelmem=get_directive_value();
 
@@ -3951,7 +3951,7 @@ endef:
 
 			break;
 
-		case d_am32:	//32 я┐╜я┐╜тная┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+		case d_am32:	//32 пїЅпїЅв­ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
 			nexttok();
 
@@ -4037,7 +4037,7 @@ endef:
 
 			linenumber=linenum2;
 
-			whitespace(); //я┐╜ропя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ симя┐╜я┐╜я┐╜я┐╜я┐╜
+			whitespace(); //пїЅа®ЇпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ бЁ¬пїЅпїЅпїЅпїЅпїЅ
 
 			while(isdigit(cha)){
 
@@ -4115,7 +4115,7 @@ endef:
 
 			break;
 
-		case d_wmb: //я┐╜рмировя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ win
+		case d_wmb: //пїЅа¬Ёа®ўпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ win
 
 			WinMonoBlock=get_directive_value();
 
@@ -4914,7 +4914,7 @@ int oendifcount;
 
 	opostnumflag=postnumflag;
 
-	holdinput=input;	//я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ремя┐╜я┐╜я┐╜
+	holdinput=input;	//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅаҐ¬пїЅпїЅпїЅ
 
 	holdinptr=inptr2;
 
@@ -4934,7 +4934,7 @@ int oendifcount;
 
 	(startfileinfo+currentfileinfo)->stlist=staticlist;
 
-	compilefile(fileincl,tfind);//я┐╜ткоя┐╜я┐╜я┐╜я┐╜я┐╜ровя┐╜я┐╜я┐╜
+	compilefile(fileincl,tfind);//пїЅвЄ®пїЅпїЅпїЅпїЅпїЅа®ўпїЅпїЅпїЅ
 
 	if(endifcount!=oendifcount){
 
@@ -4952,7 +4952,7 @@ int oendifcount;
 
 	warning=holdwarning;
 
-	endoffile=holdendoffile;//я┐╜я┐╜я┐╜таня┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ремя┐╜я┐╜я┐╜
+	endoffile=holdendoffile;//пїЅпїЅпїЅв ­пїЅпїЅпїЅпїЅпїЅ пїЅпїЅаҐ¬пїЅпїЅпїЅ
 
 	endinptr=holdendinptr;
 
@@ -4980,7 +4980,7 @@ int oendifcount;
 
 /*-----------------31.05.99 21:39-------------------
 
- я┐╜я┐╜я┐╜я┐╜я┐╜ржкя┐╜ startup
+ пїЅпїЅпїЅпїЅпїЅа¦ЄпїЅ startup
 
  --------------------------------------------------*/
 
@@ -5016,7 +5016,7 @@ void searchvar(char *name,int err)
 
 
 
-void doprestuff()  //я┐╜я┐╜я┐╜циая┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜чальноя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜, like resize mem, jump to main...
+void doprestuff()  //пїЅпїЅпїЅжЁ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅз «м­®пїЅпїЅ пїЅпїЅпїЅпїЅ, like resize mem, jump to main...
 
 {
 
@@ -5032,7 +5032,7 @@ char *bstring;
 
 int odbg=dbg;
 
-//я┐╜я┐╜раня┐╜я┐╜я┐╜ я┐╜я┐╜рамя┐╜я┐╜я┐╜я┐╜
+//пїЅпїЅа ­пїЅпїЅпїЅ пїЅпїЅа ¬пїЅпїЅпїЅпїЅ
 
 //	if(FixUp==TRUE||comfile==file_w32)optnumber=FALSE;
 
@@ -5088,7 +5088,7 @@ int odbg=dbg;
 
 		else{
 
-			header=0;	//я┐╜тоб я┐╜я┐╜ я┐╜ыло я┐╜я┐╜я┐╜я┐╜рноя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ sphinx
+			header=0;	//пїЅв®Ў пїЅпїЅ пїЅл«® пїЅпїЅпїЅпїЅа­®пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ sphinx
 
 			ojmp=jumptomain;
 
@@ -5386,13 +5386,13 @@ struct idrec *ptr,*leftptr,*rightptr,*prev;
 
 int cmpresult,ocmpresult=0;
 
-	ptr=*treestart;	//я┐╜я┐╜я┐╜я┐╜
+	ptr=*treestart;	//пїЅпїЅпїЅпїЅ
 
 	while(ptr!=NULL&&(cmpresult=strcmp(ptr->recid,itok.name))!=0){
 
-		prev=ptr;	//родя┐╜теля┐╜
+		prev=ptr;	//а®¤пїЅвҐ«пїЅ
 
-		ocmpresult=cmpresult;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ред я┐╜равя┐╜я┐╜я┐╜я┐╜я┐╜ - я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜равя┐╜я┐╜ я┐╜я┐╜тви
+		ocmpresult=cmpresult;	//аҐ§пїЅпїЅпїЅпїЅ пїЅаҐ¤ пїЅа ўпїЅпїЅпїЅпїЅпїЅ - пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅа ўпїЅпїЅ пїЅпїЅвўЁ
 
 		if(cmpresult<0)ptr=ptr->left;
 
@@ -5400,77 +5400,77 @@ int cmpresult,ocmpresult=0;
 
 	}
 
-	if(ptr!=NULL){	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ъекя┐╜ удая┐╜я┐╜я┐╜я┐╜я┐╜
+	if(ptr!=NULL){	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅкҐЄпїЅ г¤ пїЅпїЅпїЅпїЅпїЅ
 
 		if(ptr->newid){
-			free(ptr->newid);	//удая┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜.
+			free(ptr->newid);	//г¤ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.
 			// Fixed by Coldy, thx turbocat (double free error)
 			ptr->newid = NULL;
 		}
 
-		leftptr=ptr->left;	//я┐╜я┐╜я┐╜
+		leftptr=ptr->left;	//пїЅпїЅпїЅ
 
-		rightptr=ptr->right;//я┐╜я┐╜угоя┐╜ я┐╜я┐╜я┐╜
+		rightptr=ptr->right;//пїЅпїЅгЈ®пїЅ пїЅпїЅпїЅ
 
-		if(leftptr==NULL&&rightptr==NULL){	//я┐╜сли я┐╜я┐╜я┐╜ я┐╜я┐╜тей
+		if(leftptr==NULL&&rightptr==NULL){	//пїЅб«Ё пїЅпїЅпїЅ пїЅпїЅвҐ©
 
-			if(ocmpresult<0)prev->left=NULL;  //я┐╜ родя┐╜теля┐╜ я┐╜я┐╜таля┐╜я┐╜ я┐╜я┐╜той
+			if(ocmpresult<0)prev->left=NULL;  //пїЅ а®¤пїЅвҐ«пїЅ пїЅпїЅв «пїЅпїЅ пїЅпїЅв®©
 
 			else if(ocmpresult>0)prev->right=NULL;
 
-			else *treestart=NULL;	//удая┐╜я┐╜я┐╜ я┐╜я┐╜реня┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜твея┐╜
+			else *treestart=NULL;	//г¤ пїЅпїЅпїЅ пїЅпїЅаҐ­пїЅ пїЅпїЅпїЅ пїЅпїЅвўҐпїЅ
 
 		}
 
-		else if(leftptr==NULL){	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜равя┐╜
+		else if(leftptr==NULL){	//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅа ўпїЅ
 
-			if(ocmpresult<0)prev->left=rightptr;	//я┐╜я┐╜редя┐╜я┐╜я┐╜ я┐╜я┐╜укоя┐╜ родя┐╜теля┐╜
+			if(ocmpresult<0)prev->left=rightptr;	//пїЅпїЅаҐ¤пїЅпїЅпїЅ пїЅпїЅгЄ®пїЅ а®¤пїЅвҐ«пїЅ
 
 			else if(ocmpresult>0)prev->right=rightptr;
 
-			else *treestart=rightptr;	//удая┐╜я┐╜я┐╜ я┐╜я┐╜реня┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜равя┐╜я┐╜ я┐╜я┐╜ткоя┐╜
+			else *treestart=rightptr;	//г¤ пїЅпїЅпїЅ пїЅпїЅаҐ­пїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅа ўпїЅпїЅ пїЅпїЅвЄ®пїЅ
 
 		}
 
-		else if(rightptr==NULL){	//тожя┐╜ я┐╜сли я┐╜я┐╜я┐╜ слея┐╜я┐╜
+		else if(rightptr==NULL){	//в®¦пїЅ пїЅб«Ё пїЅпїЅпїЅ б«ҐпїЅпїЅ
 
 			if(ocmpresult<0)prev->left=leftptr;
 
 			else if(ocmpresult>0)prev->right=leftptr;
 
-			else *treestart=leftptr;	//удая┐╜я┐╜я┐╜ я┐╜я┐╜реня┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ткоя┐╜
+			else *treestart=leftptr;	//г¤ пїЅпїЅпїЅ пїЅпїЅаҐ­пїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅвЄ®пїЅ
 
 		}
 
-		else{	//я┐╜сли я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ ребя┐╜я┐╜я┐╜я┐╜
+		else{	//пїЅб«Ё пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ аҐЎпїЅпїЅпїЅпїЅ
 
 			struct idrec *ostptr,*ptrf;
 
-			if(ocmpresult<0){	//я┐╜сли я┐╜я┐╜ я┐╜я┐╜я┐╜ слея┐╜я┐╜
+			if(ocmpresult<0){	//пїЅб«Ё пїЅпїЅ пїЅпїЅпїЅ б«ҐпїЅпїЅ
 
-				prev->left=leftptr;	//я┐╜я┐╜редя┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ ребя┐╜я┐╜я┐╜я┐╜
+				prev->left=leftptr;	//пїЅпїЅаҐ¤пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ аҐЎпїЅпїЅпїЅпїЅ
 
-				ostptr=rightptr;    //я┐╜равя┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜
-
-			}
-
-			else if(ocmpresult>0){	//я┐╜сли я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜равя┐╜
-
-				prev->right=rightptr; //я┐╜я┐╜редя┐╜я┐╜я┐╜ я┐╜равя┐╜я┐╜я┐╜ ребя┐╜я┐╜я┐╜я┐╜
-
-				ostptr=leftptr;       //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+				ostptr=rightptr;    //пїЅа ўпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
 			}
 
-			else{                   //я┐╜сли я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ родя┐╜теля┐╜
+			else if(ocmpresult>0){	//пїЅб«Ё пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅа ўпїЅ
 
-				*treestart=rightptr;   //я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜угая┐╜ я┐╜таня┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+				prev->right=rightptr; //пїЅпїЅаҐ¤пїЅпїЅпїЅ пїЅа ўпїЅпїЅпїЅ аҐЎпїЅпїЅпїЅпїЅ
 
-				ostptr=leftptr;       //я┐╜я┐╜угоя┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+				ostptr=leftptr;       //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
 
 			}
 
-			ptrf=*treestart;	//я┐╜я┐╜чаля┐╜ я┐╜я┐╜ревя┐╜
+			else{                   //пїЅб«Ё пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ а®¤пїЅвҐ«пїЅ
+
+				*treestart=rightptr;   //пїЅпїЅпїЅпїЅ пїЅпїЅгЈ пїЅ пїЅв ­пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+
+				ostptr=leftptr;       //пїЅпїЅгЈ®пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
+
+			}
+
+			ptrf=*treestart;	//пїЅпїЅз «пїЅ пїЅпїЅаҐўпїЅ
 
 			while(((cmpresult=strcmp(ptrf->recid,ostptr->recid))<0&&ptrf->left!=NULL)||
 
@@ -5482,7 +5482,7 @@ int cmpresult,ocmpresult=0;
 
 			}
 
-			if(cmpresult<0)ptrf->left=ostptr;	//я┐╜я┐╜рокя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+			if(cmpresult<0)ptrf->left=ostptr;	//пїЅпїЅа®ЄпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 			else ptrf->right=ostptr;
 

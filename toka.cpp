@@ -20,9 +20,9 @@ struct idrec *treestart=NULL;
 struct idrec *definestart=NULL;
 UNDEFOFF *undefoffstart=NULL;
 DLLLIST *listdll=NULL;
-struct structteg *tegtree=NULL;	//глобальный срисок тегов
-struct structteg *ltegtree=NULL;	//локальный срисок тегов
-//struct idrec *lstructlist=NULL;  //список локальных структур
+struct structteg *tegtree=NULL;	//Ј«®Ў «м­л© баЁб®Є вҐЈ®ў
+struct structteg *ltegtree=NULL;	//«®Є «м­л© баЁб®Є вҐЈ®ў
+//struct idrec *lstructlist=NULL;  //бЇЁб®Є «®Є «м­ле бвагЄвга
 SINFO strinf={NULL};
 static int notdef=TRUE;
 static char precha;
@@ -30,10 +30,10 @@ int scanalltoks=TRUE;
 
 
 static volatile idrec **DynamicList=NULL;
-static int sizeDL;	//размер списка
-static volatile int countDP;	//число динамических процедур в списке
+static int sizeDL;	//а §¬Ґа бЇЁбЄ 
+static volatile int countDP;	//зЁб«® ¤Ё­ ¬ЁзҐбЄЁе Їа®жҐ¤га ў бЇЁбЄҐ
 static int findofset=FALSE;
-#define STEPDL 128;	//шаг увеличения размера списка
+#define STEPDL 128;	//и Ј гўҐ«ЁзҐ­Ёп а §¬Ґа  бЇЁбЄ 
 ITOK structadr;
 
 
@@ -54,13 +54,13 @@ char mon[12][4]={"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug",
 				 "Sep","Oct","Nov","Dec"};
 
 unsigned char cha2;
-char skipfind=FALSE;	/* пропуск поиска в глобальном дереве и среди
-															  локальных переменных */
-static unsigned char savestring3=FALSE;	//разрешить запись в буфер string3
-static int posstr3;	//указатель позиции в string3
+char skipfind=FALSE;	/* Їа®ЇгбЄ Ї®ЁбЄ  ў Ј«®Ў «м­®¬ ¤ҐаҐўҐ Ё баҐ¤Ё
+															  «®Є «м­ле ЇҐаҐ¬Ґ­­ле */
+static unsigned char savestring3=FALSE;	//а §аҐиЁвм § ЇЁбм ў ЎгдҐа string3
+static int posstr3;	//гЄ § вҐ«м Ї®§ЁжЁЁ ў string3
 
 unsigned int inptr2;
-unsigned int linenum2=0;	//если не нуль, то идет обраьотка
+unsigned int linenum2=0;	//Ґб«Ё ­Ґ ­г«м, в® Ё¤Ґв ®Ўа м®вЄ 
 char displaytokerrors;		/* flag to display errors, 0 for tok2 scan */
 char *bufrm=NULL;
 char *startline=NULL;
@@ -72,8 +72,8 @@ unsigned char bytesize=TRUE;
 COM_MOD *cur_mod=NULL;
 
 void docals(struct idrec *ptr);
-void dostructvar2(int *tok4,ITOK *itok4,struct structteg *tteg,unsigned char *string4);	//разбор структур на переменные и структуры
-void dosizeof(ITOK *itok4);	//опр значение sizeof
+void dostructvar2(int *tok4,ITOK *itok4,struct structteg *tteg,unsigned char *string4);	//а §Ў®а бвагЄвга ­  ЇҐаҐ¬Ґ­­лҐ Ё бвагЄвгал
+void dosizeof(ITOK *itok4);	//®Їа §­ зҐ­ЁҐ sizeof
 void ofsstr(int *tok4,ITOK *itok4);
 int searchlocals(ITOK *itok4,int *tok4,unsigned char *string4);
 unsigned char convert_char();
@@ -254,7 +254,7 @@ int zoom=0;
 	return zoom;
 }
 
-void calcrm(ITOK *itok4,int ttok)//обработка выражения в []
+void calcrm(ITOK *itok4,int ttok)//®Ўа Ў®вЄ  ўла ¦Ґ­Ёп ў []
 {
 int idx,base,razr=0,zoom,rm=0;
 long numrm=0,cnum,ocnum;
@@ -267,7 +267,7 @@ unsigned int sizevar=1;
 unsigned int prevtok=tk_number,operand=tk_plus;
 int dsword,dsword2;
 	nextchar();
-	whitespace();//пропуск незначащих символов
+	whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 	if(!displaytokerrors){
 		for(int i=1;i!=0;){
 			FastTok(0,&ctok,&cstok);
@@ -302,7 +302,7 @@ int dsword,dsword2;
 	}
 	if(cha=='&'){
 		nextchar();
-		whitespace();//пропуск незначащих символов
+		whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 		sizevar=1;
 		zoom=0;
 	}
@@ -310,7 +310,7 @@ int dsword,dsword2;
 		nextscan=TRUE;
 		if(cha=='#'&&dsword)dsword=1;
 		tokscan(&ctok,&cstok,pstring);
-		whitespace();//пропуск незначащих символов
+		whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 		if(dsword==1)strcpy(dstok.name,cstok.name);
 //		printf("tok=%d num=%d %s\n",ctok,cstok.number,cstok.name);
 loopsw:
@@ -373,7 +373,7 @@ loopsw:
 				if(calcnum(&ctok,&cstok,(char *)pstring,&cnum)==0)goto runblock;
 enumb:
 				flag^=cstok.flag;
-				whitespace();//пропуск незначащих символов
+				whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 				ocnum=cnum;
 				numrm+=cnum;
 				if(cstok.type==tp_opperand||cstok.type==tp_stopper)nextscan=FALSE;
@@ -408,7 +408,7 @@ enumb:
 				break;
 			case tk_postnumber:
 				if(dsword==0||sizevar!=1)goto runblock;
-				if((cstok.post&USED_DIN_VAR)==USED_DIN_VAR){	//динамическая переменная
+				if((cstok.post&USED_DIN_VAR)==USED_DIN_VAR){	//¤Ё­ ¬ЁзҐбЄ п ЇҐаҐ¬Ґ­­ п
 					if(dstok.rec!=NULL)goto runblock;
 					dstok.rec=cstok.rec;
 				}
@@ -531,11 +531,11 @@ con1:
 		if(dsword==1)dsword=0;
 		if(nextscan){
 			tokscan(&ctok,&cstok,pstring);
-			whitespace();//пропуск незначащих символов
+			whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 		}
 		while(ctok==tk_minus){
 			if(calcnum(&ctok,&cstok,(char *)pstring,&cnum)==0)goto runblock;
-			whitespace();//пропуск незначащих символов
+			whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 			numrm+=cnum;
 			flag^=cstok.flag;
 			if(cstok.type!=tp_opperand&&cstok.type!=tp_stopper){
@@ -592,7 +592,7 @@ con1:
 			}
 			else cstok.rm=base;
 		}
-		if(base!=-1||rm!=0)cstok.rm|=rm_mod10;	//корекция MOD будет позднее, а сейчас максимум
+		if(base!=-1||rm!=0)cstok.rm|=rm_mod10;	//Є®аҐЄжЁп MOD Ўг¤Ґв Ї®§¤­ҐҐ,   бҐ©з б ¬ ЄбЁ¬г¬
 	}
 	dstok.rm=cstok.rm;
 	dstok.flag|=flag;
@@ -973,7 +973,7 @@ COM_MOD *ocurmod=cur_mod;
 	ofsst=BackString(buf);
 	free(buf);
 	buf=NULL;
-	oldinput=input;	//сохр некотор переменые
+	oldinput=input;	//б®еа ­ҐЄ®в®а ЇҐаҐ¬Ґ­лҐ
 	oldinptr=inptr2;
 	bcha=cha2;
 	oldendinptr=endinptr;
@@ -1067,7 +1067,7 @@ COM_MOD *ocurmod=cur_mod;
 	else{
 		warningreg(regs[am32][treg]);
 		if((chip==7||chip==8)&&am32==FALSE&&((sizeel>1&&sizeel<6)||sizeel==8||sizeel==9)){
-		//избежать обращение к частному регистру
+		//Ё§ЎҐ¦ вм ®Ўа йҐ­ЁҐ Є з бв­®¬г аҐЈЁбваг
 			op(0x31);
 			op(0xC0+treg*9);
 		}
@@ -1193,11 +1193,11 @@ if(debug)puts("start nexttok");
 	linenumber=linenum2;
 	cha=cha2;
 	displaytokerrors=1;
-	tokscan(&tok,&itok,string); //разбор команды
+	tokscan(&tok,&itok,string); //а §Ў®а Є®¬ ­¤л
 //	printf("input=%08X inptr=%08X tok=%d %s\n",input,inptr,tok,itok.name);
 	if(tok==tk_dblcolon&&numblocks){
 		skiplocals=TRUE;
-		tokscan(&tok,&itok,string); //разбор команды
+		tokscan(&tok,&itok,string); //а §Ў®а Є®¬ ­¤л
 	}
 	ScanTok2();
 	if(tok2==tk_dblcolon&&numblocks){
@@ -1306,7 +1306,7 @@ llq:
 
 }
 
-void whitespace() //пропуск нзначащих символов
+void whitespace() //Їа®ЇгбЄ ­§­ з йЁе бЁ¬ў®«®ў
 {
 	while(isspace(cha)||cha==255||cha==0){
 		if(cha==13){
@@ -1339,7 +1339,7 @@ unsigned char c;
 		case 'f': return('\f');
 		case 'l': return(10);
 		case 'n': return(13);
-//		case 'p': return('Ь');
+//		case 'p': return('њ');
 		case 'r': return(13);
 		case 't': return('\t');
 		case 'v': return('\v');
@@ -1446,7 +1446,7 @@ int strptr=0;
 		posstr3=0;
 	}
 nextstr:
-	nextchar();	//строковая константа
+	nextchar();	//бва®Є®ў п Є®­бв ­в 
 	while(cha!='\"'&&!endoffile&&strptr<STRLEN-1){
 		string4[strptr++]=convert_char();
 		if((char)cha=='n'&&string4[strptr-1]==13){//have to add char 10 for \n value
@@ -1462,7 +1462,7 @@ nextstr:
 	string4[strptr]=0;
 	*tok4=tk_string;
 //	itok4->number=strptr;
-	itok4->rm=1;	//есть оригинал строки
+	itok4->rm=1;	//Ґбвм ®аЁЈЁ­ « бва®ЄЁ
 	if(cha!='\"')expected('\"');
 	while(cha!='\"'&&!endoffile)nextchar(); //scan until closing '\"'
 	nextchar();
@@ -1485,7 +1485,7 @@ nextstr:
 	CheckConvertString((char *)string4);
 
 //	10.08.04 22:20
-	whitespace(); //пропуск незначащих символов
+	whitespace(); //Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 	if(cha=='\"'){
 		if(displaytokerrors)savestring3=TRUE;
 		goto nextstr;
@@ -1506,12 +1506,12 @@ nextstr:
 }
 
 void tokscan(int *tok4,ITOK *itok4,unsigned char *string4)
-// поиск идентификаторов, директив ...
+// Ї®ЁбЄ Ё¤Ґ­вЁдЁЄ в®а®ў, ¤ЁаҐЄвЁў ...
 {
 int useme;
 unsigned int strptr=0;
 char uppercase=1,next=1;
-//установки по умолчанию
+//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 #ifdef DEBUGMODE
 if(debug)printf("start tokscan input=%08X inptr=%08X %c%s\n",input,inptr,cha,input+inptr);
 #endif
@@ -1532,18 +1532,18 @@ if(debug)printf("start tokscan input=%08X inptr=%08X %c%s\n",input,inptr,cha,inp
 	itok4->type=tp_ucnovn;
 	itok4->npointr=0;
 	itok4->name[0]=0;
-	whitespace(); //пропуск незначащих символов
+	whitespace(); //Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 //	if(displaytokerrors)printf("%c ",cha);
-	if(isalpha(cha)||(cha=='_')||(cha>=0x80)){	//идентификатор
+	if(isalpha(cha)||(cha=='_')||(cha>=0x80)){	//Ё¤Ґ­вЁдЁЄ в®а
 		do{
 			string4[strptr++]=cha;
 			if(islower(cha))uppercase=0;
 			nextchar();
 		}while((strptr<IDLENGTH)&&(CheckChar2()==TRUE));
-		if(strptr>=IDLENGTH){ //длина больше 32
+		if(strptr>=IDLENGTH){ //¤«Ё­  Ў®«миҐ 32
 			if(displaytokerrors)preerror("Maximum length for an identifier exceeded");
-			while(CheckChar2()==TRUE)nextchar();	//дочитать слово
-			strptr=IDLENGTH-1;	//обрезать до 32
+			while(CheckChar2()==TRUE)nextchar();	//¤®зЁв вм б«®ў®
+			strptr=IDLENGTH-1;	//®ЎаҐ§ вм ¤® 32
 		}
 		if(cha=='~'&&strptr<IDLENGTH-1){
 			string4[strptr++]=cha;
@@ -1578,7 +1578,7 @@ if(debug)printf("start tokscan input=%08X inptr=%08X %c%s\n",input,inptr,cha,inp
 			}
 			return;
 		}
-		if(uppercase){	//верхний регистр
+		if(uppercase){	//ўҐае­Ё© аҐЈЁбва
 			if(strptr==1&&string4[0]=='L'&&cha=='"'){
 				itok4->name[0]=0;
 				GetTokString(tok4,itok4,string4,TRUE);
@@ -1586,7 +1586,7 @@ if(debug)printf("start tokscan input=%08X inptr=%08X %c%s\n",input,inptr,cha,inp
 			}
 			*tok4=tk_ID;
 			if(string4[1]=='S'&&strptr>=5&&strptr<=8){
-				for(useme=0;useme<ID2S;useme++){	//проверка на ESBYTE ...
+				for(useme=0;useme<ID2S;useme++){	//Їа®ўҐаЄ  ­  ESBYTE ...
 					if(strcmp((char *)string4,id2[useme])==0){
 						*tok4=tk_charvar+useme%DATATYPES;
 						itok4->segm=useme/DATATYPES;
@@ -1598,7 +1598,7 @@ if(debug)printf("start tokscan input=%08X inptr=%08X %c%s\n",input,inptr,cha,inp
 			}
 		}
 		else *tok4=tk_id;
-		if(strptr==2){	//длина 2 символа check for AX, CX, DX, ...
+		if(strptr==2){	//¤«Ё­  2 бЁ¬ў®«  check for AX, CX, DX, ...
 			if((string4[0]&0x5f)=='S'&&(string4[1]&0x5f)=='T'){
 				if(cha=='('){
 					nextchar();
@@ -1767,8 +1767,8 @@ extreg32:
 					return;
 				}
 			}
-			if(searchlocals(itok4,tok4,string4)==FALSE){//поиск среди локальных меток
-			//если ничего не найдено поиск в дереве переменых
+			if(searchlocals(itok4,tok4,string4)==FALSE){//Ї®ЁбЄ баҐ¤Ё «®Є «м­ле ¬Ґв®Є
+			//Ґб«Ё ­ЁзҐЈ® ­Ґ ­ ©¤Ґ­® Ї®ЁбЄ ў ¤ҐаҐўҐ ЇҐаҐ¬Ґ­ле
 				searchtree(itok4,tok4,string4);
 				if(*tok4==tk_endline){
 					if(scanlexmode!=DEFLEX){
@@ -1792,8 +1792,8 @@ extreg32:
 							itok4->sib=CODE32;
 						}
 					}
-					if(itok4->post==DYNAMIC_POST){	//преобразовать динамическую локальную в локальную
-						if(alignword&&*tok4!=tk_charvar&&*tok4!=tk_bytevar){	//выровнять на четный адрес
+					if(itok4->post==DYNAMIC_POST){	//ЇаҐ®Ўа §®ў вм ¤Ё­ ¬ЁзҐбЄго «®Є «м­го ў «®Є «м­го
+						if(alignword&&*tok4!=tk_charvar&&*tok4!=tk_bytevar){	//ўла®ў­пвм ­  зҐв­л©  ¤аҐб
 							switch(*tok4){
 								case tk_intvar:
 								case tk_wordvar:
@@ -1888,8 +1888,8 @@ extreg32:
 		}
 yesid:
 		if((*tok4>=tk_bits&&*tok4<=tk_doublevar)||*tok4==tk_pointer){
-			whitespace();//пропуск незначащих символов
-			if(cha=='[')calcrm(itok4,*tok4);//обработка выражения в []
+			whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
+			if(cha=='[')calcrm(itok4,*tok4);//®Ўа Ў®вЄ  ўла ¦Ґ­Ёп ў []
 		}
 		if(itok4->rm!=rm_d16&&*tok4!=tk_proc&&*tok4!=tk_undefproc&&
 			*tok4!=tk_apiproc&&*tok4!=tk_declare&&(!(*tok4==tk_pointer&&itok4->type==tk_proc)))
@@ -1898,7 +1898,7 @@ yesid:
 			}
 		next=0;
 	}
-	else if(isdigit(cha)){//числа
+	else if(isdigit(cha)){//зЁб« 
 		inptr--;
 		itok4->lnumber=scannumber(&itok4->rm);
 		*tok4=tk_number;
@@ -1909,7 +1909,7 @@ yesid:
 			GetTokString(tok4,itok4,string4,FALSE);
 			next=0;
 			break;
-		case '\'': //символьная константа может иметь более 1 символа
+		case '\'': //бЁ¬ў®«м­ п Є®­бв ­в  ¬®¦Ґв Ё¬Ґвм Ў®«ҐҐ 1 бЁ¬ў®« 
 			nextchar();
 			next=0;
 			if(scanlexmode==RESLEX){
@@ -1931,20 +1931,20 @@ yesid:
 		case '-':
 			nextchar();
 			switch(cha){
-				case '=': *tok4=tk_minusequals; break;	//минус равно
-				case '-': *tok4=tk_minusminus; break; 	//минус-минус
-				default: *tok4=tk_minus; next = 0; itok4->type=tp_opperand; break;//минус
+				case '=': *tok4=tk_minusequals; break;	//¬Ё­гб а ў­®
+				case '-': *tok4=tk_minusminus; break; 	//¬Ё­гб-¬Ё­гб
+				default: *tok4=tk_minus; next = 0; itok4->type=tp_opperand; break;//¬Ё­гб
 			}
 			break;
 		case '+':
 			nextchar();
 			switch(cha){
-				case '=': *tok4=tk_plusequals; break; //плюс равно
-				case '+': *tok4=tk_plusplus; break; 	//плюс-плюс
+				case '=': *tok4=tk_plusequals; break; //Ї«об а ў­®
+				case '+': *tok4=tk_plusplus; break; 	//Ї«об-Ї«об
 				default: whitespace();	// spaces allowed between
 					if(cha=='-')*tok4=tk_minus;  // optimization of + -
 					else{
-						*tok4=tk_plus; 				 //плюс
+						*tok4=tk_plus; 				 //Ї«об
 						next=0;
 					}
 					itok4->type=tp_opperand;
@@ -1955,16 +1955,16 @@ yesid:
 			nextchar();
 			switch(cha){
 				case '=': *tok4=tk_multequals; break;
-				case '-': *tok4=tk_multminus; break;			 //умножить минус
+				case '-': *tok4=tk_multminus; break;			 //г¬­®¦Ёвм ¬Ё­гб
 				default:
-					*tok4=tk_mult; 									 //умножить
+					*tok4=tk_mult; 									 //г¬­®¦Ёвм
 					next=0;
 			}
 			itok4->type=tp_opperand;
 			break;
 		case '/': nextchar();
 			switch(cha){
-				case '*': nextchar(); //соментарий
+				case '*': nextchar(); //б®¬Ґ­в аЁ©
 					useme=1;
 					while(!endoffile&&useme>0){
 						whitespace();
@@ -1997,7 +1997,7 @@ yesid:
 				case '/':
 					do{
 						nextchar();
-					}while(!endoffile&&cha!=13);	//строка коментария
+					}while(!endoffile&&cha!=13);	//бва®Є  Є®¬Ґ­в аЁп
 					if(endoffile)*tok4=tk_eof;
 					else{
 						if(scanlexmode==DEFLEX)*tok4=tk_endline;
@@ -2012,7 +2012,7 @@ yesid:
 				default:
 					whitespace();
 					if(cha=='-'){
-						*tok4=tk_divminus;	//деление
+						*tok4=tk_divminus;	//¤Ґ«Ґ­ЁҐ
 						nextchar();
 					}
 					else *tok4=tk_div;
@@ -2024,7 +2024,7 @@ yesid:
 		case '%':
 			nextchar();
 			whitespace();
-			if(cha=='-')*tok4=tk_modminus;	//остаток от деления
+			if(cha=='-')*tok4=tk_modminus;	//®бв в®Є ®в ¤Ґ«Ґ­Ёп
 			else{
 				*tok4=tk_mod;
 				next=0;
@@ -2095,7 +2095,7 @@ yesid:
 				itok4->type=tp_compare;
 			}
 			else{
-				*tok4=tk_assign;						 //присвоить
+				*tok4=tk_assign;						 //ЇаЁбў®Ёвм
 				next=0;
 			}
 			break;
@@ -2104,20 +2104,20 @@ yesid:
 			switch(cha){
 				case '>':
 					nextchar();
-					if(cha=='=')*tok4=tk_rrequals; //сдвиг вправо с присвоением
+					if(cha=='=')*tok4=tk_rrequals; //б¤ўЁЈ ўЇа ў® б ЇаЁбў®Ґ­ЁҐ¬
 					else{
 						whitespace();
 						if(cha=='-')*tok4 = tk_rrminus;
 						else{
-							*tok4=tk_rr;							//сдвиг вправо
+							*tok4=tk_rr;							//б¤ўЁЈ ўЇа ў®
 							next=0;
 						}
 						itok4->type=tp_opperand;
 					}
 					break;
-				case '<': *tok4=tk_swap; break; 			 //обмен
-				case '=': *tok4=tk_greaterequal; itok4->type=tp_compare; break; //больше или равно
-				default: *tok4=tk_greater; next=0; itok4->type=tp_compare; break; //больше
+				case '<': *tok4=tk_swap; break; 			 //®Ў¬Ґ­
+				case '=': *tok4=tk_greaterequal; itok4->type=tp_compare; break; //Ў®«миҐ Ё«Ё а ў­®
+				default: *tok4=tk_greater; next=0; itok4->type=tp_compare; break; //Ў®«миҐ
 			}
 			break;
 		case '<':
@@ -2125,20 +2125,20 @@ yesid:
 			switch(cha){
 				case '<':
 					nextchar();
-					if(cha=='=')*tok4=tk_llequals;	 //сдвиг влево с присвоением
+					if(cha=='=')*tok4=tk_llequals;	 //б¤ўЁЈ ў«Ґў® б ЇаЁбў®Ґ­ЁҐ¬
 					else{
 						whitespace();
 						if(cha=='-')*tok4=tk_llminus;
 						else{
-							*tok4=tk_ll;								 //сдвиг влево
+							*tok4=tk_ll;								 //б¤ўЁЈ ў«Ґў®
 							next=0;
 						}
 						itok4->type=tp_opperand;
 					}
 					break;
 				case '>': *tok4=tk_notequal; itok4->type=tp_compare; break;  //!=
-				case '=': *tok4=tk_lessequal; itok4->type=tp_compare; break; //меньше или равно
-				default: *tok4=tk_less; next=0; itok4->type=tp_compare; break;//меньше
+				case '=': *tok4=tk_lessequal; itok4->type=tp_compare; break; //¬Ґ­миҐ Ё«Ё а ў­®
+				default: *tok4=tk_less; next=0; itok4->type=tp_compare; break;//¬Ґ­миҐ
 			}
 			break;
 		case '#':
@@ -2193,7 +2193,7 @@ procofs:
 							idrec *ptr=itok4->rec;
 							itok4->segm=ptr->recsegm=DYNAMIC_USED;
 						}
-						itok4->rm=*tok4=tk_undefofs;	//смещение еще не известной метки
+						itok4->rm=*tok4=tk_undefofs;	//б¬ҐйҐ­ЁҐ ҐйҐ ­Ґ Ё§ўҐбв­®© ¬ҐвЄЁ
 						itok4->number=0;
 //						if(FixUp)itok4->flag|=f_reloc;	//new!!! 27.06.05 22:25
 					}
@@ -2241,7 +2241,7 @@ structofs:
 					}
 					else{
 undefofs:
-						itok4->rm=*tok4=tk_undefofs;	//смещение еще не известной метки
+						itok4->rm=*tok4=tk_undefofs;	//б¬ҐйҐ­ЁҐ ҐйҐ ­Ґ Ё§ўҐбв­®© ¬ҐвЄЁ
 						itok4->number=0;
 						if(FixUp)itok4->flag|=f_reloc;	//new!!!
 					}
@@ -2292,7 +2292,7 @@ localrec *ptr;
 						}
 					}
 					else{
-						itok4->rm=*tok4=tk_undefofs;	//смещение еще не известной метки
+						itok4->rm=*tok4=tk_undefofs;	//б¬ҐйҐ­ЁҐ ҐйҐ ­Ґ Ё§ўҐбв­®© ¬ҐвЄЁ
 						itok4->number=0;
 						strcpy((char *)string4,itok4->name);
 					}
@@ -2415,7 +2415,7 @@ char *buf=NULL;
 		if(cha!=')'){
 			inptr--;
 			oline=linenumber;
-			for(i=inptr,ns=1;ns>0;i++){	//поиск параметров
+			for(i=inptr,ns=1;ns>0;i++){	//Ї®ЁбЄ Ї а ¬Ґва®ў
 				switch(input[i]){
 					case '(': ns++; break;
 					case ')': ns--; break;
@@ -2554,7 +2554,7 @@ COM_MOD *fmod;
 }
 
 int searchtree2(idrec *fptr,ITOK *itok4,int *tok4,unsigned char *string4)
-//поиск в дереве переменых
+//Ї®ЁбЄ ў ¤ҐаҐўҐ ЇҐаҐ¬Ґ­ле
 {
 struct idrec *ptr;
 int cmpresult;
@@ -2607,7 +2607,7 @@ int cmpresult;
 						itok4->segm=0;
 						if(ptr->recpost==DYNAMIC_POST){
 							ptr->recpost=itok4->post=1;
-							if(alignword){	//выровнять на четный адрес
+							if(alignword){	//ўла®ў­пвм ­  зҐв­л©  ¤аҐб
 								if(postsize%2==1)postsize++;
 							}
 							itok4->number=ptr->recnumber=postsize;
@@ -2636,10 +2636,10 @@ int cmpresult;
 								case tk_apiproc:
 								case tk_declare:
 								case tk_undefproc:
-									strcpy(itok4->name,ptr->recid);	//имя нужно для undefine
+									strcpy(itok4->name,ptr->recid);	//Ё¬п ­г¦­® ¤«п undefine
 									break;
 								default:
-									strncpy(itok4->name,(char *)string4,IDLENGTH-1);	//имя нужно для undefine
+									strncpy(itok4->name,(char *)string4,IDLENGTH-1);	//Ё¬п ­г¦­® ¤«п undefine
 									break;
 							}
 							return TRUE;
@@ -2648,7 +2648,7 @@ int cmpresult;
 				}
 			}
 			else string4[0]=0;
-			strcpy(itok4->name,ptr->recid);	//имя нужно для undefine
+			strcpy(itok4->name,ptr->recid);	//Ё¬п ­г¦­® ¤«п undefine
 			if(displaytokerrors)ptr->count++;
 			break;
 		}
@@ -3093,7 +3093,7 @@ char buf[128];
 
 				structadr.sib=THIS_REG;
 				structadr.rm=AX;
-				structadr.size=addofs;	// ???? 19.08.04 12:54 нигде не используется
+				structadr.size=addofs;	// ???? 19.08.04 12:54 ­ЁЈ¤Ґ ­Ґ ЁбЇ®«м§гҐвбп
 				CallDestr(bazael->rec);
 				addESP-=am32==FALSE?2:4;
 				op(0x58);
@@ -3257,7 +3257,7 @@ void CopyTok(int *tok4,ITOK *itok4,idrec *ptr)
 }
 
 int searchlocals(ITOK *itok4,int *tok4,unsigned char *string4)
-//поиск локальных переменых связаного списка
+//Ї®ЁбЄ «®Є «м­ле ЇҐаҐ¬Ґ­ле бўп§ ­®Ј® бЇЁбЄ 
 {
 	if(skiplocals){
 		skiplocals=FALSE;
@@ -3437,7 +3437,7 @@ locvar:
 	return FALSE;
 }
 
-void dostructvar2(int *tok4,ITOK *itok4,struct structteg *tteg,unsigned char *string4)	//разбор структур на переменные и структуры
+void dostructvar2(int *tok4,ITOK *itok4,struct structteg *tteg,unsigned char *string4)	//а §Ў®а бвагЄвга ­  ЇҐаҐ¬Ґ­­лҐ Ё бвагЄвгал
 {
 struct elementteg *bazael;
 int numel=0;
@@ -3451,9 +3451,9 @@ int i;
 structteg *subteg=NULL;
 	structadr=*itok4;
 //	bazael=tteg->baza;
-	whitespace();//пропуск незначащих символов
+	whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 	cstring=(char *)MALLOC(STRLEN);
-	if(cha=='['){	//[	номер структуры
+	if(cha=='['){	//[	­®¬Ґа бвагЄвгал
 		usenumstruct=TRUE;
 		nextchar();
 		sopenb=inptr;
@@ -3463,7 +3463,7 @@ structteg *subteg=NULL;
 			free(bufrm);
 			bufrm=NULL;
 		}
-		if(i==tk_number){	//числовой
+		if(i==tk_number){	//зЁб«®ў®©
 			ITOK dstok;
 			memcpy(&dstok,itok4,sizeof(ITOK));
 			calcnum(&i,&cstok,cstring,&cnum);
@@ -3501,7 +3501,7 @@ notnum:
 			strinf.size=tteg->size;
 		}
 		itok4->flag|=f_useidx;
-		whitespace();//пропуск незначащих символов
+		whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 	}
 	if(cha=='.'){
 		int fdestr=FALSE;
@@ -3583,7 +3583,7 @@ notnum:
 					compressoffset(&structadr);
 					if(tteg->size==0)structadr.sib=THIS_ZEROSIZE;	//14.11.05 13:51
 				}
-/*				if(strcmp(bazael->name,tteg->name)==0&&itok4->rec){	//вызов конструктора
+/*				if(strcmp(bazael->name,tteg->name)==0&&itok4->rec){	//ўл§®ў Є®­бвагЄв®а 
 					ptr=itok4->rec;
 //					printf("constructor %08X\n",ptr);
 				}*/
@@ -3622,7 +3622,7 @@ notnum:
 					itok4->post=FALSE;
 				}
 				else{
-					itok4->sib=(am32==FALSE?rm_d16:rm_d32);	//установки по умолчанию
+					itok4->sib=(am32==FALSE?rm_d16:rm_d32);	//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 					itok4->segm=DS;
 				}
 //				itok4->post=0;
@@ -3695,7 +3695,7 @@ notbit:
 			itok4->flag=f_useidx;
 		}
 		else{
-			itok4->rm=(am32==FALSE?rm_d16:rm_d32);	//установки по умолчанию
+			itok4->rm=(am32==FALSE?rm_d16:rm_d32);	//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 			if(itok4->segm==USEDSTR&&itok4->sib>=CODE16)itok4->sib++;
 			itok4->segm=DS;
 			itok4->flag=FixUp|f_useidx;
@@ -3709,12 +3709,12 @@ notbit:
 	free(cstring);
 }
 
-void dosizeof(ITOK *itok4)	//опр значение sizeof
+void dosizeof(ITOK *itok4)	//®Їа §­ зҐ­ЁҐ sizeof
 {
 struct structteg *tteg;
 int i,brase=FALSE;
 ITOK cstok;
-	whitespace();//пропуск незначащих символов
+	whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 	itok4->number=0;
 	if(cha=='('){
 		nextchar();
@@ -3815,7 +3815,7 @@ ITOK cstok;
 				break;
 		}
 	}
-	whitespace();//пропуск незначащих символов
+	whitespace();//Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
 	if(brase){
 		if(cha!=')'&&displaytokerrors)expected(')');
 		nextchar();
@@ -3898,7 +3898,7 @@ cont1: ;
 	else{
 		itok4->post=poststr;
 		if(strinf.bufstr==NULL){
-			itok4->rm=(am32==FALSE?rm_d16:rm_d32);	//установки по умолчанию
+			itok4->rm=(am32==FALSE?rm_d16:rm_d32);	//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 			if(itok4->post!=0)*tok4=tk_postnumber;
 			else *tok4=tk_number;
 		}
@@ -3935,23 +3935,23 @@ cont2: ;
 	cha=ocha;
 }
 
-void AddUndefOff(int segm,char *ostring)	//зафиксировать обращение к еще не объявленым именам
-/*segm - сегмент откуда идет обращение
- 0 - сегмент кода
- 1 - сегмент данных
- 2 - сегмент кода, но без занесения в таблицу перемещений
- 3 - сегмент данных, но без занесения в таблицу перемещений
+void AddUndefOff(int segm,char *ostring)	//§ дЁЄбЁа®ў вм ®Ўа йҐ­ЁҐ Є ҐйҐ ­Ґ ®Ўкпў«Ґ­л¬ Ё¬Ґ­ ¬
+/*segm - бҐЈ¬Ґ­в ®вЄг¤  Ё¤Ґв ®Ўа йҐ­ЁҐ
+ 0 - бҐЈ¬Ґ­в Є®¤ 
+ 1 - бҐЈ¬Ґ­в ¤ ­­ле
+ 2 - бҐЈ¬Ґ­в Є®¤ , ­® ЎҐ§ § ­ҐбҐ­Ёп ў в Ў«Ёжг ЇҐаҐ¬ҐйҐ­Ё©
+ 3 - бҐЈ¬Ґ­в ¤ ­­ле, ­® ЎҐ§ § ­ҐбҐ­Ёп ў в Ў«Ёжг ЇҐаҐ¬ҐйҐ­Ё©
 */
 {
 UNDEFOFF *curptr;
-	if(undefoffstart==NULL){	//если еще не было неизв меток
+	if(undefoffstart==NULL){	//Ґб«Ё ҐйҐ ­Ґ Ўл«® ­ҐЁ§ў ¬Ґв®Є
 		undefoffstart=(UNDEFOFF *)MALLOC(sizeof(UNDEFOFF));
 		memset(undefoffstart,0,sizeof(UNDEFOFF));
 		strcpy(undefoffstart->name,ostring);
 	}
 	for(curptr=undefoffstart;;curptr=curptr->next){
-		if(strcmp(curptr->name,ostring)==0){	//ранее уже обращались к ней
-			//таблица обращений к undef
+		if(strcmp(curptr->name,ostring)==0){	//а ­ҐҐ г¦Ґ ®Ўа й «Ёбм Є ­Ґ©
+			//в Ў«Ёж  ®Ўа йҐ­Ё© Є undef
 			if(curptr->pos==NULL)curptr->pos=(IOFS *)MALLOC(sizeof(IOFS)*(curptr->num+1));
 			else curptr->pos=(IOFS *)REALLOC(curptr->pos,sizeof(IOFS)*(curptr->num+1));
 			(curptr->pos+curptr->num)->ofs=segm==0?outptr:outptrdata;
@@ -3961,9 +3961,9 @@ UNDEFOFF *curptr;
 			curptr->num++;
 			return;
 		}
-		if(curptr->next==NULL)break;	//конец списка
+		if(curptr->next==NULL)break;	//Є®­Ґж бЇЁбЄ 
 	}
-	curptr=curptr->next=(UNDEFOFF *)MALLOC(sizeof(UNDEFOFF));	//новая undef
+	curptr=curptr->next=(UNDEFOFF *)MALLOC(sizeof(UNDEFOFF));	//­®ў п undef
 	memset(curptr,0,sizeof(UNDEFOFF));
 	strcpy(curptr->name,ostring);
 	curptr->num=1;
@@ -3978,9 +3978,9 @@ int CheckUseAsUndef(unsigned char *name)
 {
 UNDEFOFF *curptr;
 int count=0;
-	if(undefoffstart==NULL)return 0;	//не было обращений к undef
+	if(undefoffstart==NULL)return 0;	//­Ґ Ўл«® ®Ўа йҐ­Ё© Є undef
 	for(curptr=undefoffstart;;curptr=curptr->next){
-		if(strcmp(curptr->name,(char *)name)==0){	//нашли
+		if(strcmp(curptr->name,(char *)name)==0){	//­ и«Ё
 			count=curptr->num;
 			break;
 		}
@@ -3989,29 +3989,29 @@ int count=0;
 	return count;
 }
 
-int FindOff(unsigned char *name,int base)	//поиск ссылок на текущее имя
+int FindOff(unsigned char *name,int base)	//Ї®ЁбЄ ббл«®Є ­  вҐЄгйҐҐ Ё¬п
 {
 /*-----------------13.08.00 23:48-------------------
- просмотреть процедуру при вводе разделения данных и кода
+ Їа®б¬®ваҐвм Їа®жҐ¤гаг ЇаЁ ўў®¤Ґ а §¤Ґ«Ґ­Ёп ¤ ­­ле Ё Є®¤ 
 	--------------------------------------------------*/
 UNDEFOFF *curptr,*prev;
 unsigned char segm;
 unsigned int ofs,valofs;
 int count=0;
-	if(undefoffstart==NULL)return 0;	//не было обращений к undef
+	if(undefoffstart==NULL)return 0;	//­Ґ Ўл«® ®Ўа йҐ­Ё© Є undef
 	for(curptr=undefoffstart;;curptr=curptr->next){
-		if(strcmp(curptr->name,(char *)name)==0){	//нашли
+		if(strcmp(curptr->name,(char *)name)==0){	//­ и«Ё
 			for(int i=0;i<curptr->num;i++){
 				ofs=(curptr->pos+i)->ofs;
 				segm=(curptr->pos+i)->dataseg;
-				if(base==DS&&dynamic_flag){	//было обращение к динамическим иниц. переменным
+				if(base==DS&&dynamic_flag){	//Ўл«® ®Ўа йҐ­ЁҐ Є ¤Ё­ ¬ЁзҐбЄЁ¬ Ё­Ёж. ЇҐаҐ¬Ґ­­л¬
 					CheckPosts();
 					(postbuf+posts)->type=(unsigned short)(am32==0?DIN_VAR:DIN_VAR32);
 					(postbuf+posts)->num=(int)itok.rec;
 					(postbuf+posts)->loc=ofs;
 				}
 				else{
-					if((segm&1)==0||modelmem==TINY){	//в сегменте кода
+					if((segm&1)==0||modelmem==TINY){	//ў бҐЈ¬Ґ­вҐ Є®¤ 
 						if(base!=VARPOST){
 //							if(am32==FALSE)valofs=*(unsigned short *)&output[ofs];
 //							else valofs=*(unsigned long *)&output[ofs];
@@ -4067,12 +4067,12 @@ int count=0;
 	return count;
 }
 
-int FindUseName(char *name)	//поиск ссылок на текущее имя
+int FindUseName(char *name)	//Ї®ЁбЄ ббл«®Є ­  вҐЄгйҐҐ Ё¬п
 {
 UNDEFOFF *curptr;
 	if(undefoffstart){
 		for(curptr=undefoffstart;;curptr=curptr->next){
-			if(strcmp(curptr->name,(char *)name)==0){	//нашли
+			if(strcmp(curptr->name,(char *)name)==0){	//­ и«Ё
 				return curptr->num;
 			}
 			if(curptr->next==NULL)break;
@@ -4141,7 +4141,7 @@ unsigned char c;
 }
 
 /*-----------------05.01.00 22:56-------------------
- Работа со структурами
+ ђ Ў®в  б® бвагЄвга ¬Ё
 	--------------------------------------------------*/
 
 int GetVarSize(int var)
@@ -4220,7 +4220,7 @@ elementteg *bazael=searcht->baza;
 	return FALSE;
 }
 
-struct structteg *CreatTeg(int Global,int useunion,int noname)	//создать новый тег
+struct structteg *CreatTeg(int Global,int useunion,int noname)	//б®§¤ вм ­®ўл© вҐЈ
 {
 struct structteg *newteg,*tteg;
 struct elementteg *bazael;
@@ -4401,10 +4401,10 @@ int unionsize=0;
 	//				break;
 				}
 			default:
-				skipfind=LOCAL;	//запретить поиск в глобальном и локальном списке
+				skipfind=LOCAL;	//§ ЇаҐвЁвм Ї®ЁбЄ ў Ј«®Ў «м­®¬ Ё «®Є «м­®¬ бЇЁбЄҐ
 				utestInitVar=TRUE;
-				if((i=testInitVar())==FALSE||i==2){	//определение процедуры пока не обрабатываем
-					skipfind=FALSE;	//разрешить поиск
+				if((i=testInitVar())==FALSE||i==2){	//®ЇаҐ¤Ґ«Ґ­ЁҐ Їа®жҐ¤гал Ї®Є  ­Ґ ®Ўа Ў влў Ґ¬
+					skipfind=FALSE;	//а §аҐиЁвм Ї®ЁбЄ
 					FindEndLex();
 					datatype_expected();
 					nexttok();
@@ -4424,7 +4424,7 @@ int unionsize=0;
 					if(itok.npointr)orm=am32==FALSE?tk_word:tk_dword;
 					npointr=0;
 					nexttok();
-					while(tok==tk_mult){	//указатель на процедуру
+					while(tok==tk_mult){	//гЄ § вҐ«м ­  Їа®жҐ¤гаг
 						npointr++;
 						nexttok();
 					}
@@ -4436,7 +4436,7 @@ int unionsize=0;
 locvar:
 			do{
 				tsize=size;
-				skipfind=LOCAL;	//запретить поиск в глобальном и локальном списке
+				skipfind=LOCAL;	//§ ЇаҐвЁвм Ї®ЁбЄ ў Ј«®Ў «м­®¬ Ё «®Є «м­®¬ бЇЁбЄҐ
 				nexttok();
 				if(tok==tk_colon){
 					numt=getsizebit(size);
@@ -4449,7 +4449,7 @@ dproc2:
 				else bazael=(struct elementteg *)REALLOC(bazael,sizeof(struct elementteg)*(numel+1));
 				if(tok!=tk_ID&&tok!=tk_id){
 					utestInitVar=TRUE;
-					if(testInitVar()==FALSE){	//определение процедуры пока не обрабатываем
+					if(testInitVar()==FALSE){	//®ЇаҐ¤Ґ«Ґ­ЁҐ Їа®жҐ¤гал Ї®Є  ­Ґ ®Ўа Ў влў Ґ¬
 						idalreadydefined();
 					}
 					else{
@@ -4461,7 +4461,7 @@ dproc2:
 							if(itok.npointr)orm=am32==FALSE?tk_word:tk_dword;
 							npointr=0;
 							nexttok();
-							while(tok==tk_mult){	//указатель на процедуру
+							while(tok==tk_mult){	//гЄ § вҐ«м ­  Їа®жҐ¤гаг
 								npointr++;
 								nexttok();
 							}
@@ -4481,7 +4481,7 @@ dproc2:
 						if(npointr){
 							idrec *nrec;
 							nrec=(bazael+numel)->rec=(idrec *)MALLOC(sizeof(idrec));
-							strcpy(nrec->recid,(bazael+numel)->name);//скопир название
+							strcpy(nrec->recid,(bazael+numel)->name);//бЄ®ЇЁа ­ §ў ­ЁҐ
 							nrec->newid=NULL;
 							nrec->npointr=(unsigned short)npointr;
 							nrec->flag=oflag;
@@ -4506,7 +4506,7 @@ dproc2:
 					}
 					strcpy((bazael+numel)->name,itok.name/*(char *)string*/);
 					if(tok2==tk_openbracket&&utestInitVar==FALSE){
-						if(tok==tk_id)oflag|=(comfile==file_w32?tp_stdcall:tp_pascal);	//тип проц по умолчанию
+						if(tok==tk_id)oflag|=(comfile==file_w32?tp_stdcall:tp_pascal);	//вЁЇ Їа®ж Ї® г¬®«з ­Ёо
 						else oflag=tp_fastcall;
 					}
 //					printf("tok=%d %s\n",tok,itok.name);
@@ -4533,13 +4533,13 @@ dproc:
 								npointr=0;
 							}
 						}
-						skipfind=FALSE;	//разрешить поиск
+						skipfind=FALSE;	//а §аҐиЁвм Ї®ЁбЄ
 						expecting(tk_openbracket);
 						if((oflag&f_typeproc)==tp_fastcall)declareparamreg();
 						else declareparamstack();
 						skipfind=LOCAL;
 						nrec=(bazael+numel)->rec=(idrec *)MALLOC(sizeof(idrec));
-						strcpy(nrec->recid,(bazael+numel)->name);//скопир название
+						strcpy(nrec->recid,(bazael+numel)->name);//бЄ®ЇЁа ­ §ў ­ЁҐ
 						nrec->newid=NULL;
 //						printf("name=%s param=%s\n",nrec->recid,param);
 						if(param[0]!=0)nrec->newid=BackString((char *)param);
@@ -4605,7 +4605,7 @@ endelteg:
 						if((oflag&f_static)){
 							idrec *nrec;
 							nrec=(bazael+numel)->rec=(idrec *)MALLOC(sizeof(idrec));
-							strcpy(nrec->recid,(bazael+numel)->name);//скопир название
+							strcpy(nrec->recid,(bazael+numel)->name);//бЄ®ЇЁа ­ §ў ­ЁҐ
 							nrec->line=linenumber;
 							nrec->file=currentfileinfo;
 							nrec->count=0;
@@ -4631,11 +4631,11 @@ endelteg:
 								nrec->type=tp_ucnovn;
 							}
 							if(tok==tk_assign){
-								skipfind=FALSE;	//разрешить поиск
+								skipfind=FALSE;	//а §аҐиЁвм Ї®ЁбЄ
 								nrec->recpost=0;
 								if(localtok==tk_struct){
-									if(alignword)alignersize+=AlignCD(DS,2);	//выровнять
-									nrec->recnumber=outptrdata;	//адрес начала структуры
+									if(alignword)alignersize+=AlignCD(DS,2);	//ўла®ў­пвм
+									nrec->recnumber=outptrdata;	// ¤аҐб ­ з «  бвагЄвгал
 									i=initstructvar(tteg,numt);
 									if(numt==0){
 										numt=i/tteg->size;
@@ -4665,7 +4665,7 @@ endelteg:
 										break;
 									}
 								}
-								if(alignword){	//выровнять на четный адрес
+								if(alignword){	//ўла®ў­пвм ­  зҐв­л©  ¤аҐб
 									if(postsize%2==1)postsize++;
 									if(tsize==4&&postsize%4!=0)postsize+=2;
 								}
@@ -4685,7 +4685,7 @@ endelteg:
 				}
 				newteg->size=ssize+unionsize;
 			}while(tok==tk_camma);
-			skipfind=FALSE;	//разрешить поиск
+			skipfind=FALSE;	//а §аҐиЁвм Ї®ЁбЄ
 			seminext();
 		}
 	};//while(tok!=tk_closebrace&&tok!=tk_eof);
@@ -4718,7 +4718,7 @@ idrec *nrec;
 			strcpy((bazael+numel)->name,itok.name);
 			strcat((bazael+numel)->name,"~");
 			itok.rec=nrec=(bazael+numel)->rec=(idrec *)MALLOC(sizeof(idrec));
-			strcpy(nrec->recid,itok.name);//скопир название
+			strcpy(nrec->recid,itok.name);//бЄ®ЇЁа ­ §ў ­ЁҐ
 			nrec->newid=NULL;
 			itok.npointr=nrec->npointr=0;
 			itok.rm=nrec->recrm=tk_void;
@@ -4771,7 +4771,7 @@ idrec *nrec;
 	return newteg;
 }
 
-struct structteg * FindTeg(int Global,char *name)	//найти тег
+struct structteg * FindTeg(int Global,char *name)	//­ ©вЁ вҐЈ
 {
 struct structteg *tteg;
 int i;
@@ -4826,7 +4826,7 @@ unsigned int loop=0;
 
 void FillTeg(unsigned long long val,unsigned int numel,struct structteg *tteg)
 /*-----------------03.10.99 00:20-------------------
- заполнить структуру одинаковыми величинами
+ § Ї®«­Ёвм бвагЄвгаг ®¤Ё­ Є®ўл¬Ё ўҐ«ЁзЁ­ ¬Ё
  --------------------------------------------------*/
 {
 struct elementteg *elem=tteg->baza;
@@ -4863,15 +4863,15 @@ unsigned int startstruct;
 
 unsigned int Fill2Teg(unsigned int numel,struct structteg *tteg)
 /*-----------------03.10.99 00:20-------------------
- заполнить структуру величинами
+ § Ї®«­Ёвм бвагЄвгаг ўҐ«ЁзЁ­ ¬Ё
  --------------------------------------------------*/
 {
 unsigned long long hold;
 struct elementteg *elem=tteg->baza;
-unsigned int tnumel=0;	//номер елемента одного типа
-unsigned int ttype=0;	//номер элемента структуры
-unsigned int nums=0;	//номер копии структуры
-unsigned int loop=0;	//заполненый размер
+unsigned int tnumel=0;	//­®¬Ґа Ґ«Ґ¬Ґ­в  ®¤­®Ј® вЁЇ 
+unsigned int ttype=0;	//­®¬Ґа н«Ґ¬Ґ­в  бвагЄвгал
+unsigned int nums=0;	//­®¬Ґа Є®ЇЁЁ бвагЄвгал
+unsigned int loop=0;	//§ Ї®«­Ґ­л© а §¬Ґа
 int type=tokens;
 int bitofs=0;
 unsigned int startstruct=outptrdata;
@@ -5025,25 +5025,25 @@ unsigned int initstructvar(structteg *tteg,int numel)
 {
 unsigned int loop=0;
 	nexttok();
-	switch(tok){	//заполнить величинами
+	switch(tok){	//§ Ї®«­Ёвм ўҐ«ЁзЁ­ ¬Ё
 		case tk_minus:
 		case tk_number:
 			if(numel==0)ZeroMassiv();
 			FillTeg(doconstqwordmath(),numel,tteg);
 			loop=numel*tteg->size;
 			break;
-		case tk_from:	//считать файл с данными
+		case tk_from:	//бзЁв вм д ©« б ¤ ­­л¬Ё
 			nexttok();
 			loop=dofrom();
 			for(;loop<tteg->size*numel;loop++)opd(aligner);
 			nexttok();
 			break;
-		case tk_extract:	//считать фрагмент файла с данными
+		case tk_extract:	//бзЁв вм да Ј¬Ґ­в д ©«  б ¤ ­­л¬Ё
 			nexttok();
 			loop=doextract();
 			for(;loop<tteg->size*numel;loop++)opd(aligner);
 			break;
-		case tk_openbrace:	//массив данных
+		case tk_openbrace:	//¬ ббЁў ¤ ­­ле
 			nexttok();
 			loop=Fill2Teg(numel,tteg);
 			for(;loop<tteg->size*numel;loop++)opd(aligner);
@@ -5060,7 +5060,7 @@ unsigned int loop=0;
 	return loop;
 }
 
-void InitStruct2(unsigned int flag,structteg *tteg)	//инициализировать глобальную структуру
+void InitStruct2(unsigned int flag,structteg *tteg)	//Ё­ЁжЁ «Ё§Ёа®ў вм Ј«®Ў «м­го бвагЄвгаг
 {
 struct idrec *newrec=NULL,*ptr;
 int numel,count;
@@ -5071,22 +5071,22 @@ unsigned int loop;
 //		printf("3 tok=%d %s\n",tok,itok.name);
 		switch(tok){
 			case tk_id:
-			case tk_ID:	//инициализировать структуру
-//выделить память под новую структ
+			case tk_ID:	//Ё­ЁжЁ «Ё§Ёа®ў вм бвагЄвгаг
+//ўл¤Ґ«Ёвм Ї ¬пвм Ї®¤ ­®ўго бвагЄв
 				newrec=(struct idrec *)MALLOC(sizeof(struct idrec));
 
 //				if(strcmp(itok.name,"ccchrg")==0)printf("rec=%08X teg=%08X size=%X %s\n",newrec,tteg,sizeof(idrec),itok.name);
 
-				ptr=((flag&f_static)==0?treestart:staticlist);	//начало дерева
-				if(ptr==NULL)((flag&f_static)==0?treestart:staticlist)=newrec;//начало дерева
-				else{	//поиск строки в дереве
+				ptr=((flag&f_static)==0?treestart:staticlist);	//­ з «® ¤ҐаҐў 
+				if(ptr==NULL)((flag&f_static)==0?treestart:staticlist)=newrec;//­ з «® ¤ҐаҐў 
+				else{	//Ї®ЁбЄ бва®ЄЁ ў ¤ҐаҐўҐ
 					while(((numel=strcmp(ptr->recid,itok.name))<0&&ptr->left!=NULL)||(numel>0&&ptr->right!=NULL)){
 						ptr=(numel<0?ptr->left:ptr->right);
 					}
-					(numel<0?ptr->left:ptr->right)=newrec;	//строка меньше
+					(numel<0?ptr->left:ptr->right)=newrec;	//бва®Є  ¬Ґ­миҐ
 				}
 				newrec->recsib=0;
-				strcpy(newrec->recid,itok.name);//скопир название
+				strcpy(newrec->recid,itok.name);//бЄ®ЇЁа ­ §ў ­ЁҐ
 				newrec->newid=(char *)tteg;
 				newrec->left=NULL;
 				newrec->right=NULL;
@@ -5100,7 +5100,7 @@ unsigned int loop;
 				nexttok();
 				if(tok==tk_openblock){//[
 					nexttok();
-					if(tok!=tk_closeblock)numel=doconstlongmath();	//число элементов
+					if(tok!=tk_closeblock)numel=doconstlongmath();	//зЁб«® н«Ґ¬Ґ­в®ў
 					else numel=0;
 					expecting(tk_closeblock);//]
 				}
@@ -5111,14 +5111,14 @@ unsigned int loop;
 					if(useStartup==TRUE&&tok!=tk_assign&&numel!=0){
 						if(SaveStruct(numel*tteg->size,newrec)==TRUE)break;
 					}
-					if(alignword&&(!dynamic_flag))alignersize+=AlignCD(DS,2);	//выровнять
+					if(alignword&&(!dynamic_flag))alignersize+=AlignCD(DS,2);	//ўла®ў­пвм
 //					NotPostUnion();
 					itok.rec=newrec;
 					if((count=FindOff((unsigned char *)newrec->recid,DS))==0){
 						if(dynamic_flag)dynamic=DYNAMIC_VAR;
 					}
 					else if(dynamic_flag)dynamic=USED_DIN_VAR;
-					newrec->recnumber=(dynamic==0?outptrdata:0);	//адрес начала структуры
+					newrec->recnumber=(dynamic==0?outptrdata:0);	// ¤аҐб ­ з «  бвагЄвгал
 					newrec->recpost=dynamic;
 					if(notpost==TRUE&&tok!=tk_assign){
 						if(numel==0)ZeroMassiv();
@@ -5149,7 +5149,7 @@ unsigned int loop;
 						break;
 					}
 					if(CheckUseAsUndef((unsigned char *)newrec->recid)==0&&dynamic_flag)dynamic=TRUE;
-					switch(tok){	//неинициализированные
+					switch(tok){	//­ҐЁ­ЁжЁ «Ё§Ёа®ў ­­лҐ
 						default: expected(';');
 						case tk_semicolon: done=1;//	;
 						case tk_camma:	 //, post global type
@@ -5163,7 +5163,7 @@ unsigned int loop;
 							newrec->recpost=dynamic+1;
 							loop=numel*tteg->size;
 							if((flag&f_extern)==0&&dynamic==0){
-								if(alignword){	//выровнять на четный адрес
+								if(alignword){	//ўла®ў­пвм ­  зҐв­л©  ¤аҐб
 									if(postsize%2==1)postsize++;
 								}
 								newrec->recnumber=postsize;
@@ -5172,7 +5172,7 @@ unsigned int loop;
 							count=FindOff((unsigned char *)newrec->recid,VARPOST);
 							if((flag&f_extern)==0&&dynamic==0)
 									/*-----------------10.09.02 23:21-------------------
-									 этот вызов должен быть после FindOff
+									 нв®в ўл§®ў ¤®«¦Ґ­ Ўлвм Ї®б«Ґ FindOff
 										--------------------------------------------------*/
 									AddPostData(loop);
 							nexttok();
@@ -5202,7 +5202,7 @@ unsigned int loop;
 	dopoststrings();
 }
 
-void InitStruct()	//инициализировать глобальную структуру
+void InitStruct()	//Ё­ЁжЁ «Ё§Ёа®ў вм Ј«®Ў «м­го бвагЄвгаг
 {
 struct structteg *tteg;
 unsigned int flag;
@@ -5226,7 +5226,7 @@ unsigned int flag;
 	tteg=FindTeg(TRUE);
 	if(tteg==NULL){
 		if(tok==tk_openbrace||tok2==tk_openbrace||tok==tk_colon||tok2==tk_colon)
-				tteg=CreatTeg(TRUE);	//найти или создать тег
+				tteg=CreatTeg(TRUE);	//­ ©вЁ Ё«Ё б®§¤ вм вҐЈ
 		else{
 			while(tok!=tk_semicolon&&tok!=tk_eof)nexttok();
 			tegnotfound();
@@ -5240,12 +5240,12 @@ unsigned int flag;
 	InitStruct2(flag,tteg);
 }
 
-unsigned long LocalStruct2(int flag,int *localline,int binptr,char bcha,structteg *tteg)	//инициализировать локальную структуру
+unsigned long LocalStruct2(int flag,int *localline,int binptr,char bcha,structteg *tteg)	//Ё­ЁжЁ «Ё§Ёа®ў вм «®Є «м­го бвагЄвгаг
 {
 int numel,first=FALSE;
 struct localrec *newrec;
 unsigned long size=0;
-	skipfind=TRUE;	//запретить искать в глобальном дереве
+	skipfind=TRUE;	//§ ЇаҐвЁвм ЁбЄ вм ў Ј«®Ў «м­®¬ ¤ҐаҐўҐ
 	do{
 		if(first!=FALSE){
 			binptr=inptr2;
@@ -5254,7 +5254,7 @@ unsigned long size=0;
 		}
 		first=TRUE;
 		if(tok!=tk_ID&&tok!=tk_id)idalreadydefined();
-		else{	//инициализировать структуру
+		else{	//Ё­ЁжЁ «Ё§Ёа®ў вм бвагЄвгаг
 			numel=1;
 			newrec=addlocalvar((char *)string,tk_structvar,localsize);
 			newrec->rec.newid=(char *)tteg;
@@ -5264,7 +5264,7 @@ unsigned long size=0;
 			if(tok==tk_openblock){//[
 				skipfind=FALSE;
 				nexttok();
-				numel=doconstlongmath();	//число элементов
+				numel=doconstlongmath();	//зЁб«® н«Ґ¬Ґ­в®ў
 				skipfind=TRUE;
 				expecting(tk_closeblock);//]
 			}
@@ -5287,7 +5287,7 @@ unsigned long size=0;
 				}
 				else{
 					newrec->rec.recpost=TRUE;
-					if(alignword){	//выровнять на четный адрес
+					if(alignword){	//ўла®ў­пвм ­  зҐв­л©  ¤аҐб
 						if(postsize%2==1)postsize++;
 					}
 					newrec->rec.recnumber=postsize;
@@ -5308,14 +5308,14 @@ unsigned long size=0;
 		}
 		localsize+=size;
 	}while(tok==tk_camma);
-	skipfind=FALSE;	//запретить искать в глобальном дереве
+	skipfind=FALSE;	//§ ЇаҐвЁвм ЁбЄ вм ў Ј«®Ў «м­®¬ ¤ҐаҐўҐ
 //	localsize+=size;
 	itok.name[0]=0;
 	seminext();
 	return size;
 }
 
-unsigned long LocalStruct(int flag,int *localline)	//инициализировать локальную структуру
+unsigned long LocalStruct(int flag,int *localline)	//Ё­ЁжЁ «Ё§Ёа®ў вм «®Є «м­го бвагЄвгаг
 {
 struct structteg *tteg;
 int binptr;
@@ -5323,14 +5323,14 @@ char bcha;
 structteg *osearchteg;
 	osearchteg=searchteg;
 	searchteg=NULL;
-	skipfind=TRUE;	//запретить искать в глобальном дереве
+	skipfind=TRUE;	//§ ЇаҐвЁвм ЁбЄ вм ў Ј«®Ў «м­®¬ ¤ҐаҐўҐ
 	if(tok==tk_struct)nexttok();
 	binptr=inptr2;
 	bcha=cha2;
 	if((tteg=FindTeg(FALSE))==NULL&&(tteg=FindTeg(TRUE))==NULL){
 		skipfind=FALSE;
 		if(tok==tk_openbrace||tok2==tk_openbrace){
-			tteg=CreatTeg(FALSE);	//найти или создать тег
+			tteg=CreatTeg(FALSE);	//­ ©вЁ Ё«Ё б®§¤ вм вҐЈ
 		}
 		else{
 			while(tok!=tk_semicolon&&tok!=tk_eof)nexttok();
@@ -5394,7 +5394,7 @@ struct idrec *ptrs;
 				}
 				else{
 					itok.segm=DS;
-					itok.rm=(am32==FALSE?rm_d16:rm_d32);	//установки по умолчанию
+					itok.rm=(am32==FALSE?rm_d16:rm_d32);	//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 					itok.post=ptrs->recpost;
 				}
 				itok.sib=(am32==FALSE?CODE16:CODE32);
@@ -5425,8 +5425,8 @@ struct idrec *ptrs;
 		}
 	}
 	adr=itok.number;
-	numel=itok.rm;	//число структур
-	usenumstr=itok.post;	//было указание номера структуры
+	numel=itok.rm;	//зЁб«® бвагЄвга
+	usenumstr=itok.post;	//Ўл«® гЄ § ­ЁҐ ­®¬Ґа  бвагЄвгал
 	if(itok.type==tp_classvar){
 		tteg=(structteg *)itok.rec;
 		poststr=0;
@@ -5446,7 +5446,7 @@ struct idrec *ptrs;
 	nexttok();
 	if(tok==tk_assign){
 		getoperand();
-int starts=0;	//смещение заполнения в структуре
+int starts=0;	//б¬ҐйҐ­ЁҐ § Ї®«­Ґ­Ёп ў бвагЄвгаҐ
 		if(tok==tk_int||tok==tk_word){
 			sized=2;
 			getoperand();
@@ -5534,7 +5534,7 @@ convr:
 					}
 				}
 				if(usenumstr!=FALSE){
-//					num/=ptrs->recrm;	//указан номер структуры - значит не все
+//					num/=ptrs->recrm;	//гЄ § ­ ­®¬Ґа бвагЄвгал - §­ зЁв ­Ґ ўбҐ
 					num=tteg->size;
 					if(strinf.bufstr==NULL)starts=num*numel;
 				}
@@ -5554,7 +5554,7 @@ convr:
 					if(itok.number<256)sized=1;
 				}
 				if(usenumstr!=FALSE){
-//					num/=ptrs->recrm;	//указан номер структуры - значит не все
+//					num/=ptrs->recrm;	//гЄ § ­ ­®¬Ґа бвагЄвгал - §­ зЁв ­Ґ ўбҐ
 					num=tteg->size;
 					if(strinf.bufstr==NULL)starts=num*numel;
 				}
@@ -5640,7 +5640,7 @@ fillstr:
 					}
 					itok.post=poststr;
 					itok.segm=DS;
-					itok.rm=(am32==FALSE?rm_d16:rm_d32);	//установки по умолчанию
+					itok.rm=(am32==FALSE?rm_d16:rm_d32);	//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 					itok.rec=NULL;//ptrs;
 					if(rstr.bufstr==NULL){
 						if(itok.post!=0)tok=tk_postnumber;
@@ -5735,8 +5735,8 @@ int flagstr2;
 //	adr=itok.number;
 
 				localstr2=FALSE;
-				numel2=itok.rm;	//число структур
-				usenumstr2=itok.post;	//было указание номера структуры
+				numel2=itok.rm;	//зЁб«® бвагЄвга
+				usenumstr2=itok.post;	//Ўл«® гЄ § ­ЁҐ ­®¬Ґа  бвагЄвгал
 				if(itok.type==tp_classvar){
 					tteg2=(structteg *)itok.rec;
 					poststr2=0;
@@ -5753,13 +5753,13 @@ struct idrec *ptrs;
 				num2=itok.size;
 //				ptrs2=itok.rec;
 //				tteg2=(structteg *)ptrs2->newid;
-//				numel2=itok.rm;	//число структур
+//				numel2=itok.rm;	//зЁб«® бвагЄвга
 //				num2=tteg2->size;
 				if(usenumstr2!=FALSE){
 					num2=tteg->size;
 					if(strinf.bufstr==NULL)starts=num2*numel2;
 				}
-//				if(itok.post==FALSE)num2*=ptrs2->recrm;	//не указан номер структуры - значит все
+//				if(itok.post==FALSE)num2*=ptrs2->recrm;	//­Ґ гЄ § ­ ­®¬Ґа бвагЄвгал - §­ зЁв ўбҐ
 //				else if(strinf.bufstr==NULL)starts=num2*numel2;
 				if(strinf.bufstr==NULL)itok.number+=starts;
 				itok.sib=(am32==FALSE?CODE16:CODE32);
@@ -5792,7 +5792,7 @@ struct idrec *ptrs;
 				}
 				else{
 					itok.post=poststr2;
-					itok.rm=(am32==FALSE?rm_d16:rm_d32);	//22.11.04 09:22//установки по умолчанию
+					itok.rm=(am32==FALSE?rm_d16:rm_d32);	//22.11.04 09:22//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 					if(strinf.bufstr==NULL){
 						if(itok.post==TRUE)tok=tk_postnumber;
 						else tok=tk_number;
@@ -5814,7 +5814,7 @@ struct idrec *ptrs;
 				ClearReg(SI);
 				num=tteg->size;
 				starts=0;
-				if(usenumstr==FALSE)num*=tteg->size;	//ptrs->recrm;	//не указан номер структуры - значит все
+				if(usenumstr==FALSE)num*=tteg->size;	//ptrs->recrm;	//­Ґ гЄ § ­ ­®¬Ґа бвагЄвгал - §­ зЁв ўбҐ
 				else if(rstr.bufstr==NULL)starts=num*numel;
 				itok.number=adr;//ptrs->recnumber;
 				if(rstr.bufstr==NULL)itok.number+=starts;
@@ -5839,7 +5839,7 @@ struct idrec *ptrs;
 				else{
 					itok.post=poststr;//ptrs->recpost;
 					itok.segm=DS;
-					itok.rm=(am32==FALSE?rm_d16:rm_d32);	//установки по умолчанию
+					itok.rm=(am32==FALSE?rm_d16:rm_d32);	//гбв ­®ўЄЁ Ї® г¬®«з ­Ёо
 					if(rstr.bufstr==NULL){
 						if(itok.post==TRUE)tok=tk_postnumber;
 						else tok=tk_number;
@@ -5915,12 +5915,12 @@ int SaveStruct(int size,idrec *newrec)
 {
 int i=0;
 	if((startStartup+size)<endStartup){
-		if(alignword){	//выровнять на четный адрес
+		if(alignword){	//ўла®ў­пвм ­  зҐв­л©  ¤аҐб
 			if(startStartup%2==1)i=1;
 		}
 		if((startStartup+size+i)<=endStartup){
 			startStartup+=i;
-			newrec->recnumber=startStartup;	//адрес начала структуры
+			newrec->recnumber=startStartup;	// ¤аҐб ­ з «  бвагЄвгал
 			newrec->recpost=FALSE;
 			startStartup+=size;
 			return TRUE;
@@ -5943,8 +5943,8 @@ int useme;
 int next=1;
 	*tok4=tokens;
 	itok4->type=tp_ucnovn;
-	whitespace(); //пропуск незначащих символов
-	if(isalpha(cha)||(cha=='_')||cha>=0x80){	//идентификатор
+	whitespace(); //Їа®ЇгбЄ ­Ґ§­ з йЁе бЁ¬ў®«®ў
+	if(isalpha(cha)||(cha=='_')||cha>=0x80){	//Ё¤Ґ­вЁдЁЄ в®а
 		if(mode==1){
 			int i=0;
 			do{
@@ -5954,11 +5954,11 @@ int next=1;
 			if(i==IDLENGTH)i--;
 			itok4->name[i]=0;
 		}
-		while(CheckChar2()==TRUE)nextchar();	//дочитать слово
+		while(CheckChar2()==TRUE)nextchar();	//¤®зЁв вм б«®ў®
 		*tok4=tk_id;
 		return;
 	}
-	if(isdigit(cha)){//числа
+	if(isdigit(cha)){//зЁб« 
 		if(mode==1){
 			inptr--;
 			itok4->lnumber=scannumber(&itok4->rm);
@@ -5973,14 +5973,14 @@ int next=1;
 	}
 	else switch(cha){
 		case '\"':
-			nextchar();	//строковая константа
+			nextchar();	//бва®Є®ў п Є®­бв ­в 
 			while(cha!='\"'&&!endoffile){
 				convert_char();
 				nextchar();
 			}
 			*tok4=tk_string;
 			break;
-		case '\'': //символьная константа может иметь более 1 символа
+		case '\'': //бЁ¬ў®«м­ п Є®­бв ­в  ¬®¦Ґв Ё¬Ґвм Ў®«ҐҐ 1 бЁ¬ў®« 
 			nextchar();
 			while(cha!='\''&&!endoffile){  // special character
 				convert_char();
@@ -5989,7 +5989,7 @@ int next=1;
 			break;
 		case '/': nextchar();
 			switch(cha){
-				case '*': nextchar(); //соментарий
+				case '*': nextchar(); //б®¬Ґ­в аЁ©
 					useme=1;
 					if(mode==2)itok4->number=inptr-2;
 					while(!endoffile&&useme>0){
@@ -6014,7 +6014,7 @@ int next=1;
 					if(mode==2)itok4->number=inptr-2;
 					do{
 						nextchar();
-					}while(!endoffile&&cha!=13);	//строка коментария
+					}while(!endoffile&&cha!=13);	//бва®Є  Є®¬Ґ­в аЁп
 					if(endoffile)*tok4=tk_eof;
 					if(mode==2)*tok4=tk_comment1;
 					else FastTok(mode,tok4,itok4);
@@ -6068,7 +6068,7 @@ int next=1;
 				itok4->type=tp_compare;
 			}
 			else{
-				*tok4=tk_assign;						 //присвоить
+				*tok4=tk_assign;						 //ЇаЁбў®Ёвм
 				next=0;
 			}
 			break;
@@ -6077,16 +6077,16 @@ int next=1;
 			switch(cha){
 				case '>':
 					nextchar();
-					if(cha=='=')*tok4=tk_rrequals; //сдвиг вправо с присвоением
+					if(cha=='=')*tok4=tk_rrequals; //б¤ўЁЈ ўЇа ў® б ЇаЁбў®Ґ­ЁҐ¬
 					else{
-						*tok4=tk_rr;							//сдвиг вправо
+						*tok4=tk_rr;							//б¤ўЁЈ ўЇа ў®
 						next=0;
 						itok4->type=tp_opperand;
 					}
 					break;
-				case '<': *tok4=tk_swap; break; 			 //обмен
-				case '=': *tok4=tk_greaterequal; itok4->type=tp_compare; break; //больше или равно
-				default: *tok4=tk_greater; next=0; itok4->type=tp_compare; break; //больше
+				case '<': *tok4=tk_swap; break; 			 //®Ў¬Ґ­
+				case '=': *tok4=tk_greaterequal; itok4->type=tp_compare; break; //Ў®«миҐ Ё«Ё а ў­®
+				default: *tok4=tk_greater; next=0; itok4->type=tp_compare; break; //Ў®«миҐ
 			}
 			break;
 		case '<':
@@ -6094,16 +6094,16 @@ int next=1;
 			switch(cha){
 				case '<':
 					nextchar();
-					if(cha=='=')*tok4=tk_llequals;	 //сдвиг влево с присвоением
+					if(cha=='=')*tok4=tk_llequals;	 //б¤ўЁЈ ў«Ґў® б ЇаЁбў®Ґ­ЁҐ¬
 					else{
-						*tok4=tk_ll;								 //сдвиг влево
+						*tok4=tk_ll;								 //б¤ўЁЈ ў«Ґў®
 						next=0;
 						itok4->type=tp_opperand;
 					}
 					break;
 				case '>': *tok4=tk_notequal; itok4->type=tp_compare; break;  //!=
-				case '=': *tok4=tk_lessequal; itok4->type=tp_compare; break; //меньше или равно
-				default: *tok4=tk_less; next=0; itok4->type=tp_compare; break;//меньше
+				case '=': *tok4=tk_lessequal; itok4->type=tp_compare; break; //¬Ґ­миҐ Ё«Ё а ў­®
+				default: *tok4=tk_less; next=0; itok4->type=tp_compare; break;//¬Ґ­миҐ
 			}
 			break;
 	}
@@ -6111,7 +6111,7 @@ int next=1;
 }
 
 void FindDirectiv()
-//ускоренный поиск директивы
+//гбЄ®аҐ­­л© Ї®ЁбЄ ¤ЁаҐЄвЁўл
 {
 	inptr=inptr2;
 	cha=cha2;
@@ -6271,7 +6271,7 @@ int number,tok,rm;
 			itok4->sib=rm|rm_mod10;
 			itok4->flag&=~f_reloc;
 		}
-		else if(*tok4!=tk_proc&&*tok4!=tk_declare/*&&(itok4->flag&f_static)==0 эффект добавления регристра*/){
+		else if(*tok4!=tk_proc&&*tok4!=tk_declare/*&&(itok4->flag&f_static)==0 нддҐЄв ¤®Ў ў«Ґ­Ёп аҐЈаЁбва */){
 			itok4->rm=rm_mod10|rm;
 			itok4->flag&=~f_reloc;
 		}

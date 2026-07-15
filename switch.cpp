@@ -2,12 +2,12 @@
 
 #include "tok.h"
 
-extern int lastcommand;	//последний оператор в блоке
+extern int lastcommand;	//Ї®б«Ґ¤­Ё© ®ЇҐа в®а ў Ў«®ЄҐ
 
 #define MAXCASE 1024
 
-FSWI *swtables;	//таблица информаций об switch
-int numswtable=0;	//число блоков в этой таблице
+FSWI *swtables;	//в Ў«Ёж  Ё­д®а¬ жЁ© ®Ў switch
+int numswtable=0;	//зЁб«® Ў«®Є®ў ў нв®© в Ў«ЁжҐ
 char mesSWITCH[]="SWITCH";
 char mesCASE[]="CASE";
 int numexpandcase;
@@ -173,7 +173,7 @@ int retcode=TRUE;
 			}
 		}
 	}
-	if(retcode){	//если не найдено ошибок
+	if(retcode){	//Ґб«Ё ­Ґ ­ ©¤Ґ­® ®иЁЎ®Є
 		tok=dtok;
 		itok=otok;
 		linenum2=line;
@@ -213,7 +213,7 @@ int numrm;
 int nonum;
 #endif
 	useinline=0;
-	caseinf=(ISW *)MALLOC(sizeof(ISW)*MAXCASE);	//блок для инфо о case
+	caseinf=(ISW *)MALLOC(sizeof(ISW)*MAXCASE);	//Ў«®Є ¤«п Ё­д® ® case
 	numexpandcase=0;
 	uptdbr(/*TRUE*/);
 	getoperand();
@@ -292,7 +292,7 @@ qword:
 #endif
 	if(ScanSwitch(&numcase,caseinf,startmod)){
 int i;
-unsigned int sizetab;	//размер таблицы
+unsigned int sizetab;	//а §¬Ґа в Ў«Ёжл
 unsigned long min=0xffffffff,max=0;
 unsigned int size0=0,size1;
 int reg0=0,svop=0;
@@ -304,9 +304,9 @@ unsigned oaddESP=addESP;
 				if((am32==FALSE&&tokr==r32)||(am32&&tokr==r16))size0=numcase;
 				else if(tokr==r8)size0=numcase*2;
 				if((tok==tk_beg||tok==tk_reg||tok==tk_reg32)&&tok2==tk_closebracket)
-					reg0=itok.number;	//предполагаемый регистр метода 0
+					reg0=itok.number;	//ЇаҐ¤Ї®« Ј Ґ¬л© аҐЈЁбва ¬Ґв®¤  0
 			}
-			for(i=0;i<numcase;i++){	//расчет размера по методу 0
+			for(i=0;i<numcase;i++){	//а бзҐв а §¬Ґа  Ї® ¬Ґв®¤г 0
 				if((caseinf+i)->value>max)max=(caseinf+i)->value;
 				if((caseinf+i)->value<min)min=(caseinf+i)->value;
 				if((long) (caseinf+i)->value>smax)smax=(caseinf+i)->value;
@@ -333,17 +333,17 @@ unsigned oaddESP=addESP;
 				smin=min;
 				max-=min;
 			}
-			sizetab=max+1;	//размер таблицы для метода 1
+			sizetab=max+1;	//а §¬Ґа в Ў«Ёжл ¤«п ¬Ґв®¤  1
 			if(sizetab<0x1000000&&(!(am32==FALSE&&tokr==r32))){
 				if(optimizespeed){
 					if((unsigned int)(sizetab/numcase)<(unsigned int)(am32==FALSE?3:4)){
 						mode=1;
 						if(am32==FALSE)reg=BX;
-					/* если отношение числа элементов в таблице к числу case менее
-					 3 для 16-битного режима и 4 для 32-битного, то берется метод 1 */
+					/* Ґб«Ё ®в­®иҐ­ЁҐ зЁб«  н«Ґ¬Ґ­в®ў ў в Ў«ЁжҐ Є зЁб«г case ¬Ґ­ҐҐ
+					 3 ¤«п 16-ЎЁв­®Ј® аҐ¦Ё¬  Ё 4 ¤«п 32-ЎЁв­®Ј®, в® ЎҐаҐвбп ¬Ґв®¤ 1 */
 					}
 				}
-				else{	//вычислить размер для оптимизации по размеру
+				else{	//ўлзЁб«Ёвм а §¬Ґа ¤«п ®ЇвЁ¬Ё§ жЁЁ Ї® а §¬Ґаг
 					if(shortjmp)size0+=2;
 					else size0+=(am32==FALSE?(chip<3?5:4):6);
 					size1=sizetab*(am32==FALSE?2:4);
@@ -366,7 +366,7 @@ unsigned oaddESP=addESP;
 					else{
 						if(reg0!=BX)size1+=2;
 					}
-				//выбор метода с меньшим размером
+				//ўлЎ®а ¬Ґв®¤  б ¬Ґ­миЁ¬ а §¬Ґа®¬
 					if(size1<=size0){
 						mode=1;
 						size0=size1;
@@ -377,7 +377,7 @@ unsigned oaddESP=addESP;
 			}
 		}
 		if(numcase>9&&(!optimizespeed)){
-// расчет метода 2
+// а бзҐв ¬Ґв®¤  2
 			size2=numcase+numexpandcase;
 			switch(tokr){
 				case r8:
@@ -394,7 +394,7 @@ unsigned oaddESP=addESP;
 					break;
 			}
 			size2+=29;
-			//выбор метода с меньшим размером
+			//ўлЎ®а ¬Ґв®¤  б ¬Ґ­миЁ¬ а §¬Ґа®¬
 			if(size2<=size0)mode=2;
 		}
 //		printf("Num CASE %d Metod 0 size=%d. Metod 1 size=%d. Metod 2 size=%d\n",numcase,size0,size1,size2);
@@ -445,9 +445,9 @@ unsigned oaddESP=addESP;
 				}
 			}
 		}
-		nextexpecting2(tk_openbrace);	//пров на откр скобку
+		nextexpecting2(tk_openbrace);	//Їа®ў ­  ®вЄа бЄ®ЎЄг
 		if(numcase){
-			if(mode==1){	//первый метод
+			if(mode==1){	//ЇҐаўл© ¬Ґв®¤
 				if(min!=0){
 					if(min==1)op(0x48+reg-svop);	//dec reg
 					else if(min==2&&(!optimizespeed)){
@@ -497,7 +497,7 @@ unsigned oaddESP=addESP;
 					op(0x77);
 					op(0);
 				}
-				endsw=outptr;	//адрес конца switch или default
+				endsw=outptr;	// ¤аҐб Є®­ж  switch Ё«Ё default
 				if(am32){
 					outword(0x24FF);
 					op(0x85+reg*8);
@@ -510,7 +510,7 @@ unsigned oaddESP=addESP;
 			}
 			else if(mode==0){
 				svop=numcase;
-				for(;numcase>0;){	//ветвление
+				for(;numcase>0;){	//ўҐвў«Ґ­ЁҐ
 					numcase--;
 					CmpRegNum(tokr,(caseinf+numcase)->value,reg);
 					if((caseinf+numcase)->type==singlcase){
@@ -538,7 +538,7 @@ unsigned oaddESP=addESP;
 								if(am32)outword(0);
 							}
 							else outword(0x75);
-							endsw=outptr;	//адрес конца switch или default
+							endsw=outptr;	// ¤аҐб Є®­ж  switch Ё«Ё default
 						}
 					}
 					else{	//case 1...5
@@ -615,7 +615,7 @@ unsigned oaddESP=addESP;
 									outword(0x72);
 								}
 							}
-							endsw=outptr;	//адрес конца switch или default
+							endsw=outptr;	// ¤аҐб Є®­ж  switch Ё«Ё default
 						}
 					}
 				}
@@ -640,7 +640,7 @@ unsigned oaddESP=addESP;
 					op(0x59);	//pop cx
 					if(shortjmp==FALSE)jumploc0();
 					else outword(0xEB);
-					endsw=outptr;	//адрес конца switch или default
+					endsw=outptr;	// ¤аҐб Є®­ж  switch Ё«Ё default
 					op(0xBF);	//mov DI,numcase
 					outword(numcase+numexpandcase);
 					outdword(0x014FCF29);	//sub di,cx dec di add di,di
@@ -685,7 +685,7 @@ unsigned oaddESP=addESP;
 					else op(tokr==r16?0xE9:0xEA);
 					if(shortjmp==FALSE)jumploc0();
 					else outword(0xEB);
-					endsw=outptr;	//адрес конца switch или default
+					endsw=outptr;	// ¤аҐб Є®­ж  switch Ё«Ё default
 				}
 			}
 		}
@@ -695,7 +695,7 @@ unsigned oaddESP=addESP;
 		changeregstat=BakRegStat();
 		lastcommand=tk_switch;
 		do{
-			if(tok==tk_case||tok==tk_CASE||tok==tk_default){     //если case - запомнить позицию и величину
+			if(tok==tk_case||tok==tk_CASE||tok==tk_default){     //Ґб«Ё case - § Ї®¬­Ёвм Ї®§ЁжЁо Ё ўҐ«ЁзЁ­г
 				RestoreStack();
 				CompareRegStat(changeregstat);
 				switch(lastcommand){
@@ -720,20 +720,20 @@ unsigned oaddESP=addESP;
 						if(ESPloc&&am32&&oaddESP!=addESP)warESP();
 						break;
 				}
-				if(tok==tk_default){	//тоже для default
+				if(tok==tk_default){	//в®¦Ґ ¤«п default
 					if(mode==0&&svop){
-						if(numcase==0)jumploc0();	//default самый первый
+						if(numcase==0)jumploc0();	//default б ¬л© ЇҐаўл©
 						CheckJmpSW(sline,endsw,outptr,shortjmp,mesSWITCH);
 						if(endsw2)CheckJmpSW(sline,endsw2,outptr,shortjmp,mesSWITCH);
 					}
 					if(defaul)preerror("Duplicate 'default'");
 					defaul=outptr;
 					nexttok();
-					expecting(tk_colon);	//пров на : и чтение следующ tok
+					expecting(tk_colon);	//Їа®ў ­  : Ё звҐ­ЁҐ б«Ґ¤гой tok
 					continue;
 				}
 				if(mode==0){
-					if(numcase==0&&defaul){	//default самый первый
+					if(numcase==0&&defaul){	//default б ¬л© ЇҐаўл©
 						if(am32==FALSE)*(unsigned short *)&output[defaul-2]=(unsigned short)(outptr-defaul);
 						else *(unsigned long *)&output[defaul-4]=(unsigned long)(outptr-defaul);
 					}
@@ -758,7 +758,7 @@ unsigned oaddESP=addESP;
 #ifdef OPTVARCONST
 				else if(swvar&&nonum==FALSE)Const2Var(&otok,numbervar,numrm);
 #endif
-				expecting(tk_colon);	//пров на : и чтение следующ tok
+				expecting(tk_colon);	//Їа®ў ­  : Ё звҐ­ЁҐ б«Ґ¤гой tok
 				if(tok==tk_closebrace)numcase--;
 				continue;//goto checkcase;
 			}
@@ -781,7 +781,7 @@ unsigned oaddESP=addESP;
 		}
 		if(defaul&&outptr<defaul){
 			if(mode==0&&svop){
-				if(numcase==0)jumploc0();	//default самый первый
+				if(numcase==0)jumploc0();	//default б ¬л© ЇҐаўл©
 				CheckJmpSW(sline,endsw,outptr,shortjmp,mesSWITCH);
 				if(endsw2)CheckJmpSW(sline,endsw2,outptr,shortjmp,mesSWITCH);
 			}

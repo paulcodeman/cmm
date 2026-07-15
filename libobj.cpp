@@ -16,7 +16,7 @@ enum{
 };
 
 struct LISTNAMESYMBOL{
-	int idx;	//индекс имени
+	int idx;	//Ё­¤ҐЄб Ё¬Ґ­Ё
 	int seg;
 	int adr;
 	idrec *rec;
@@ -151,7 +151,7 @@ long flag;
 		flag=obj->flags;
 		align=GetAlighSize(flag);
 		obj->vsize=-1;
-		if((flag&IMAGE_SCN_CNT_CODE)&&(flag&IMAGE_SCN_MEM_EXECUTE)){//секция кода
+		if((flag&IMAGE_SCN_CNT_CODE)&&(flag&IMAGE_SCN_MEM_EXECUTE)){//бҐЄжЁп Є®¤ 
 			obj->vsize=s_code;
 			obj->sectionRVA=poutptr=Align(poutptr,align);
 			poutptr+=obj->psize;
@@ -159,13 +159,13 @@ long flag;
 		}
 		else{
 			if((flag&IMAGE_SCN_MEM_READ)&&(flag&IMAGE_SCN_MEM_WRITE)){
-				if(flag&IMAGE_SCN_CNT_INITIALIZED_DATA){	//секция инициализированных данных
+				if(flag&IMAGE_SCN_CNT_INITIALIZED_DATA){	//бҐЄжЁп Ё­ЁжЁ «Ё§Ёа®ў ­­ле ¤ ­­ле
 					obj->vsize=s_data;
 					obj->sectionRVA=poutptrdata=Align(poutptrdata,align);
 					poutptrdata+=obj->psize;
 					if(splitdata==FALSE)poutptr=poutptrdata;
 				}
-				else if(flag&IMAGE_SCN_CNT_UNINITIALIZED_DATA){	//секция bss
+				else if(flag&IMAGE_SCN_CNT_UNINITIALIZED_DATA){	//бҐЄжЁп bss
 					obj->vsize=s_bss;
 					obj->sectionRVA=ppostsize=Align(postsize,align);
 					postsize+=obj->psize;
@@ -255,7 +255,7 @@ idrec *rec;
 				strncpy((char *)string,(char *)tsym->N.sname,8);
 				string[8]=0;
 			}
-			//преобразовать имя
+			//ЇаҐ®Ўа §®ў вм Ё¬п
 			ConvertName((char *)string);
 			seg=(listnamesymbol+j)->seg=GetSegm(tsym->SectionNumber);
 //			printf("find name \"%s\" seg=%d type=%d class=%d\n",(char *)string,seg,tsym->Type,tsym->StorageClass);
@@ -290,7 +290,7 @@ idrec *rec;
 //				printf("tok=%d %s\n",tok,itok.name);
 			}
 			else{
-				if(seg==s_extern/*&&tsym->Type==32*/){	//внешний объект любого типа
+				if(seg==s_extern/*&&tsym->Type==32*/){	//ў­Ґи­Ё© ®ЎкҐЄв «оЎ®Ј® вЁЇ 
 					strcpy(itok.name,(char *)string);
 //					printf("undef proc \"%s\"\n",itok.name);
 					string[0]=0;

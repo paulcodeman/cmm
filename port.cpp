@@ -89,7 +89,7 @@ bool CharToOemA(char* a, char* b)
   return true;
 }
 
-//ёЄЁюър-Ёхчєы№ЄрЄ эх шёяюы№чєхЄё 
+//строка-результат не используется
 int MultiByteToWideChar( 
     unsigned int CodePage,	// code page 
     unsigned int dwFlags,	// character-type options 
