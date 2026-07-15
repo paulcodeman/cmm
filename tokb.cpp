@@ -7340,6 +7340,12 @@ fold_done:
 
 						strinf.bufstr=NULL;
 
+						if(hsavedtok==tk_number){
+
+							MovRegNum(razr,i&f_reloc,hsaveditok.number,EAX);
+
+						}else
+
 						getinto_e_ax(sign,hsavedtok,&hsaveditok,hsavedbuf,&hsavedstr,razr);
 
 						next=1;
