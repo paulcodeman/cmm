@@ -2208,6 +2208,16 @@ int otok,oinptr,deistv,negflag,starttok;
 
 char ocha2;
 
+int oinptr_tok;
+
+char ocha_tok;
+
+int otok2_save;
+
+ITOK oitok2_save;
+
+ITOK oitok_save;
+
 long long val;
 
 unsigned int flag,oflag;
@@ -2228,7 +2238,17 @@ int plusreloc=0;
 
 	oinptr=inptr2;
 
+	oinptr_tok=inptr;
+
+	ocha_tok=cha;
+
 	ocha2=cha2;
+
+	otok2_save=tok2;
+
+	oitok2_save=itok2;
+
+	oitok_save=itok;
 
 	nexttok();
 
@@ -2257,6 +2277,16 @@ int plusreloc=0;
 					cha2=ocha2;
 
 					inptr2=oinptr;
+
+					inptr=oinptr_tok;
+
+					cha=ocha_tok;
+
+					tok2=otok2_save;
+
+					itok2=oitok2_save;
+
+					itok=oitok_save;
 
 					endoffile=0;
 
@@ -2341,6 +2371,16 @@ LL1:
 					cha2=ocha2;
 
 					inptr2=oinptr;
+
+					inptr=oinptr_tok;
+
+					cha=ocha_tok;
+
+					tok2=otok2_save;
+
+					itok2=oitok2_save;
+
+					itok=oitok_save;
 
 					endoffile=0;
 
@@ -7184,11 +7224,29 @@ unsigned char oaddstack;
 
 				   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
 
-					if(tok==tk_number){
+					int fold_ok=(tok==tk_number);
+
+					if(fold_ok){
 
 						unsigned long long hval=itok.lnumber;
 
 						unsigned int hflag=itok.flag;
+
+						unsigned long fold_inptr=inptr;
+
+						unsigned long fold_inptr2=inptr2;
+
+						unsigned char fold_cha=cha;
+
+						unsigned char fold_cha2=cha2;
+
+						int fold_tok=tok;
+
+						int fold_tok2=tok2;
+
+						ITOK fold_itok=itok;
+
+						ITOK fold_itok2=itok2;
 
 						while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
 
@@ -7208,7 +7266,21 @@ unsigned char oaddstack;
 
 							nexttok();
 
-							if(tok!=tk_number)break;
+							if(tok!=tk_number){
+
+								inptr=fold_inptr; inptr2=fold_inptr2;
+
+								cha=fold_cha; cha2=fold_cha2;
+
+								tok=fold_tok; tok2=fold_tok2;
+
+								itok=fold_itok; itok2=fold_itok2;
+
+								fold_ok=0;
+
+								goto fold_done;
+
+							}
 
 							long long opval=itok.lnumber;
 
@@ -7246,7 +7318,7 @@ fold_done:
 
 					}
 
-					else{
+					if(!fold_ok){
 
 						int hsavedtok=tok;
 

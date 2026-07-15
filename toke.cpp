@@ -488,6 +488,28 @@ unsigned int htok;
 
 int fundef;
 
+unsigned int saved_inptr;
+
+unsigned int saved_inptr2;
+
+unsigned char saved_cha;
+
+unsigned char saved_cha2;
+
+unsigned int saved_linenumber;
+
+unsigned int saved_linenum2;
+
+int saved_tok;
+
+int saved_tok2;
+
+ITOK saved_itok;
+
+ITOK saved_itok2;
+
+unsigned int saved_postnumflag;
+
 	CheckMinusNum();
 
 	if(tok!=tk_number){
@@ -515,6 +537,28 @@ int fundef;
 		nexttok();
 
 		htok=tok;
+
+		saved_inptr=inptr;
+
+		saved_inptr2=inptr2;
+
+		saved_cha=cha;
+
+		saved_cha2=cha2;
+
+		saved_linenumber=linenumber;
+
+		saved_linenum2=linenum2;
+
+		saved_tok=tok;
+
+		saved_tok2=tok2;
+
+		saved_itok=itok;
+
+		saved_itok2=itok2;
+
+		saved_postnumflag=postnumflag;
 
 		if(tok2!=tk_number){
 
@@ -562,11 +606,31 @@ int fundef;
 
 					if(tok2!=tk_dollar&&tok2!=tk_not){
 
-						if(calcdwordnumber(&value,right,t)==FALSE)beep();
+						inptr=saved_inptr;
 
-						value=right;
+						inptr2=saved_inptr2;
 
-						goto done_high;
+						cha=saved_cha;
+
+						cha2=saved_cha2;
+
+						linenumber=saved_linenumber;
+
+						linenum2=saved_linenum2;
+
+						tok=saved_tok;
+
+						tok2=saved_tok2;
+
+						itok=saved_itok;
+
+						itok2=saved_itok2;
+
+						postnumflag=saved_postnumflag;
+
+						calcnumber=FALSE;
+
+						return(value);
 
 					}
 
@@ -574,11 +638,31 @@ int fundef;
 
 					if(tok!=tk_number){
 
-						if(calcdwordnumber(&value,right,t)==FALSE)beep();
+						inptr=saved_inptr;
 
-						value=right;
+						inptr2=saved_inptr2;
 
-						goto done_high;
+						cha=saved_cha;
+
+						cha2=saved_cha2;
+
+						linenumber=saved_linenumber;
+
+						linenum2=saved_linenum2;
+
+						tok=saved_tok;
+
+						tok2=saved_tok2;
+
+						itok=saved_itok;
+
+						itok2=saved_itok2;
+
+						postnumflag=saved_postnumflag;
+
+						calcnumber=FALSE;
+
+						return(value);
 
 					}
 
@@ -614,9 +698,31 @@ int fundef;
 
 				if(tok2!=tk_dollar&&tok2!=tk_not){
 
-					if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+					inptr=saved_inptr;
 
-					goto done_high;
+					inptr2=saved_inptr2;
+
+					cha=saved_cha;
+
+					cha2=saved_cha2;
+
+					linenumber=saved_linenumber;
+
+					linenum2=saved_linenum2;
+
+					tok=saved_tok;
+
+					tok2=saved_tok2;
+
+					itok=saved_itok;
+
+					itok2=saved_itok2;
+
+					postnumflag=saved_postnumflag;
+
+					calcnumber=FALSE;
+
+					return(value);
 
 				}
 
@@ -624,9 +730,31 @@ int fundef;
 
 				if(tok!=tk_number){
 
-					if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+					inptr=saved_inptr;
 
-					goto done_high;
+					inptr2=saved_inptr2;
+
+					cha=saved_cha;
+
+					cha2=saved_cha2;
+
+					linenumber=saved_linenumber;
+
+					linenum2=saved_linenum2;
+
+					tok=saved_tok;
+
+					tok2=saved_tok2;
+
+					itok=saved_itok;
+
+					itok2=saved_itok2;
+
+					postnumflag=saved_postnumflag;
+
+					calcnumber=FALSE;
+
+					return(value);
 
 				}
 
@@ -650,9 +778,31 @@ int fundef;
 
 					if(tok2!=tk_dollar&&tok2!=tk_not){
 
-						if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+						inptr=saved_inptr;
 
-						goto done_high;
+						inptr2=saved_inptr2;
+
+						cha=saved_cha;
+
+						cha2=saved_cha2;
+
+						linenumber=saved_linenumber;
+
+						linenum2=saved_linenum2;
+
+						tok=saved_tok;
+
+						tok2=saved_tok2;
+
+						itok=saved_itok;
+
+						itok2=saved_itok2;
+
+						postnumflag=saved_postnumflag;
+
+						calcnumber=FALSE;
+
+						return(value);
 
 					}
 
@@ -660,9 +810,31 @@ int fundef;
 
 					if(tok!=tk_number){
 
-						if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+						inptr=saved_inptr;
 
-						goto done_high;
+						inptr2=saved_inptr2;
+
+						cha=saved_cha;
+
+						cha2=saved_cha2;
+
+						linenumber=saved_linenumber;
+
+						linenum2=saved_linenum2;
+
+						tok=saved_tok;
+
+						tok2=saved_tok2;
+
+						itok=saved_itok;
+
+						itok2=saved_itok2;
+
+						postnumflag=saved_postnumflag;
+
+						calcnumber=FALSE;
+
+						return(value);
 
 					}
 
