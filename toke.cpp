@@ -9,17 +9,17 @@ unsigned char gotoendif=FALSE;
 
 unsigned char atex=FALSE;
 
-unsigned char usedirectiv=TRUE;	//идет обработка директивы
+unsigned char usedirectiv=TRUE;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рабя┐╜тка я┐╜я┐╜рективя┐╜
 
 unsigned char parsecommandline = 0; 	// parse command line flag
 
-unsigned char sdp_mode=FALSE;	//режим принудительной выгрузки динамических процедур
+unsigned char sdp_mode=FALSE;	//режя┐╜я┐╜ я┐╜ринудительноя┐╜ я┐╜я┐╜я┐╜узкя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ския┐╜ я┐╜я┐╜цедя┐╜я┐╜
 
 unsigned int startexit;
 
 extern int	maxerrors; 				// number of errors to stop at
 
-unsigned int postnumflag;	//флаг последнего идентификатора в вычислении номера
+unsigned int postnumflag;	//флая┐╜ я┐╜я┐╜слея┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜фикя┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜слея┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
 
 int calcnumber=FALSE;
 
@@ -51,7 +51,7 @@ int dirmode;
 
 
 
-#define NUMIFDEF 32	//максимальная вложеность директив ifdef/ifndef
+#define NUMIFDEF 32	//я┐╜я┐╜я┐╜симя┐╜я┐╜ьная┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ректив ifdef/ifndef
 
 int	endifcount=-1; 		 // depth count of ?if
 
@@ -65,7 +65,7 @@ unsigned char startuptomain=FALSE;
 
 unsigned char dosstring=FALSE;
 
-unsigned char useelse[NUMIFDEF];	//флаги использования директивы else
+unsigned char useelse[NUMIFDEF];	//флая┐╜я┐╜ я┐╜споя┐╜ьзоя┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рективя┐╜ else
 
 unsigned char jumptomain = CALL_NEAR; // jump to the main()
 
@@ -83,7 +83,7 @@ unsigned int stackstartaddress;  /* location of SP assignment */
 
 /*-----------------18.09.98 23:20-------------------
 
- Реализация SYS
+ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ SYS
 
 --------------------------------------------------*/
 
@@ -97,7 +97,7 @@ int sysnumcom=0;
 
 int syscom;
 
-//переменные для компиляции rom-bios
+//я┐╜я┐╜ремя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ции rom-bios
 
 int unsigned romsize=0;
 
@@ -107,9 +107,9 @@ int dataseg=0x70;
 
 
 
-unsigned int numdomain=0;	//число процедур запускаемых до main
+unsigned int numdomain=0;	//я┐╜сло я┐╜я┐╜цедя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ская┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ main
 
-char *domain;	//буфер имен процедур запускаемых до main
+char *domain;	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜цедя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ская┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ main
 
 
 
@@ -221,7 +221,7 @@ unsigned long long value;
 
 unsigned int htok;
 
-int fundef;	//флаг использования неизв адреса
+int fundef;
 
 	CheckMinusNum();
 
@@ -242,8 +242,6 @@ int fundef;	//флаг использования неизв адреса
 	fundef=itok.rm;
 
 	postnumflag=itok.flag;
-
-//	usedirectiv=TRUE;
 
 	calcnumber=TRUE;
 
@@ -283,9 +281,151 @@ int fundef;	//флаг использования неизв адреса
 
 		else if(itok.rm==tk_double)itok.lnumber=*(double *)&itok.lnumber;
 
-		if(calcqwordnumber(&value,itok.lnumber,htok)==FALSE)beep();
+		if(is_high_prec(htok)){
 
-		postnumflag^=itok.flag;
+			unsigned long long right=itok.lnumber;
+
+			unsigned int t=htok;
+
+			postnumflag^=itok.flag;
+
+			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+				nexttok();
+
+				t=tok;
+
+				if(tok2!=tk_number){
+
+					if(tok2!=tk_dollar&&tok2!=tk_not){
+
+						if(calcqwordnumber(&value,right,t)==FALSE)beep();
+
+						value=right;
+
+						goto done_qword;
+
+					}
+
+					nexttok();
+
+					if(tok!=tk_number){
+
+						if(calcqwordnumber(&value,right,t)==FALSE)beep();
+
+						value=right;
+
+						goto done_qword;
+
+					}
+
+				}
+
+				else nexttok();
+
+				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+				else if(itok.rm==tk_double)itok.lnumber=*(double *)&itok.lnumber;
+
+				if(calcqwordnumber(&right,itok.lnumber,t)==FALSE)beep();
+
+				postnumflag^=itok.flag;
+
+			}
+
+			if(calcqwordnumber(&value,right,htok)==FALSE)beep();
+
+		}else if(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+			unsigned long long right=itok.lnumber;
+
+			unsigned int t;
+
+			postnumflag^=itok.flag;
+
+			nexttok();
+
+			t=tok;
+
+			if(tok2!=tk_number){
+
+				if(tok2!=tk_dollar&&tok2!=tk_not){
+
+					if(calcqwordnumber(&value,right,htok)==FALSE)beep();
+
+					goto done_qword;
+
+				}
+
+				nexttok();
+
+				if(tok!=tk_number){
+
+					if(calcqwordnumber(&value,right,htok)==FALSE)beep();
+
+					goto done_qword;
+
+				}
+
+			}else nexttok();
+
+			if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+			else if(itok.rm==tk_double)itok.lnumber=*(double *)&itok.lnumber;
+
+			if(calcqwordnumber(&right,itok.lnumber,t)==FALSE)beep();
+
+			postnumflag^=itok.flag;
+
+			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+				nexttok();
+
+				t=tok;
+
+				if(tok2!=tk_number){
+
+					if(tok2!=tk_dollar&&tok2!=tk_not){
+
+						if(calcqwordnumber(&value,right,htok)==FALSE)beep();
+
+						goto done_qword;
+
+					}
+
+					nexttok();
+
+					if(tok!=tk_number){
+
+						if(calcqwordnumber(&value,right,htok)==FALSE)beep();
+
+						goto done_qword;
+
+					}
+
+				}else nexttok();
+
+				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+				else if(itok.rm==tk_double)itok.lnumber=*(double *)&itok.lnumber;
+
+				if(calcqwordnumber(&right,itok.lnumber,t)==FALSE)beep();
+
+				postnumflag^=itok.flag;
+
+			}
+
+			if(calcqwordnumber(&value,right,htok)==FALSE)beep();
+
+		}else{
+
+			if(calcqwordnumber(&value,itok.lnumber,htok)==FALSE)beep();
+
+			postnumflag^=itok.flag;
+
+		}
+
+done_qword:;
 
 	}
 
@@ -357,6 +497,12 @@ unsigned long value;
 
 
 
+int is_high_prec(int op)
+{
+	return op==tk_mult||op==tk_div||op==tk_mod||
+	       op==tk_multminus||op==tk_divminus||op==tk_modminus;
+}
+
 unsigned long doconstdwordmath()
 
 {
@@ -365,7 +511,7 @@ unsigned long value;
 
 unsigned int htok;
 
-int fundef;	//флаг использования неизв адреса
+int fundef;
 
 	CheckMinusNum();
 
@@ -384,8 +530,6 @@ int fundef;	//флаг использования неизв адреса
 	fundef=itok.rm;
 
 	postnumflag=itok.flag;
-
-//	usedirectiv=TRUE;
 
 	calcnumber=TRUE;
 
@@ -425,9 +569,151 @@ int fundef;	//флаг использования неизв адреса
 
 		if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
 
-		if(calcdwordnumber(&value,itok.number,htok)==FALSE)beep();
+		if(is_high_prec(htok)){
 
-		postnumflag^=itok.flag;
+			unsigned long right=itok.number;
+
+			unsigned int t=htok;
+
+			postnumflag^=itok.flag;
+
+			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+				nexttok();
+
+				t=tok;
+
+				if(tok2!=tk_number){
+
+					if(tok2!=tk_dollar&&tok2!=tk_not){
+
+						if(calcdwordnumber(&value,right,t)==FALSE)beep();
+
+						value=right;
+
+						goto done_high;
+
+					}
+
+					nexttok();
+
+					if(tok!=tk_number){
+
+						if(calcdwordnumber(&value,right,t)==FALSE)beep();
+
+						value=right;
+
+						goto done_high;
+
+					}
+
+				}
+
+				else nexttok();
+
+				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+				if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
+
+				if(calcdwordnumber(&right,itok.number,t)==FALSE)beep();
+
+				postnumflag^=itok.flag;
+
+			}
+
+			if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+
+		}else if(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+			unsigned long right=itok.number;
+
+			unsigned int t;
+
+			postnumflag^=itok.flag;
+
+			nexttok();
+
+			t=tok;
+
+			if(tok2!=tk_number){
+
+				if(tok2!=tk_dollar&&tok2!=tk_not){
+
+					if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+
+					goto done_high;
+
+				}
+
+				nexttok();
+
+				if(tok!=tk_number){
+
+					if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+
+					goto done_high;
+
+				}
+
+			}else nexttok();
+
+			if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+			if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
+
+			if(calcdwordnumber(&right,itok.number,t)==FALSE)beep();
+
+			postnumflag^=itok.flag;
+
+			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+				nexttok();
+
+				t=tok;
+
+				if(tok2!=tk_number){
+
+					if(tok2!=tk_dollar&&tok2!=tk_not){
+
+						if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+
+						goto done_high;
+
+					}
+
+					nexttok();
+
+					if(tok!=tk_number){
+
+						if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+
+						goto done_high;
+
+					}
+
+				}else nexttok();
+
+				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+				if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
+
+				if(calcdwordnumber(&right,itok.number,t)==FALSE)beep();
+
+				postnumflag^=itok.flag;
+
+			}
+
+			if(calcdwordnumber(&value,right,htok)==FALSE)beep();
+
+		}else{
+
+			if(calcdwordnumber(&value,itok.number,htok)==FALSE)beep();
+
+			postnumflag^=itok.flag;
+
+		}
+
+done_high:;
 
 	}
 
@@ -501,7 +787,7 @@ long value;
 
 signed long doconstlongmath()
 
-//вычислить выражение
+//я┐╜я┐╜я┐╜слия┐╜я┐╜ я┐╜я┐╜ражя┐╜я┐╜я┐╜я┐╜
 
 {
 
@@ -509,7 +795,7 @@ long value;
 
 unsigned int htok;
 
-int fundef;	//флаг использования неизв адреса
+int fundef;
 
 	CheckMinusNum();
 
@@ -527,21 +813,15 @@ int fundef;	//флаг использования неизв адреса
 
 	else value=itok.number;
 
-//	value=itok.number;
-
 	postnumflag=itok.flag;
-
-//	usedirectiv=TRUE;
 
 	calcnumber=TRUE;
 
-	while(itok2.type==tp_opperand){	//пока операнд
+	while(itok2.type==tp_opperand){
 
 		if(fundef==tk_undefofs&&tok2!=tk_plus&&tok2!=tk_minus)break;
 
 		nexttok();
-
-//		printf("tok=%d tok2=%d\n",tok,tok2);
 
 		htok=tok;
 
@@ -573,9 +853,151 @@ int fundef;	//флаг использования неизв адреса
 
 		if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
 
-		if(calclongnumber(&value,itok.number,htok)==FALSE)beep();
+		if(is_high_prec(htok)){
 
-		postnumflag^=itok.flag;
+			long right=itok.number;
+
+			unsigned int t=htok;
+
+			postnumflag^=itok.flag;
+
+			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+				nexttok();
+
+				t=tok;
+
+				if(tok2!=tk_number){
+
+					if(tok2!=tk_dollar&&tok2!=tk_not){
+
+						if(calclongnumber(&value,right,t)==FALSE)beep();
+
+						value=right;
+
+						goto done_long;
+
+					}
+
+					nexttok();
+
+					if(tok!=tk_number){
+
+						if(calclongnumber(&value,right,t)==FALSE)beep();
+
+						value=right;
+
+						goto done_long;
+
+					}
+
+				}
+
+				else nexttok();
+
+				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+				if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
+
+				if(calclongnumber(&right,itok.number,t)==FALSE)beep();
+
+				postnumflag^=itok.flag;
+
+			}
+
+			if(calclongnumber(&value,right,htok)==FALSE)beep();
+
+		}else if(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+			long right=itok.number;
+
+			unsigned int t;
+
+			postnumflag^=itok.flag;
+
+			nexttok();
+
+			t=tok;
+
+			if(tok2!=tk_number){
+
+				if(tok2!=tk_dollar&&tok2!=tk_not){
+
+					if(calclongnumber(&value,right,htok)==FALSE)beep();
+
+					goto done_long;
+
+				}
+
+				nexttok();
+
+				if(tok!=tk_number){
+
+					if(calclongnumber(&value,right,htok)==FALSE)beep();
+
+					goto done_long;
+
+				}
+
+			}else nexttok();
+
+			if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+			if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
+
+			if(calclongnumber(&right,itok.number,t)==FALSE)beep();
+
+			postnumflag^=itok.flag;
+
+			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
+
+				nexttok();
+
+				t=tok;
+
+				if(tok2!=tk_number){
+
+					if(tok2!=tk_dollar&&tok2!=tk_not){
+
+						if(calclongnumber(&value,right,htok)==FALSE)beep();
+
+						goto done_long;
+
+					}
+
+					nexttok();
+
+					if(tok!=tk_number){
+
+						if(calclongnumber(&value,right,htok)==FALSE)beep();
+
+						goto done_long;
+
+					}
+
+				}else nexttok();
+
+				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+
+				if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
+
+				if(calclongnumber(&right,itok.number,t)==FALSE)beep();
+
+				postnumflag^=itok.flag;
+
+			}
+
+			if(calclongnumber(&value,right,htok)==FALSE)beep();
+
+		}else{
+
+			if(calclongnumber(&value,itok.number,htok)==FALSE)beep();
+
+			postnumflag^=itok.flag;
+
+		}
+
+done_long:;
 
 	}
 
@@ -625,8 +1047,6 @@ float value;
 
 long doconstfloatmath()
 
-//вычислить выражение
-
 {
 
 float value;
@@ -655,19 +1075,19 @@ float value;
 
 	value=itok.fnumber;
 
-//	usedirectiv=TRUE;
-
 	calcnumber=TRUE;
 
-	while(itok2.type==tp_opperand){	//пока операнд
+	while(itok2.type==tp_opperand){
 
 		nexttok();
+
+		int htok=tok;
 
 		if(tok2!=tk_number){
 
 			calcnumber=FALSE;
 
-			return *(long *) &value;//нет никаких действий
+			return *(long *) &value;
 
 		}
 
@@ -677,9 +1097,79 @@ float value;
 
 		itok2.rm=tk_float;
 
-		if(calcfloatnumber(&value,itok2.fnumber,tok)==FALSE)beep();
+		if(htok==tk_mult||htok==tk_div){
+
+			float right=itok2.fnumber;
+
+			nexttok();
+
+			while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div)){
+
+				nexttok();
+
+				if(tok2!=tk_number){
+
+					calcnumber=FALSE;
+
+					return *(long *) &value;
+
+				}
+
+				if(itok2.rm==tk_double)*(float *)&itok2.number=itok2.dnumber;
+
+				else if(itok2.rm!=tk_float)*(float *)&itok2.number=itok2.number;
+
+				itok2.rm=tk_float;
+
+				if(calcfloatnumber(&right,itok2.fnumber,tok)==FALSE)beep();
+
+				nexttok();
+
+			}
+
+			if(calcfloatnumber(&value,right,htok)==FALSE)beep();
+
+			continue;
+
+		}
+
+		float right=itok2.fnumber;
 
 		nexttok();
+
+		if(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div)){
+
+			while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div)){
+
+				nexttok();
+
+				if(tok2!=tk_number){
+
+					calcnumber=FALSE;
+
+					return *(long *) &value;
+
+				}
+
+				if(itok2.rm==tk_double)*(float *)&itok2.number=itok2.dnumber;
+
+				else if(itok2.rm!=tk_float)*(float *)&itok2.number=itok2.number;
+
+				itok2.rm=tk_float;
+
+				if(calcfloatnumber(&right,itok2.fnumber,tok)==FALSE)beep();
+
+				nexttok();
+
+			}
+
+			if(calcfloatnumber(&value,right,htok)==FALSE)beep();
+
+		}else{
+
+			if(calcfloatnumber(&value,right,htok)==FALSE)beep();
+
+		}
 
 	}
 
@@ -729,8 +1219,6 @@ double value;
 
 long long doconstdoublemath()
 
-//вычислить выражение
-
 {
 
 double value;
@@ -763,19 +1251,19 @@ double value;
 
 	value=itok.dnumber;
 
-//	usedirectiv=TRUE;
-
 	calcnumber=TRUE;
 
-	while(itok2.type==tp_opperand){	//пока операнд
+	while(itok2.type==tp_opperand){
 
 		nexttok();
+
+		int htok=tok;
 
 		if(tok2!=tk_number){
 
 			calcnumber=FALSE;
 
-			return *(long long *) &value;//нет никаких действий
+			return *(long long *) &value;
 
 		}
 
@@ -785,9 +1273,79 @@ double value;
 
 		itok2.rm=tk_double;
 
-		if(calcdoublenumber(&value,itok2.dnumber,tok)==FALSE)beep();
+		if(htok==tk_mult||htok==tk_div){
+
+			double right=itok2.dnumber;
+
+			nexttok();
+
+			while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div)){
+
+				nexttok();
+
+				if(tok2!=tk_number){
+
+					calcnumber=FALSE;
+
+					return *(long long *) &value;
+
+				}
+
+				if(itok2.rm==tk_float)itok2.dnumber=*(float *)&itok2.number;
+
+				else if(itok2.rm!=tk_double)itok2.dnumber=itok2.lnumber;;
+
+				itok2.rm=tk_double;
+
+				if(calcdoublenumber(&right,itok2.dnumber,tok)==FALSE)beep();
+
+				nexttok();
+
+			}
+
+			if(calcdoublenumber(&value,right,htok)==FALSE)beep();
+
+			continue;
+
+		}
+
+		double right=itok2.dnumber;
 
 		nexttok();
+
+		if(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div)){
+
+			while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div)){
+
+				nexttok();
+
+				if(tok2!=tk_number){
+
+					calcnumber=FALSE;
+
+					return *(long long *) &value;
+
+				}
+
+				if(itok2.rm==tk_float)itok2.dnumber=*(float *)&itok2.number;
+
+				else if(itok2.rm!=tk_double)itok2.dnumber=itok2.lnumber;;
+
+				itok2.rm=tk_double;
+
+				if(calcdoublenumber(&right,itok2.dnumber,tok)==FALSE)beep();
+
+				nexttok();
+
+			}
+
+			if(calcdoublenumber(&value,right,htok)==FALSE)beep();
+
+		}else{
+
+			if(calcdoublenumber(&value,right,htok)==FALSE)beep();
+
+		}
 
 	}
 
@@ -913,7 +1471,7 @@ void SwTok(int want)
 
 /*-----------------03.07.99 22:48-------------------
 
- Внутренние процедуры
+ я┐╜я┐╜я┐╜я┐╜реня┐╜я┐╜я┐╜ я┐╜я┐╜цедя┐╜я┐╜я┐╜
 
 	--------------------------------------------------*/
 
@@ -937,7 +1495,7 @@ void  outprocedure(unsigned char *array,unsigned int length)
 
 unsigned char aabaner[]={
 
-	0x53,0x50,0x48,0x49,0x4E,0x58,0x43,0x2d,0x2d,ver1,ver2};	//надпись SPHINXC--ver
+	0x53,0x50,0x48,0x49,0x4E,0x58,0x43,0x2d,0x2d,ver1,ver2};	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ SPHINXC--ver
 
 
 
@@ -967,7 +1525,7 @@ unsigned char aaEXP[]={
 
 void CallExitProcess()
 
-//вызов процедуры ExitProcess
+//я┐╜ызоя┐╜ я┐╜я┐╜цедя┐╜я┐╜я┐╜ ExitProcess
 
 {
 
@@ -1247,7 +1805,7 @@ int includeproc()
 
 /*-----------------18.01.99 22:42-------------------
 
- Макропроцедуры
+ я┐╜я┐╜я┐╜ропя┐╜цедя┐╜я┐╜я┐╜
 
  --------------------------------------------------*/
 
@@ -1503,19 +2061,19 @@ enout:
 
 				outword(0xFAD9);	//FSQRT
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_cos:
 
 				outword(0xFFD9);
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_sin:
 
 				outword(0xFED9);
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_atan2:
 
@@ -1531,13 +2089,13 @@ enout:
 
 				outword(0xF3D9);	//FPATAN
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_tan:
 
 				outdword(0xD8DDF2D9);	//FPTAN fstp st
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_log:
 
@@ -1545,7 +2103,7 @@ enout:
 
 				outdword(0xF1D9C9D9);	//fxch st1  fyl2x
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_log10:
 
@@ -1553,25 +2111,25 @@ enout:
 
 				outdword(0xF1D9C9D9);	//fxch st1  fyl2x
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_exp:
 
 				outprocedure(aaEXP,MMEXP);
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_atan:
 
 				outdword(0xF3D9E8D9);	//FLD1 FPATAN
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 			case m_fabs:
 
 				outword(0xE1D9);	//FABS
 
-				return tk_fpust;	//результат в стеке fpu
+				return tk_fpust;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜текя┐╜ fpu
 
 		}
 
@@ -1589,7 +2147,7 @@ enout:
 
 /*-----------------06.02.99 16:09-------------------
 
- Работа с внешней библиотекой
+ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜шнея┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜текя┐╜я┐╜
 
 	--------------------------------------------------*/
 
@@ -1737,7 +2295,7 @@ int size;
 
 void addconsttotree(char *keystring,long long constvalue,int type)
 
-//вставить константу в дерево
+//я┐╜я┐╜тавя┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜таня┐╜я┐╜ я┐╜ я┐╜я┐╜ревя┐╜
 
 {
 
@@ -1745,7 +2303,7 @@ struct idrec *ptr,*newptr;
 
 int cmpresult;
 
-	newptr=(struct idrec *)MALLOC(sizeof(struct idrec));//новый блок константы
+	newptr=(struct idrec *)MALLOC(sizeof(struct idrec));//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜таня┐╜я┐╜
 
 	ptr=definestart;
 
@@ -1833,7 +2391,7 @@ int cmpresult;
 
 
 
-void addtodefine(char *keystring)//добавить строку в дерево define
+void addtodefine(char *keystring)//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рокя┐╜ я┐╜ я┐╜я┐╜ревя┐╜ define
 
 {
 
@@ -1841,15 +2399,15 @@ struct idrec *ptr,*newptr,*left=NULL,*right=NULL;
 
 int cmpresult;
 
-//выделить память под новую проц
+//я┐╜ыдея┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜
 
 	newptr=(struct idrec *)MALLOC(sizeof(struct idrec));
 
-	ptr=definestart;	//начало дерева
+	ptr=definestart;	//я┐╜я┐╜чаля┐╜ я┐╜я┐╜ревя┐╜
 
 	if(ptr==NULL)definestart=newptr;
 
-	else{	//поиск строки в дереве
+	else{	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜рокя┐╜ я┐╜ я┐╜я┐╜ревя┐╜
 
 		while(((cmpresult=strcmp(ptr->recid,keystring))<0&&ptr->left!=NULL)||
 
@@ -1861,7 +2419,7 @@ int cmpresult;
 
 		}
 
-		if(cmpresult<0)ptr->left=newptr;	//строка меньше
+		if(cmpresult<0)ptr->left=newptr;	//я┐╜я┐╜рокя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
 
 		else if(cmpresult>0)ptr->right=newptr;
 
@@ -1883,7 +2441,7 @@ int cmpresult;
 
 	}
 
-	strcpy(newptr->recid,keystring);//скопир название
+	strcpy(newptr->recid,keystring);//скоя┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
 
 	newptr->newid=NULL;
 
@@ -1949,7 +2507,7 @@ unsigned char get_directive_value()  //return the 0 or 1 value for directive
 
 	if(tok==tk_number){
 
-		if(doconstlongmath())return(1);//если значение не нулевое вернуть 1
+		if(doconstlongmath())return(1);//я┐╜сли я┐╜я┐╜я┐╜ченя┐╜я┐╜ я┐╜я┐╜ я┐╜улея┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ 1
 
 		return(0);
 
@@ -2635,9 +3193,9 @@ int oscanlexmode;
 
 			holdid[0]=CS;
 
-		case d_align: //использовать байт вставки если нечетный адрес
+		case d_align: //я┐╜споя┐╜ьзоя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜тавя┐╜я┐╜ я┐╜сли я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜
 
-			if(notdoneprestuff==TRUE)doprestuff();	//начальный код
+			if(notdoneprestuff==TRUE)doprestuff();	//я┐╜я┐╜чаля┐╜я┐╜ я┐╜я┐╜я┐╜
 
 			i=2;
 
@@ -2659,13 +3217,13 @@ int oscanlexmode;
 
 			break;
 
-		case d_aligner://значение байта вставки
+		case d_aligner://я┐╜я┐╜я┐╜ченя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜тавя┐╜я┐╜
 
 			nexttok();
 
 			if(tok==tk_number){
 
-				aligner=(unsigned char)doconstlongmath();//вычислить значение
+				aligner=(unsigned char)doconstlongmath();//я┐╜я┐╜я┐╜слия┐╜я┐╜ я┐╜я┐╜я┐╜ченя┐╜я┐╜
 
 				next=0;
 
@@ -2675,7 +3233,7 @@ int oscanlexmode;
 
 			break;
 
-		case d_alignw://выравнивание адресов
+		case d_alignw://я┐╜я┐╜равя┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜сов
 
 			alignword=get_directive_value();
 
@@ -3231,7 +3789,7 @@ endef:
 
 			break;
 
-		case d_com:	//список команд для SYS
+		case d_com:	//список я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ SYS
 
 			listcom=(LISTCOM *)MALLOC(sizeof(LISTCOM)*MAXSYSCOM);
 
@@ -3277,7 +3835,7 @@ endef:
 
 			break;
 
-		case d_sdp:	//выгрузить динамические процедуры
+		case d_sdp:	//я┐╜я┐╜я┐╜узия┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ския┐╜ я┐╜я┐╜цедя┐╜я┐╜я┐╜
 
 			next=notdoneprestuff;
 
@@ -3309,13 +3867,13 @@ endef:
 
 			break;
 
-		case d_us:	//использовать код STARTUP
+		case d_us:	//я┐╜споя┐╜ьзоя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ STARTUP
 
 			if(comfile==file_com)useStartup=TRUE;
 
 			break;
 
-		case d_suv:	//адрес начала использования под неинициализированные переменные
+		case d_suv:	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜чаля┐╜ я┐╜споя┐╜ьзоя┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜циая┐╜я┐╜я┐╜я┐╜ровя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ремя┐╜я┐╜я┐╜я┐╜
 
 			nexttok();
 
@@ -3339,7 +3897,7 @@ endef:
 
 			break;
 
-		case d_iav:	//инициализировать все переменные
+		case d_iav:	//я┐╜я┐╜я┐╜циая┐╜я┐╜я┐╜я┐╜ровя┐╜я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜ремя┐╜я┐╜я┐╜я┐╜
 
 			notpost=get_directive_value();
 
@@ -3347,13 +3905,13 @@ endef:
 
 			break;
 
-		case d_atex:	//механизм ATEXIT
+		case d_atex:	//я┐╜я┐╜ханя┐╜я┐╜я┐╜ ATEXIT
 
 			atex=TRUE;
 
 			break;
 
-		case d_dseg:	//сегмент данных для rom-bios
+		case d_dseg:	//сегя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ rom-bios
 
 			nexttok();
 
@@ -3369,7 +3927,7 @@ endef:
 
 			break;
 
-		case d_rsize:	//размер rom-bios
+		case d_rsize:	//разя┐╜я┐╜я┐╜ rom-bios
 
 			nexttok();
 
@@ -3385,7 +3943,7 @@ endef:
 
 			break;
 
-		case d_mdr:	//переносить данные а  опер память
+		case d_mdr:	//я┐╜я┐╜реня┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜  я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
 
 			splitdata=modelmem=get_directive_value();
 
@@ -3393,7 +3951,7 @@ endef:
 
 			break;
 
-		case d_am32:	//32 битная адресация
+		case d_am32:	//32 я┐╜я┐╜тная┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
 
 			nexttok();
 
@@ -3479,7 +4037,7 @@ endef:
 
 			linenumber=linenum2;
 
-			whitespace(); //пропуск нзначащих символов
+			whitespace(); //я┐╜ропя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ симя┐╜я┐╜я┐╜я┐╜я┐╜
 
 			while(isdigit(cha)){
 
@@ -3557,7 +4115,7 @@ endef:
 
 			break;
 
-		case d_wmb: //формирование одного блока под win
+		case d_wmb: //я┐╜рмировя┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ win
 
 			WinMonoBlock=get_directive_value();
 
@@ -4356,7 +4914,7 @@ int oendifcount;
 
 	opostnumflag=postnumflag;
 
-	holdinput=input;	//сохр некотор переменые
+	holdinput=input;	//я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ремя┐╜я┐╜я┐╜
 
 	holdinptr=inptr2;
 
@@ -4376,7 +4934,7 @@ int oendifcount;
 
 	(startfileinfo+currentfileinfo)->stlist=staticlist;
 
-	compilefile(fileincl,tfind);//откомпилировать
+	compilefile(fileincl,tfind);//я┐╜ткоя┐╜я┐╜я┐╜я┐╜я┐╜ровя┐╜я┐╜я┐╜
 
 	if(endifcount!=oendifcount){
 
@@ -4394,7 +4952,7 @@ int oendifcount;
 
 	warning=holdwarning;
 
-	endoffile=holdendoffile;//востановить переменые
+	endoffile=holdendoffile;//я┐╜я┐╜я┐╜таня┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ремя┐╜я┐╜я┐╜
 
 	endinptr=holdendinptr;
 
@@ -4422,7 +4980,7 @@ int oendifcount;
 
 /*-----------------31.05.99 21:39-------------------
 
- поддержка startup
+ я┐╜я┐╜я┐╜я┐╜я┐╜ржкя┐╜ startup
 
  --------------------------------------------------*/
 
@@ -4458,7 +5016,7 @@ void searchvar(char *name,int err)
 
 
 
-void doprestuff()  //инициализация начального кода, like resize mem, jump to main...
+void doprestuff()  //я┐╜я┐╜я┐╜циая┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜чальноя┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜, like resize mem, jump to main...
 
 {
 
@@ -4474,7 +5032,7 @@ char *bstring;
 
 int odbg=dbg;
 
-//сохранить параметры
+//я┐╜я┐╜раня┐╜я┐╜я┐╜ я┐╜я┐╜рамя┐╜я┐╜я┐╜я┐╜
 
 //	if(FixUp==TRUE||comfile==file_w32)optnumber=FALSE;
 
@@ -4530,7 +5088,7 @@ int odbg=dbg;
 
 		else{
 
-			header=0;	//чтоб не было повторной надписи sphinx
+			header=0;	//я┐╜тоб я┐╜я┐╜ я┐╜ыло я┐╜я┐╜я┐╜я┐╜рноя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ sphinx
 
 			ojmp=jumptomain;
 
@@ -4828,13 +5386,13 @@ struct idrec *ptr,*leftptr,*rightptr,*prev;
 
 int cmpresult,ocmpresult=0;
 
-	ptr=*treestart;	//поиск
+	ptr=*treestart;	//я┐╜я┐╜я┐╜я┐╜
 
 	while(ptr!=NULL&&(cmpresult=strcmp(ptr->recid,itok.name))!=0){
 
-		prev=ptr;	//родитель
+		prev=ptr;	//родя┐╜теля┐╜
 
-		ocmpresult=cmpresult;	//результат пред сравнения - опр в левой или правой ветви
+		ocmpresult=cmpresult;	//резя┐╜я┐╜я┐╜я┐╜ я┐╜ред я┐╜равя┐╜я┐╜я┐╜я┐╜я┐╜ - я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜равя┐╜я┐╜ я┐╜я┐╜тви
 
 		if(cmpresult<0)ptr=ptr->left;
 
@@ -4842,77 +5400,77 @@ int cmpresult,ocmpresult=0;
 
 	}
 
-	if(ptr!=NULL){	//найден объект удаления
+	if(ptr!=NULL){	//я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ъекя┐╜ удая┐╜я┐╜я┐╜я┐╜я┐╜
 
 		if(ptr->newid){
-			free(ptr->newid);	//удалить доп информ.
+			free(ptr->newid);	//удая┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜.
 			// Fixed by Coldy, thx turbocat (double free error)
 			ptr->newid = NULL;
 		}
 
-		leftptr=ptr->left;	//дите
+		leftptr=ptr->left;	//я┐╜я┐╜я┐╜
 
-		rightptr=ptr->right;//другое дите
+		rightptr=ptr->right;//я┐╜я┐╜угоя┐╜ я┐╜я┐╜я┐╜
 
-		if(leftptr==NULL&&rightptr==NULL){	//если нет дитей
+		if(leftptr==NULL&&rightptr==NULL){	//я┐╜сли я┐╜я┐╜я┐╜ я┐╜я┐╜тей
 
-			if(ocmpresult<0)prev->left=NULL;  //то родитель остался сиротой
+			if(ocmpresult<0)prev->left=NULL;  //я┐╜ родя┐╜теля┐╜ я┐╜я┐╜таля┐╜я┐╜ я┐╜я┐╜той
 
 			else if(ocmpresult>0)prev->right=NULL;
 
-			else *treestart=NULL;	//удален корень без ветвей
+			else *treestart=NULL;	//удая┐╜я┐╜я┐╜ я┐╜я┐╜реня┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜твея┐╜
 
 		}
 
-		else if(leftptr==NULL){	//одно дите справа
+		else if(leftptr==NULL){	//я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜равя┐╜
 
-			if(ocmpresult<0)prev->left=rightptr;	//передать внуков родителю
+			if(ocmpresult<0)prev->left=rightptr;	//я┐╜я┐╜редя┐╜я┐╜я┐╜ я┐╜я┐╜укоя┐╜ родя┐╜теля┐╜
 
 			else if(ocmpresult>0)prev->right=rightptr;
 
-			else *treestart=rightptr;	//удален корень с одной правой веткой
+			else *treestart=rightptr;	//удая┐╜я┐╜я┐╜ я┐╜я┐╜реня┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜равя┐╜я┐╜ я┐╜я┐╜ткоя┐╜
 
 		}
 
-		else if(rightptr==NULL){	//тоже если дите слева
+		else if(rightptr==NULL){	//тожя┐╜ я┐╜сли я┐╜я┐╜я┐╜ слея┐╜я┐╜
 
 			if(ocmpresult<0)prev->left=leftptr;
 
 			else if(ocmpresult>0)prev->right=leftptr;
 
-			else *treestart=leftptr;	//удален корень с одной левой веткой
+			else *treestart=leftptr;	//удая┐╜я┐╜я┐╜ я┐╜я┐╜реня┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜ткоя┐╜
 
 		}
 
-		else{	//если есть оба ребенка
+		else{	//я┐╜сли я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ ребя┐╜я┐╜я┐╜я┐╜
 
 			struct idrec *ostptr,*ptrf;
 
-			if(ocmpresult<0){	//если мы дите слева
+			if(ocmpresult<0){	//я┐╜сли я┐╜я┐╜ я┐╜я┐╜я┐╜ слея┐╜я┐╜
 
-				prev->left=leftptr;	//передать левого ребенка
+				prev->left=leftptr;	//я┐╜я┐╜редя┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ ребя┐╜я┐╜я┐╜я┐╜
 
-				ostptr=rightptr;    //правого к поиску места
-
-			}
-
-			else if(ocmpresult>0){	//если же мы дите справа
-
-				prev->right=rightptr; //передать правого ребенка
-
-				ostptr=leftptr;       //левого к поиску
+				ostptr=rightptr;    //я┐╜равя┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜
 
 			}
 
-			else{                   //если у нас нет родителя
+			else if(ocmpresult>0){	//я┐╜сли я┐╜я┐╜ я┐╜я┐╜ я┐╜я┐╜я┐╜ я┐╜равя┐╜
 
-				*treestart=rightptr;   //один наугад становится главным
+				prev->right=rightptr; //я┐╜я┐╜редя┐╜я┐╜я┐╜ я┐╜равя┐╜я┐╜я┐╜ ребя┐╜я┐╜я┐╜я┐╜
 
-				ostptr=leftptr;       //другого к поиску
+				ostptr=leftptr;       //я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
 
 			}
 
-			ptrf=*treestart;	//начало дерева
+			else{                   //я┐╜сли я┐╜ я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜ родя┐╜теля┐╜
+
+				*treestart=rightptr;   //я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜угая┐╜ я┐╜таня┐╜я┐╜я┐╜я┐╜я┐╜я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜я┐╜
+
+				ostptr=leftptr;       //я┐╜я┐╜угоя┐╜я┐╜ я┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
+
+			}
+
+			ptrf=*treestart;	//я┐╜я┐╜чаля┐╜ я┐╜я┐╜ревя┐╜
 
 			while(((cmpresult=strcmp(ptrf->recid,ostptr->recid))<0&&ptrf->left!=NULL)||
 
@@ -4924,7 +5482,7 @@ int cmpresult,ocmpresult=0;
 
 			}
 
-			if(cmpresult<0)ptrf->left=ostptr;	//строка меньше
+			if(cmpresult<0)ptrf->left=ostptr;	//я┐╜я┐╜рокя┐╜ я┐╜я┐╜я┐╜я┐╜я┐╜
 
 			else ptrf->right=ostptr;
 
