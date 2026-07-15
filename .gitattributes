@@ -1,0 +1,10 @@
+# Files that are executed, rather than compiled, must not carry CR: a stray
+# CR ends up in the recipe and the shell takes it as part of the filename.
+# GNU make happens to strip it, other tools do not.
+Makefile.*  text eol=lf
+*.lds       text eol=lf
+*.lua       text eol=lf
+*.yaml      text eol=lf
+
+# Windows batch is the one thing that genuinely wants CRLF.
+*.bat       text eol=crlf

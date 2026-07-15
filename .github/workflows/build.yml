@@ -10,29 +10,38 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
+    name: 'Build (${{ matrix.name }})'
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-i386
+            makefile: Makefile.lin32
+            binary: c--
+          - name: windows-i386
+            makefile: Makefile.win32
+            binary: c--.exe
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW32
-          update: true
-          install: >
-            mingw-w64-i686-gcc
+      - name: Install the Windows cross compiler
+        if: matrix.name == 'windows-i386'
+        run: sudo apt-get update && sudo apt-get install -y g++-mingw-w64-i686
+
+      - name: Install the Linux multilib
+        if: matrix.name == 'linux-i386'
+        run: sudo apt-get update && sudo apt-get install -y g++-multilib
 
       - name: Build
-        run: |
-          g++ -w -fpermissive -fno-exceptions -D_WIN32_ -D__CONSOLE__ -static -o cmm.exe *.cpp
+        run: make -f ${{ matrix.makefile }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: cmm.exe
-          path: cmm.exe
+          name: ${{ matrix.name }}
+          path: ${{ matrix.binary }}
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -43,9 +52,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: cmm.exe
+          name: windows-i386
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: cmm.exe
+          files: c--.exe
           generate_release_notes: true
