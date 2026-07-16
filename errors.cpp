@@ -83,7 +83,7 @@ static int is_idchar(int c)
 	return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||c=='_';
 }
 
-static void show_source_line(const char *fname, unsigned int line, const char *bgcol, const char *hl)
+static void show_source_line(const char *fname, unsigned int line, const char *attr, const char *hl)
 {
 	FILE *f = fopen(fname,"rt");
 	if(!f)return;
@@ -95,6 +95,7 @@ static void show_source_line(const char *fname, unsigned int line, const char *b
 		if(cur==line){
 			size_t len=strlen(buf);
 			while(len>0&&(buf[len-1]=='\n'||buf[len-1]=='\r'))buf[--len]=0;
+			int first_match=-1;
 			printf("  | ");
 			if(hl&&hllen>0){
 				char *p=buf;
@@ -106,15 +107,21 @@ static void show_source_line(const char *fname, unsigned int line, const char *b
 					*match=saved;
 					int wb=(match>buf?!is_idchar(match[-1]):1) && !is_idchar(match[hllen]);
 					if(wb){
-						printf("%s%.*s\033[0m",bgcol,hllen,match);
+						if(first_match==-1)first_match=(int)(match-buf);
+						printf("%s%.*s\033[0m",attr,hllen,match);
 					}else{
 						printf("%.*s",hllen,match);
 					}
 					p=match+hllen;
 				}
 				printf("%s\n",p);
+				if(first_match>=0){
+					printf("  | %*s",first_match,"");
+					int i;for(i=0;i<hllen;i++)printf("^");
+					printf("\n");
+				}
 			}else{
-				printf("%s%s\033[0m\n",bgcol,buf);
+				printf("%s%s\033[0m\n",attr,buf);
 			}
 			break;
 		}
@@ -153,7 +160,7 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 		if(*fname){
 			char hl[64];
 			extract_hl(str,hl,sizeof(hl));
-			show_source_line(fname,line,"\033[41m",hl);
+			show_source_line(fname,line,"\033[97;41m",hl);
 		}
 
 		if(errfile.file==NULL)errfile.file=fopen(errfile.name,"w+t");
@@ -1209,7 +1216,7 @@ void warningprint(char *str,unsigned int line,unsigned int file)
 		if(*fname){
 			char hl[64];
 			extract_hl(str,hl,sizeof(hl));
-			show_source_line(fname,line,"\033[43m",hl);
+			show_source_line(fname,line,"\033[30;43m",hl);
 		}
 
 	}
