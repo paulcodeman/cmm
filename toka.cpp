@@ -4002,7 +4002,7 @@ int count=0;
 				if(base==DS&&dynamic_flag){	//было обращение к динамическим иниц. переменным
 					CheckPosts();
 					(postbuf+posts)->type=(unsigned short)(am32==0?DIN_VAR:DIN_VAR32);
-					(postbuf+posts)->num=(int)itok.rec;
+					(postbuf+posts)->num=(uintptr_t)itok.rec;
 					(postbuf+posts)->loc=ofs;
 				}
 				else{

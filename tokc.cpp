@@ -8793,9 +8793,9 @@ int rmm1;
 			(postbuf+posts)->type=(unsigned short)(am32==0?DIN_VAR:DIN_VAR32);
 //			printf("Add tok=%d %08X sib=%d %s\n",outtok->rec->rectok,outtok->rec->right,outtok->rec->recsib,outtok->rec->recid);
 			if(outtok->rec->rectok==tk_structvar&&outtok->rec->recsib==tp_gvar){
-				(postbuf+posts)->num=(int)outtok->rec;//02.09.05 17:10 ->right;
+				(postbuf+posts)->num=(uintptr_t)outtok->rec;
 			}
-			else (postbuf+posts)->num=(int)outtok->rec;
+			else (postbuf+posts)->num=(uintptr_t)outtok->rec;
 		}
 //		else if((outtok->flag&f_dataseg))(postbuf+posts)->type=(unsigned short)(am32==0?DATABLOCK_VAR:DATABLOCK_VAR32);
 		else (postbuf+posts)->type=(unsigned short)(am32==0?POST_VAR:POST_VAR32);

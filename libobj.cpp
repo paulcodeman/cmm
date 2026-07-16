@@ -52,7 +52,7 @@ unsigned int adr_end;
 
 void LoadObj();
 
-void AddPost(unsigned long loc,int type,unsigned int num);
+void AddPost(unsigned long loc,int type,uintptr_t num);
 
 int searchtree2(idrec *fptr,ITOK *itok4,int *tok4,unsigned char *string4);
 
@@ -234,7 +234,7 @@ char c;
 
 }
 
-void AddPost(unsigned long loc,int type,unsigned int num)
+void AddPost(unsigned long loc,int type,uintptr_t num)
 
 {
 

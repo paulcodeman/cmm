@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
+#include <stdint.h>
 
 typedef struct _BIT_{
 	unsigned int siz:8;
@@ -366,7 +367,7 @@ typedef struct _ISW_
 struct postinfo
 {
 	unsigned int loc;
-	unsigned int num;
+	uintptr_t num;
 	unsigned short type;
 	unsigned short line;
 	unsigned short file;

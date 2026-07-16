@@ -1,0 +1,17 @@
+CC = x86_64-w64-mingw32-g++
+
+CPPFLAGS = -w -fno-exceptions -std=c++03 -Wno-write-strings -D_WIN32_ -DO_BINARY=0
+LDFLAGS  = -static-libgcc -static-libstdc++
+
+OBJS=$(patsubst %.cpp, %.o, $(wildcard *.cpp))
+
+TARGET = c--64.exe
+
+$(TARGET): $(OBJS)
+	$(CC) $(LDFLAGS) $^ -o $@
+
+%.o: %.cpp
+	$(CC) $(CPPFLAGS) -c $<
+
+clean:
+	rm -f $(OBJS) $(TARGET)

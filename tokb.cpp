@@ -18018,11 +18018,10 @@ void setwordpost(ITOK *stok)						/* for post word num setting */
 
 		if(stok->rec->rectok==tk_structvar&&stok->rec->recsib==tp_gvar){
 
-			(postbuf+posts)->num=(int)stok->rec;//02.09.05 17:11 ->right;
-
+			(postbuf+posts)->num=(uintptr_t)stok->rec;
 		}
 
-		else (postbuf+posts)->num=(int)stok->rec;
+		else (postbuf+posts)->num=(uintptr_t)stok->rec;
 
 	}
 

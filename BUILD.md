@@ -1,45 +1,68 @@
-# Building C-- Compiler on Windows
+# Building C-- Compiler
 
-## Requirements
+## Windows (32-bit)
 
-- [MSYS2](https://www.msys2.org/) with **mingw32** (32-bit) toolchain
+### Requirements
 
-Install in MSYS2:
+- [MSYS2](https://www.msys2.org/) with the **mingw32** toolchain
 
 ```sh
 pacman -S mingw-w64-i686-gcc mingw-w64-i686-binutils
 ```
 
-## Build
-
-Open **PowerShell** (not MSYS2 shell) and run:
+### Build
 
 ```powershell
 $env:PATH = "C:\msys64\mingw32\bin;$env:PATH"
 i686-w64-mingw32-g++ -w -fno-exceptions -static-libgcc -D_WIN32_ -D__CONSOLE__ -o c--.exe *.cpp
 ```
 
-> [!TIP]
-> If you get *"multiple definition of `main`"*, check for extra `.cpp` files (like `simple_test.cpp`) and move them aside, or list only the needed files.
-
-## Why this works
-
-The compiler is 32-bit code and uses `int` for pointers (e.g. `(int)itok.rec`). A 64-bit compiler rejects those casts with *"loses precision"*, and its `-m32` flag links against incompatible libraries.
-
-The **i686-w64-mingw32-g++** cross-compiler is the correct 32-bit toolchain — it produces a 32-bit `.exe` and links against `mingw32` libraries natively.
-
-## Original Makefile
-
-`Makefile.win32` uses `i686-w64-mingw32-gcc` (C compiler) with `-m32`. To use it directly:
+### Makefile
 
 ```powershell
 $env:PATH = "C:\msys64\mingw32\bin;$env:PATH"
 mingw32-make -f Makefile.win32
 ```
 
-## Quick test
+## Windows (64-bit)
+
+### Requirements
+
+- [MSYS2](https://www.msys2.org/) with the **mingw64** toolchain
+
+```sh
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-binutils
+```
+
+### Build
 
 ```powershell
-$env:PATH = "C:\msys64\mingw32\bin;$env:PATH"
-.\c--.exe test.c -lst
+$env:PATH = "C:\msys64\mingw64\bin;$env:PATH"
+x86_64-w64-mingw32-g++ -w -fno-exceptions -static-libgcc -D_WIN32_ -D__CONSOLE__ -o c--64.exe *.cpp
+```
+
+## Linux
+
+### 32-bit
+
+```sh
+apt install g++-multilib
+make -f Makefile.lin32
+```
+
+### 64-bit
+
+```sh
+apt install g++-x86-64-linux-gnu
+# or just use the system g++ (no cross needed on x86_64 hosts)
+g++ -w -fno-exceptions -static-libgcc -static-libstdc++ -D_UNIX_ -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -DO_BINARY=0 -o c-- *.cpp
+```
+
+> [!TIP]
+> If you get *"multiple definition of `main`"*, check for extra `.cpp` files and move them aside.
+
+## Quick test
+
+```sh
+./c-- test.c -lst
 ```

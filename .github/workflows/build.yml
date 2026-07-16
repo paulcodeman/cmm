@@ -20,16 +20,22 @@ jobs:
           - name: linux-i386
             makefile: Makefile.lin32
             binary: c--
+          - name: linux-x86_64
+            makefile: Makefile.lin64
+            binary: c--64
           - name: windows-i386
             makefile: Makefile.win32
             binary: c--.exe
+          - name: windows-x86_64
+            makefile: Makefile.win64
+            binary: c--64.exe
 
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install the Windows cross compiler
-        if: matrix.name == 'windows-i386'
-        run: sudo apt-get update && sudo apt-get install -y g++-mingw-w64-i686
+      - name: Install the Windows cross compilers
+        if: startsWith(matrix.name, 'windows-')
+        run: sudo apt-get update && sudo apt-get install -y g++-mingw-w64-i686 g++-mingw-w64-x86-64
 
       - name: Install the Linux multilib
         if: matrix.name == 'linux-i386'
@@ -56,11 +62,21 @@ jobs:
 
       - uses: actions/download-artifact@v7
         with:
+          name: linux-x86_64
+
+      - uses: actions/download-artifact@v7
+        with:
           name: windows-i386
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: windows-x86_64
 
       - uses: softprops/action-gh-release@v3
         with:
           files: |
             c--
+            c--64
             c--.exe
+            c--64.exe
           generate_release_notes: true

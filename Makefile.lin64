@@ -1,0 +1,17 @@
+CC = g++
+
+CPPFLAGS = -w -fno-exceptions -std=c++03 -Wno-write-strings -Dstricmp=strcasecmp -Dstrnicmp=strncasecmp -DO_BINARY=0 -D_UNIX_
+LDFLAGS  = -static-libgcc -static-libstdc++
+
+OBJS=$(patsubst %.cpp, %.o, $(wildcard *.cpp))
+
+TARGET = c--64
+
+$(TARGET): $(OBJS)
+	$(CC) $(LDFLAGS) $^ -o $@
+
+%.o: %.cpp
+	$(CC) $(CPPFLAGS) -c $<
+
+clean:
+	rm -f $(OBJS) $(TARGET)
