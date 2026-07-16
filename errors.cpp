@@ -227,6 +227,8 @@ static void show_hint_line(const char *fname, unsigned int line, const char *pre
 void  preerror3(char *str,unsigned int line,unsigned int file)//error message at a different than current line
 
 {
+	static unsigned int last_hint_line=0;
+	static unsigned int last_hint_file_id=~0u;
 
 	if(error<maxerrors){
 
@@ -243,7 +245,11 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 
 		if(*fname){
 			if(strcmp(str,"operator identifier expected")==0){
-				show_hint_line(fname,line,"?","\033[97;41m",errfile.file);
+				if(line!=last_hint_line||file!=last_hint_file_id){
+					show_hint_line(fname,line,"?","\033[97;41m",errfile.file);
+					last_hint_line=line;
+					last_hint_file_id=file;
+				}
 			}else{
 				char hl[64];
 				extract_hl(str,hl,sizeof(hl));
