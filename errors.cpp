@@ -135,8 +135,13 @@ static void show_source_line(const char *fname, unsigned int line, const char *a
 				}
 				printf("%s\n",p);
 				if(first_match>=0){
-					printf("  | %*s",first_match,"");
-					int i;for(i=0;i<hllen;i++)printf("^");
+					int viscol=0;
+					int i;for(i=0;i<first_match;i++){
+						if(buf[i]=='\t')viscol=(viscol/8+1)*8;
+						else viscol++;
+					}
+					printf("  | %*s",viscol,"");
+					for(i=0;i<hllen;i++)printf("^");
 					printf("\n");
 				}
 			}else{
