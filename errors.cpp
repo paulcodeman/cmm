@@ -102,7 +102,7 @@ static char *stristr(char *s, const char *needle)
 	return NULL;
 }
 
-static void show_source_line(const char *fname, unsigned int line, const char *attr, const char *hl)
+static void show_source_line(const char *fname, unsigned int line, const char *attr, const char *hl, FILE *err)
 {
 	FILE *f=fopen(fname,"rt");
 	if(!f)return;
@@ -128,6 +128,7 @@ static void show_source_line(const char *fname, unsigned int line, const char *a
 			exp[xlen]=0;
 			int first_match=-1;
 			printf("  | ");
+			if(err)fprintf(err,"  | ");
 			if(hl&&hllen>0){
 				char *p=exp;
 				char *match;
@@ -135,24 +136,32 @@ static void show_source_line(const char *fname, unsigned int line, const char *a
 					char saved=*match;
 					*match=0;
 					printf("%s",p);
+					if(err)fprintf(err,"%s",p);
 					*match=saved;
 					int wb=(match>exp?!is_idchar(match[-1]):1)&&!is_idchar(match[hllen]);
 					if(wb){
 						if(first_match==-1)first_match=(int)(match-exp);
 						printf("%s%.*s\033[0m",attr,hllen,match);
+						if(err)fprintf(err,"%.*s",hllen,match);
 					}else{
 						printf("%.*s",hllen,match);
+						if(err)fprintf(err,"%.*s",hllen,match);
 					}
 					p=match+hllen;
 				}
 				printf("%s\n",p);
+				if(err)fprintf(err,"%s\n",p);
 				if(first_match>=0){
 					printf("  | %*s",first_match,"");
+					if(err)fprintf(err,"  | %*s",first_match,"");
 					for(i=0;i<hllen;i++)printf("^");
+					if(err){for(i=0;i<hllen;i++)fprintf(err,"^");}
 					printf("\n");
+					if(err)fprintf(err,"\n");
 				}
 			}else{
 				printf("%s%s\033[0m\n",attr,exp);
+				if(err)fprintf(err,"%s\n",exp);
 			}
 			break;
 		}
@@ -174,7 +183,7 @@ static void extract_hl(const char *str, char *out, int outsize)
 	out[len]=0;
 }
 
-static void show_hint_line(const char *fname, unsigned int line, const char *prefix, const char *hl_attr)
+static void show_hint_line(const char *fname, unsigned int line, const char *prefix, const char *hl_attr, FILE *err)
 {
 	if(line<2)return;
 	FILE *f=fopen(fname,"rt");
@@ -197,11 +206,17 @@ static void show_hint_line(const char *fname, unsigned int line, const char *pre
 				}else exp[xlen++]=buf[i];
 			}
 			exp[xlen]=0;
+			char pfx=prefix?*prefix:'?';
 			if(first&&hl_attr){
-				printf("  %c %s%s\033[0m\n",prefix?*prefix:'?',hl_attr,exp);
-				printf("  %c %*s^\n",prefix?*prefix:'?',xlen,"");
+				printf("  %c %s%s\033[0m\n",pfx,hl_attr,exp);
+				printf("  %c %*s^\n",pfx,xlen,"");
+				if(err){
+					fprintf(err,"  %c %s\n",pfx,exp);
+					fprintf(err,"  %c %*s^\n",pfx,xlen,"");
+				}
 			}else{
-				printf("  %c %s\n",prefix?*prefix:'?',exp);
+				printf("  %c %s\n",pfx,exp);
+				if(err)fprintf(err,"  %c %s\n",pfx,exp);
 			}
 			first=0;
 		}
@@ -223,19 +238,18 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 
 		printf((char *)string3);
 
+		if(errfile.file==NULL&&*errfile.name)errfile.file=fopen(errfile.name,"w+t");
+		if(errfile.file!=NULL)fprintf(errfile.file,(char *)string3);
+
 		if(*fname){
 			if(strcmp(str,"operator identifier expected")==0){
-				show_hint_line(fname,line,"?","\033[97;41m");
+				show_hint_line(fname,line,"?","\033[97;41m",errfile.file);
 			}else{
 				char hl[64];
 				extract_hl(str,hl,sizeof(hl));
-				show_source_line(fname,line,"\033[97;41m",hl);
+				show_source_line(fname,line,"\033[97;41m",hl,errfile.file);
 			}
 		}
-
-		if(errfile.file==NULL)errfile.file=fopen(errfile.name,"w+t");
-
-		if(errfile.file!=NULL)fprintf(errfile.file,(char *)string3);
 
 	}
 
@@ -1283,10 +1297,14 @@ void warningprint(char *str,unsigned int line,unsigned int file)
 
 		const char *fname=startfileinfo==NULL?"":(startfileinfo+file)->filename;
 		printf("%s(%d)> Warning! %s.\n",fname,line,str);
+
+		if(errfile.file==NULL&&*errfile.name)errfile.file=fopen(errfile.name,"w+t");
+		if(errfile.file!=NULL)fprintf(errfile.file,"%s(%d)> Warning! %s.\n",fname,line,str);
+
 		if(*fname){
 			char hl[64];
 			extract_hl(str,hl,sizeof(hl));
-			show_source_line(fname,line,"\033[30;43m",hl);
+			show_source_line(fname,line,"\033[30;43m",hl,errfile.file);
 		}
 
 	}
