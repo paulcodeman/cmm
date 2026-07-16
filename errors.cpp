@@ -174,14 +174,14 @@ static void extract_hl(const char *str, char *out, int outsize)
 	out[len]=0;
 }
 
-static void show_hint_line(const char *fname, unsigned int line, const char *prefix)
+static void show_hint_line(const char *fname, unsigned int line, const char *prefix, const char *hl_attr)
 {
 	if(line<2)return;
 	FILE *f=fopen(fname,"rt");
 	if(!f)return;
 	char buf[512];
 	unsigned int cur=0;
-	int n=0;
+	int first=1;
 	while(fgets(buf,sizeof(buf),f)){
 		cur++;
 		if(cur>=line-2&&cur<line){
@@ -197,8 +197,13 @@ static void show_hint_line(const char *fname, unsigned int line, const char *pre
 				}else exp[xlen++]=buf[i];
 			}
 			exp[xlen]=0;
-			printf("  %c %s\n",prefix?*prefix:'?',exp);
-			n++;
+			if(first&&hl_attr){
+				printf("  %c %s%s\033[0m\n",prefix?*prefix:'?',hl_attr,exp);
+				printf("  %c %*s^\n",prefix?*prefix:'?',xlen,"");
+			}else{
+				printf("  %c %s\n",prefix?*prefix:'?',exp);
+			}
+			first=0;
 		}
 	}
 	fclose(f);
@@ -219,11 +224,13 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 		printf((char *)string3);
 
 		if(*fname){
-			char hl[64];
-			extract_hl(str,hl,sizeof(hl));
-			show_source_line(fname,line,"\033[97;41m",hl);
-			if(strcmp(str,"operator identifier expected")==0)
-				show_hint_line(fname,line,"?");
+			if(strcmp(str,"operator identifier expected")==0){
+				show_hint_line(fname,line,"?","\033[97;41m");
+			}else{
+				char hl[64];
+				extract_hl(str,hl,sizeof(hl));
+				show_source_line(fname,line,"\033[97;41m",hl);
+			}
 		}
 
 		if(errfile.file==NULL)errfile.file=fopen(errfile.name,"w+t");
