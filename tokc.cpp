@@ -2297,7 +2297,7 @@ cont_float:
 int CheckCompareTok(int reg)
 {
 int comparetok=tk_equalto;
-	if(itok.type==tp_compare)comparetok=tok;
+	if(itok.type==tp_compare || tok==tk_oror || tok==tk_andand) comparetok=tok;
 	else unknowncompop();
 	getoperand(reg);
 	return comparetok;
@@ -2360,7 +2360,9 @@ unsigned char oinline=useinline;
 /////////////////
 
 	setzeroflag=FALSE;
-	ofsstr=GetLecsem(tk_closebracket,tk_eof,tp_compare);
+	// For for-loop conditions that end with semicolon, also stop at semicolon
+	if(vartype==tk_for) ofsstr=GetLecsem(tk_closebracket,tk_semicolon,tp_compare);
+	else ofsstr=GetLecsem(tk_closebracket,tk_eof,tp_compare);
 	getoperand();	//NEW 04.10.04 13:45
 	if(tok==tk_openbracket){
 		bracket++;
@@ -2818,11 +2820,16 @@ nn1:
 		nexttok();
 		if(itok.type == tp_compare || itok.type == tp_stopper) break;
 		if(tok == tk_closebracket) continue;
+		// only continue for high-precedence operators that can follow a paren in math expr
+		if(tok != tk_mult && tok != tk_div && tok != tk_mod &&
+		   tok != tk_multminus && tok != tk_divminus && tok != tk_modminus) break;
 		int r = (razr == r_undef) ? r32 : razr;
 		do_e_axmath2(0, r, 0);
 		ittok = tk_reg32;
 	}
 	if(tok!=tk_closebracket){	//сравнение
+		// logical OR/AND (||, &&) connecting boolean expressions - not a comparison
+		if(tok == tk_oror || tok == tk_andand) return voidcompr;
 		ofsstr2=GetLecsem(tk_closebracket);
 		comparetok=CheckCompareTok(preg);
 		if(tok>=tk_char&&tok<=tk_double){
@@ -3189,7 +3196,7 @@ unsigned int i;
 ICOMP *icomp;
 int j=0;
 int ifline=linenumber;
-int ptok=tk_oror;
+int ptok=tokens;  // initialize to invalid token to detect first iteration
 int rcompr;
 int useor=FALSE;
 REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
@@ -3204,7 +3211,7 @@ REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
 		if((rcompr=constructcompare(0,outptr))==voidcompr||rcompr==zerocompr)i=1;
 #endif
 		if(i){
-			if(rcompr==voidcompr&&ptok==tk_andand){
+			if(rcompr==voidcompr && (ptok==tk_andand || ptok==tk_oror)){
 				i=0;
 				ptok=tok;
 			}

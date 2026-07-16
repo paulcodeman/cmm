@@ -7142,7 +7142,7 @@ contloop:
 
 //	printf("tok=%d type=%d name=%s\n",tok,itok.type,itok.name);
 
-		if(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare){
+		if(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare&&tok!=tk_closebracket&&tok!=tk_closebrace&&tok!=tk_closeblock){
 
 		do_e_axmath2(sign,razr,expand);
 
@@ -7168,7 +7168,7 @@ char *ofsstr=NULL;
 
 unsigned char oaddstack;
 
-		while(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare){
+while(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare&&tok!=tk_closebracket&&tok!=tk_closebrace&&tok!=tk_closeblock){
 
 		next=1;
 
@@ -9123,13 +9123,13 @@ int rettype=tk_beg;
 
 	}
 
-	if(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare){
+if(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare&&tok!=tk_closebracket&&tok!=tk_closebrace&&tok!=tk_closeblock){
 
-		doalmath2(sign);
+	doalmath2(sign);
 
-		rettype=tk_beg;
+	rettype=tk_beg;
 
-	}
+}
 
 	return rettype;
 
