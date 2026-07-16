@@ -78,22 +78,62 @@ void  preerror(char *str) /* error on currentline with line number and file name
 
 }
 
-static void show_source_line(const char *fname, unsigned int line)
+static int is_idchar(int c)
+{
+	return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||c=='_';
+}
+
+static void show_source_line(const char *fname, unsigned int line, const char *bgcol, const char *hl)
 {
 	FILE *f = fopen(fname,"rt");
 	if(!f)return;
 	char buf[512];
 	unsigned int cur=0;
+	int hllen=hl?(int)strlen(hl):0;
 	while(fgets(buf,sizeof(buf),f)){
 		cur++;
 		if(cur==line){
 			size_t len=strlen(buf);
 			while(len>0&&(buf[len-1]=='\n'||buf[len-1]=='\r'))buf[--len]=0;
-			printf("  | %s\n",buf);
+			printf("  | ");
+			if(hl&&hllen>0){
+				char *p=buf;
+				char *match;
+				while((match=strstr(p,hl))!=NULL){
+					char saved=*match;
+					*match=0;
+					printf("%s",p);
+					*match=saved;
+					int wb=(match>buf?!is_idchar(match[-1]):1) && !is_idchar(match[hllen]);
+					if(wb){
+						printf("%s%.*s\033[0m",bgcol,hllen,match);
+					}else{
+						printf("%.*s",hllen,match);
+					}
+					p=match+hllen;
+				}
+				printf("%s\n",p);
+			}else{
+				printf("%s%s\033[0m\n",bgcol,buf);
+			}
 			break;
 		}
 	}
 	fclose(f);
+}
+
+static void extract_hl(const char *str, char *out, int outsize)
+{
+	out[0]=0;
+	const char *s=strchr(str,'\'');
+	if(!s)return;
+	s++;
+	const char *e=strchr(s,'\'');
+	if(!e)return;
+	int len=(int)(e-s);
+	if(len>=outsize)len=outsize-1;
+	memcpy(out,s,len);
+	out[len]=0;
 }
 
 void  preerror3(char *str,unsigned int line,unsigned int file)//error message at a different than current line
@@ -110,7 +150,11 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 
 		printf((char *)string3);
 
-		if(*fname)show_source_line(fname,line);
+		if(*fname){
+			char hl[64];
+			extract_hl(str,hl,sizeof(hl));
+			show_source_line(fname,line,"\033[41m",hl);
+		}
 
 		if(errfile.file==NULL)errfile.file=fopen(errfile.name,"w+t");
 
@@ -1162,7 +1206,11 @@ void warningprint(char *str,unsigned int line,unsigned int file)
 
 		const char *fname=startfileinfo==NULL?"":(startfileinfo+file)->filename;
 		printf("%s(%d)> Warning! %s.\n",fname,line,str);
-		if(*fname)show_source_line(fname,line);
+		if(*fname){
+			char hl[64];
+			extract_hl(str,hl,sizeof(hl));
+			show_source_line(fname,line,"\033[43m",hl);
+		}
 
 	}
 }
