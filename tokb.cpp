@@ -7645,6 +7645,8 @@ tl_hmul2:
 
 							if(next)nexttok();
 
+							if(tok==tk_closebracket)break;
+
 							calcnumber=FALSE;
 
 						}
@@ -8202,7 +8204,7 @@ defxor:
 
 				}
 
-								switch(tok){
+				switch(tok){
 
 					case tk_number:
 
@@ -13021,6 +13023,8 @@ tl_hmul2:
 							}
 
 							if(next)nexttok();
+
+							if(tok==tk_closebracket)break;
 
 							calcnumber=FALSE;
 
