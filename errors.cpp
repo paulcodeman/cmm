@@ -83,6 +83,25 @@ static int is_idchar(int c)
 	return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||c=='_';
 }
 
+static char *stristr(char *s, const char *needle)
+{
+	int nlen=(int)strlen(needle);
+	if(!nlen)return s;
+	while(*s){
+		int i;
+		for(i=0;i<nlen;i++){
+			char c1=s[i],c2=needle[i];
+			if(c1==c2)continue;
+			if(c1>='A'&&c1<='Z'&&c2>='a'&&c2<='z'&&c1==c2-32)continue;
+			if(c2>='A'&&c2<='Z'&&c1>='a'&&c1<='z'&&c2==c1-32)continue;
+			break;
+		}
+		if(i==nlen)return s;
+		s++;
+	}
+	return NULL;
+}
+
 static void show_source_line(const char *fname, unsigned int line, const char *attr, const char *hl)
 {
 	FILE *f = fopen(fname,"rt");
@@ -100,7 +119,7 @@ static void show_source_line(const char *fname, unsigned int line, const char *a
 			if(hl&&hllen>0){
 				char *p=buf;
 				char *match;
-				while((match=strstr(p,hl))!=NULL){
+				while((match=stristr(p,hl))!=NULL){
 					char saved=*match;
 					*match=0;
 					printf("%s",p);
