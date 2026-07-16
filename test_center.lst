@@ -22,10 +22,10 @@ void test(dword x, dword w)
 0119 6650                     push    eax
 011B 683C01                   push    13Ch
 011E E8DFFF                   call    100h
-0121 665A                     pop     edx
-0123 6692                     xchg    edx,eax
-0125 6629D0                   sub     eax,edx
-0128 66C1E003                 shl     eax,3
+0121 66C1E003                 shl     eax,3
+0125 665A                     pop     edx
+0127 6692                     xchg    edx,eax
+0129 6629D0                   sub     eax,edx
 012C 66D1E8                   shr     eax,1
 012F 665A                     pop     edx
 0131 6601D0                   add     eax,edx
@@ -34,4 +34,3 @@ void test(dword x, dword w)
 0139 C20800                   ret     8
 
 013C 68656C6C6F00             db      'hello',0
-

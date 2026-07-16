@@ -7973,6 +7973,7 @@ tl_hmul2:
 									else op(0x92);
 								}
 								expand=FALSE;
+								next=0;
 							}else{
 								expand=expandvar();
 								if(tok==tk_number){
@@ -8019,6 +8020,7 @@ tl_hmul2:
 										else op(0x92);
 									}
 									expand=FALSE;
+									next=0;
 								}else{
 									expand=expandvar();
 									if(tok==tk_number){
@@ -8050,7 +8052,7 @@ tl_hmul2:
 									}
 								}
 							}
-							nexttok();
+							if(next)nexttok();
 						}
 
 						op66(razr);
