@@ -1298,13 +1298,10 @@ void warningprint(char *str,unsigned int line,unsigned int file)
 		const char *fname=startfileinfo==NULL?"":(startfileinfo+file)->filename;
 		printf("%s(%d)> Warning! %s.\n",fname,line,str);
 
-		if(errfile.file==NULL&&*errfile.name)errfile.file=fopen(errfile.name,"w+t");
-		if(errfile.file!=NULL)fprintf(errfile.file,"%s(%d)> Warning! %s.\n",fname,line,str);
-
 		if(*fname){
 			char hl[64];
 			extract_hl(str,hl,sizeof(hl));
-			show_source_line(fname,line,"\033[30;43m",hl,errfile.file);
+			show_source_line(fname,line,"\033[30;43m",hl,NULL);
 		}
 
 	}
