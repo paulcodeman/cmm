@@ -7805,6 +7805,104 @@ tl_hmul2:
 
 						addESP-=razr==r16?2:4;
 
+						if(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+						   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus){
+							int hneg=0,hvop=0,hop;
+							nexttok();
+							hop=tok;
+							if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
+							if(tok==tk_mod||tok==tk_modminus)hvop=1;
+							getoperand();
+							if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
+							if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
+								DivMod(hvop,sign,razr,expand);
+								if(hvop==1&&setzeroflag==0){
+									op66(razr);
+									if(optimizespeed)outword(0xC28B);
+									else op(0x92);
+								}
+								expand=FALSE;
+							}else{
+								expand=expandvar();
+								if(tok==tk_number){
+									RegMulNum(AX,itok.number,razr,sign,&expand,itok.flag);
+								}else if(tok==tk_openbracket){
+									nexttok();
+									op66(razr);
+									op(0x50);
+									addESP+=razr==r16?2:4;
+									do_e_axmath(sign,razr,&ofsstr);
+									if(tok!=tk_closebracket)expected(')');
+									nexttok();
+									op66(razr);
+									op(0x58+EDX);
+									addESP-=razr==r16?2:4;
+									itok.number=EDX;
+									warningreg(regs[razr/2-1][EDX]);
+									op66(razr);
+									op(0xF7);
+									if(sign)op(0xE8+(unsigned int)itok.number);
+									else op(0xE0+(unsigned int)itok.number);
+									setzeroflag=FALSE;
+								}else{
+									outseg(&itok,2);
+									op(0xF7);
+									if(sign)op(0x28+itok.rm);
+									else op(0x20+itok.rm);
+									outaddress(&itok);
+									setzeroflag=FALSE;
+								}
+							}
+							while(!(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+							   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)?0:
+							   (nexttok(),1)){
+								hneg=0;hvop=0;hop=tok;
+								if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
+								if(tok==tk_mod||tok==tk_modminus)hvop=1;
+								getoperand();
+								if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
+								if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
+									DivMod(hvop,sign,razr,expand);
+									if(hvop==1&&setzeroflag==0){
+										op66(razr);
+										if(optimizespeed)outword(0xC28B);
+										else op(0x92);
+									}
+									expand=FALSE;
+								}else{
+									expand=expandvar();
+									if(tok==tk_number){
+										RegMulNum(AX,itok.number,razr,sign,&expand,itok.flag);
+									}else if(tok==tk_openbracket){
+										nexttok();
+										op66(razr);
+										op(0x50);
+										addESP+=razr==r16?2:4;
+										do_e_axmath(sign,razr,&ofsstr);
+										if(tok!=tk_closebracket)expected(')');
+										nexttok();
+										op66(razr);
+										op(0x58+EDX);
+										addESP-=razr==r16?2:4;
+										itok.number=EDX;
+										warningreg(regs[razr/2-1][EDX]);
+										op66(razr);
+										op(0xF7);
+										if(sign)op(0xE8+(unsigned int)itok.number);
+										else op(0xE0+(unsigned int)itok.number);
+										setzeroflag=FALSE;
+									}else{
+										outseg(&itok,2);
+										op(0xF7);
+										if(sign)op(0x28+itok.rm);
+										else op(0x20+itok.rm);
+										outaddress(&itok);
+										setzeroflag=FALSE;
+									}
+								}
+							}
+						}
+
 						op66(razr);
 
 						op(0x58+EDX);
@@ -7861,12 +7959,13 @@ tl_hmul2:
 
 						if(tok==tk_mult||tok==tk_div||tok==tk_mod||
 						   tok==tk_multminus||tok==tk_divminus||tok==tk_modminus){
-							int hneg=0,hvop=0;
+							int hneg=0,hvop=0,hop;
+							hop=tok;
 							if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
 							if(tok==tk_mod||tok==tk_modminus)hvop=1;
 							getoperand();
 							if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
-							if(tok==tk_div||tok==tk_divminus||tok==tk_mod||tok==tk_modminus){
+							if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
 								DivMod(hvop,sign,razr,expand);
 								if(hvop==1&&setzeroflag==0){
 									op66(razr);
@@ -7907,12 +8006,12 @@ tl_hmul2:
 							while(!(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
 							   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)?0:
 							   (nexttok(),1)){
-								hneg=0;hvop=0;
+								hneg=0;hvop=0;hop=tok;
 								if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
 								if(tok==tk_mod||tok==tk_modminus)hvop=1;
 								getoperand();
 								if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
-								if(tok==tk_div||tok==tk_divminus||tok==tk_mod||tok==tk_modminus){
+								if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
 									DivMod(hvop,sign,razr,expand);
 									if(hvop==1&&setzeroflag==0){
 										op66(razr);
@@ -13043,12 +13142,13 @@ tl_hmul2:
 
 						while(tok==tk_mult||tok==tk_div||tok==tk_mod||
 						   tok==tk_multminus||tok==tk_divminus||tok==tk_modminus){
-							int hneg=0,hvop=0,hexpand=divexpand;
+							int hneg=0,hvop=0,hexpand=divexpand,hop;
+							hop=tok;
 							if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
 							if(tok==tk_mod||tok==tk_modminus)hvop=1;
 							getoperand();
 							if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
-							if(tok==tk_div||tok==tk_divminus||tok==tk_mod||tok==tk_modminus){
+							if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
 								DivMod(hvop,sign,razr,hexpand);
 								if(hvop==1&&setzeroflag==0){
 									op66(razr);
@@ -13231,6 +13331,104 @@ unsigned char oaddstack;
 						addstack=oaddstack;
 
 						addESP-=razr==r16?2:4;
+
+						if(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+						   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus){
+							int hneg=0,hvop=0,hexpand=divexpand,hop;
+							nexttok();
+							hop=tok;
+							if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
+							if(tok==tk_mod||tok==tk_modminus)hvop=1;
+							getoperand();
+							if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
+							if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
+								DivMod(hvop,sign,razr,hexpand);
+								if(hvop==1&&setzeroflag==0){
+									op66(razr);
+									if(optimizespeed)outword(0xC28B);
+									else op(0x92);
+								}
+								hexpand=FALSE;
+							}else{
+								hexpand=expandvar();
+								if(tok==tk_number){
+									RegMulNum(AX,itok.number,razr,sign,&hexpand,itok.flag);
+								}else if(tok==tk_openbracket){
+									nexttok();
+									op66(razr);
+									op(0x50);
+									addESP+=razr==r16?2:4;
+									do_e_axmath(sign,razr,ofsstr);
+									if(tok!=tk_closebracket)expected(')');
+									nexttok();
+									op66(razr);
+									op(0x58+EDX);
+									addESP-=razr==r16?2:4;
+									itok.number=EDX;
+									warningreg(regs[razr/2-1][EDX]);
+									op66(razr);
+									op(0xF7);
+									if(sign)op(0xE8+(unsigned int)itok.number);
+									else op(0xE0+(unsigned int)itok.number);
+									setzeroflag=FALSE;
+								}else{
+									outseg(&itok,2);
+									op(0xF7);
+									if(sign)op(0x28+itok.rm);
+									else op(0x20+itok.rm);
+									outaddress(&itok);
+									setzeroflag=FALSE;
+								}
+							}
+							while(!(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+							   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)?0:
+							   (nexttok(),1)){
+								hneg=0;hvop=0;hexpand=divexpand;hop=tok;
+								if(tok==tk_multminus||tok==tk_divminus||tok==tk_modminus)hneg=1;
+								if(tok==tk_mod||tok==tk_modminus)hvop=1;
+								getoperand();
+								if(hneg&&tok==tk_number){itok.number=-itok.number;hneg=0;}
+								if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
+									DivMod(hvop,sign,razr,hexpand);
+									if(hvop==1&&setzeroflag==0){
+										op66(razr);
+										if(optimizespeed)outword(0xC28B);
+										else op(0x92);
+									}
+									hexpand=FALSE;
+								}else{
+									hexpand=expandvar();
+									if(tok==tk_number){
+										RegMulNum(AX,itok.number,razr,sign,&hexpand,itok.flag);
+									}else if(tok==tk_openbracket){
+										nexttok();
+										op66(razr);
+										op(0x50);
+										addESP+=razr==r16?2:4;
+										do_e_axmath(sign,razr,ofsstr);
+										if(tok!=tk_closebracket)expected(')');
+										nexttok();
+										op66(razr);
+										op(0x58+EDX);
+										addESP-=razr==r16?2:4;
+										itok.number=EDX;
+										warningreg(regs[razr/2-1][EDX]);
+										op66(razr);
+										op(0xF7);
+										if(sign)op(0xE8+(unsigned int)itok.number);
+										else op(0xE0+(unsigned int)itok.number);
+										setzeroflag=FALSE;
+									}else{
+										outseg(&itok,2);
+										op(0xF7);
+										if(sign)op(0x28+itok.rm);
+										else op(0x20+itok.rm);
+										outaddress(&itok);
+										setzeroflag=FALSE;
+									}
+								}
+							}
+						}
 
 						if(!(comfile==file_w32&&(reg==EBX||reg==EDI||reg==ESI))){
 
