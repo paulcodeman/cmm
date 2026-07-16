@@ -16,7 +16,7 @@ Open **PowerShell** (not MSYS2 shell) and run:
 
 ```powershell
 $env:PATH = "C:\msys64\mingw32\bin;$env:PATH"
-i686-w64-mingw32-g++ -w -fno-exceptions -D_WIN32_ -D__CONSOLE__ -o cmm_new.exe *.cpp
+i686-w64-mingw32-g++ -w -fno-exceptions -D_WIN32_ -D__CONSOLE__ -o c--.exe *.cpp
 ```
 
 > [!TIP]
@@ -41,5 +41,5 @@ mingw32-make -f Makefile.win32
 
 ```powershell
 $env:PATH = "C:\msys64\mingw32\bin;$env:PATH"
-.\cmm_new.exe test.c -lst
+.\c--.exe test.c -lst
 ```
