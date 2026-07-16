@@ -104,7 +104,7 @@ static char *stristr(char *s, const char *needle)
 
 static void show_source_line(const char *fname, unsigned int line, const char *attr, const char *hl)
 {
-	FILE *f = fopen(fname,"rt");
+	FILE *f=fopen(fname,"rt");
 	if(!f)return;
 	char buf[512];
 	unsigned int cur=0;
@@ -114,19 +114,31 @@ static void show_source_line(const char *fname, unsigned int line, const char *a
 		if(cur==line){
 			size_t len=strlen(buf);
 			while(len>0&&(buf[len-1]=='\n'||buf[len-1]=='\r'))buf[--len]=0;
+			char exp[sizeof(buf)];
+			int xlen=0;
+			int i;for(i=0;i<(int)len&&xlen<(int)sizeof(exp)-1;i++){
+				if(buf[i]=='\t'){
+					int stop=(xlen/8+1)*8;
+					if(stop>(int)sizeof(exp)-1)stop=(int)sizeof(exp)-1;
+					while(xlen<stop)exp[xlen++]=' ';
+				}else{
+					exp[xlen++]=buf[i];
+				}
+			}
+			exp[xlen]=0;
 			int first_match=-1;
 			printf("  | ");
 			if(hl&&hllen>0){
-				char *p=buf;
+				char *p=exp;
 				char *match;
 				while((match=stristr(p,hl))!=NULL){
 					char saved=*match;
 					*match=0;
 					printf("%s",p);
 					*match=saved;
-					int wb=(match>buf?!is_idchar(match[-1]):1) && !is_idchar(match[hllen]);
+					int wb=(match>exp?!is_idchar(match[-1]):1)&&!is_idchar(match[hllen]);
 					if(wb){
-						if(first_match==-1)first_match=(int)(match-buf);
+						if(first_match==-1)first_match=(int)(match-exp);
 						printf("%s%.*s\033[0m",attr,hllen,match);
 					}else{
 						printf("%.*s",hllen,match);
@@ -135,17 +147,12 @@ static void show_source_line(const char *fname, unsigned int line, const char *a
 				}
 				printf("%s\n",p);
 				if(first_match>=0){
-					int viscol=0;
-					int i;for(i=0;i<first_match;i++){
-						if(buf[i]=='\t')viscol=(viscol/8+1)*8;
-						else viscol++;
-					}
-					printf("  | %*s",viscol,"");
+					printf("  | %*s",first_match,"");
 					for(i=0;i<hllen;i++)printf("^");
 					printf("\n");
 				}
 			}else{
-				printf("%s%s\033[0m\n",attr,buf);
+				printf("%s%s\033[0m\n",attr,exp);
 			}
 			break;
 		}
