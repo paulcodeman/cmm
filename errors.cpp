@@ -174,6 +174,36 @@ static void extract_hl(const char *str, char *out, int outsize)
 	out[len]=0;
 }
 
+static void show_hint_line(const char *fname, unsigned int line, const char *prefix)
+{
+	if(line<2)return;
+	FILE *f=fopen(fname,"rt");
+	if(!f)return;
+	char buf[512];
+	unsigned int cur=0;
+	int n=0;
+	while(fgets(buf,sizeof(buf),f)){
+		cur++;
+		if(cur>=line-2&&cur<line){
+			size_t len=strlen(buf);
+			while(len>0&&(buf[len-1]=='\n'||buf[len-1]=='\r'))buf[--len]=0;
+			char exp[sizeof(buf)];
+			int xlen=0,i;
+			for(i=0;i<(int)len&&xlen<(int)sizeof(exp)-1;i++){
+				if(buf[i]=='\t'){
+					int stop=(xlen/8+1)*8;
+					if(stop>(int)sizeof(exp)-1)stop=(int)sizeof(exp)-1;
+					while(xlen<stop)exp[xlen++]=' ';
+				}else exp[xlen++]=buf[i];
+			}
+			exp[xlen]=0;
+			printf("  %c %s\n",prefix?*prefix:'?',exp);
+			n++;
+		}
+	}
+	fclose(f);
+}
+
 void  preerror3(char *str,unsigned int line,unsigned int file)//error message at a different than current line
 
 {
@@ -192,6 +222,8 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 			char hl[64];
 			extract_hl(str,hl,sizeof(hl));
 			show_source_line(fname,line,"\033[97;41m",hl);
+			if(strcmp(str,"operator identifier expected")==0)
+				show_hint_line(fname,line,"?");
 		}
 
 		if(errfile.file==NULL)errfile.file=fopen(errfile.name,"w+t");
