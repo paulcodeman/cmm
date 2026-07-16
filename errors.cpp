@@ -232,6 +232,13 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 
 	if(error<maxerrors){
 
+		if(strcmp(str,"operator identifier expected")==0){
+			if(line==last_hint_line&&file==last_hint_file_id)
+				return;
+			last_hint_line=line;
+			last_hint_file_id=file;
+		}
+
 		error++;
 
 		const char *fname=startfileinfo==NULL?"":(startfileinfo+file)->filename;
@@ -245,11 +252,7 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 
 		if(*fname){
 			if(strcmp(str,"operator identifier expected")==0){
-				if(line!=last_hint_line||file!=last_hint_file_id){
-					show_hint_line(fname,line,"?","\033[97;41m",errfile.file);
-					last_hint_line=line;
-					last_hint_file_id=file;
-				}
+				show_hint_line(fname,line,"?","\033[97;41m",errfile.file);
 			}else{
 				char hl[64];
 				extract_hl(str,hl,sizeof(hl));
