@@ -7354,9 +7354,11 @@ fold_done:
 
 						       tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
 
-							int hnegflag=0,hvop=0;
+							int hnegflag=0,hvop=0,hop;
 
 							nexttok();
+
+							hop=tok;
 
 							if(tok==tk_multminus)hnegflag=1;
 
@@ -7370,7 +7372,7 @@ fold_done:
 
 							if(hnegflag&&tok==tk_number){itok.number=-itok.number;hnegflag=0;}
 
-							if(tok==tk_div||tok==tk_divminus||tok==tk_mod||tok==tk_modminus){
+							if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
 
 								DivMod(hvop,sign,razr,hexpand);
 
@@ -12628,9 +12630,11 @@ fold_done2:
 
 						       tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
 
-							int hnegflag=0,hvop=0;
+							int hnegflag=0,hvop=0,hop;
 
 							nexttok();
+
+							hop=tok;
 
 							if(tok==tk_multminus)hnegflag=1;
 
@@ -12644,7 +12648,7 @@ fold_done2:
 
 							if(hnegflag&&tok==tk_number){itok.number=-itok.number;hnegflag=0;}
 
-							if(tok==tk_div||tok==tk_divminus||tok==tk_mod||tok==tk_modminus){
+							if(hop==tk_div||hop==tk_divminus||hop==tk_mod||hop==tk_modminus){
 
 								DivMod(hvop,sign,razr,hexpand);
 
