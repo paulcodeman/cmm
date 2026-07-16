@@ -78,6 +78,24 @@ void  preerror(char *str) /* error on currentline with line number and file name
 
 }
 
+static void show_source_line(const char *fname, unsigned int line)
+{
+	FILE *f = fopen(fname,"rt");
+	if(!f)return;
+	char buf[512];
+	unsigned int cur=0;
+	while(fgets(buf,sizeof(buf),f)){
+		cur++;
+		if(cur==line){
+			size_t len=strlen(buf);
+			while(len>0&&(buf[len-1]=='\n'||buf[len-1]=='\r'))buf[--len]=0;
+			printf("  | %s\n",buf);
+			break;
+		}
+	}
+	fclose(f);
+}
+
 void  preerror3(char *str,unsigned int line,unsigned int file)//error message at a different than current line
 
 {
@@ -86,9 +104,13 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 
 		error++;
 
-		sprintf((char *)string3,"%s(%d)#%d> %s.\n",startfileinfo==NULL?"":(startfileinfo+file)->filename,line,error,str);
+		const char *fname=startfileinfo==NULL?"":(startfileinfo+file)->filename;
+
+		sprintf((char *)string3,"%s(%d)#%d> %s.\n",fname,line,error,str);
 
 		printf((char *)string3);
+
+		if(*fname)show_source_line(fname,line);
 
 		if(errfile.file==NULL)errfile.file=fopen(errfile.name,"w+t");
 
@@ -1138,12 +1160,9 @@ void warningprint(char *str,unsigned int line,unsigned int file)
 {
 	if(warning==TRUE){
 
-		//if(wartype.name!=NULL&&wartype.file==stdout){
-		//	if((wartype.file=fopen(wartype.name,"w+t"))==NULL)wartype.file=stdout;
-		//}
-
-		//fprintf(wartype.file,"%s(%d)> Warning! %s.\n",startfileinfo==NULL?"":(startfileinfo+file)->filename,line,str);
-		printf("%s(%d)> Warning! %s.\n",startfileinfo==NULL?"":(startfileinfo+file)->filename,line,str);
+		const char *fname=startfileinfo==NULL?"":(startfileinfo+file)->filename;
+		printf("%s(%d)> Warning! %s.\n",fname,line,str);
+		if(*fname)show_source_line(fname,line);
 
 	}
 }
