@@ -144,7 +144,7 @@ int kfont_char_width[255];
 
 :byte KFONT::symbol(signed x,y; byte s; dword image_raw)
 {
-	dword xi,yi;
+	dword xi,yi, _h, _blk, _off_y, _w, _row;
 	dword iii = 0;
 	dword offs;
 	dword tmp, _;
@@ -153,10 +153,15 @@ int kfont_char_width[255];
 	if(s==32)return width/4+1;
 	if(s==9)return width;
 	s = Cp866ToAnsi(s);
-	tmp = block*s << 2 + font;
-	for(yi=0; yi<height; yi++)
+	_off_y = size.offset_y;
+	_w = size.width;
+	_blk = block;
+	tmp = _blk*s << 2 + font;
+	_h = height;
+	_row = y * _w * KFONT_BPP;
+	for(yi=0; yi<_h; yi++)
 	{
-		EDI = size.offset_y + yi + y * size.width * KFONT_BPP + image_raw;
+		EDI = _off_y + yi + _row + image_raw;
 		for(xi=0; xi<width; xi++)
 		{
 			if(iii%32) _ >>= 1;
@@ -211,12 +216,13 @@ inline fastcall Cp866ToAnsi(AL) {
 inline fastcall dword b32(EAX) { return DSDWORD[EAX]; }
 :void KFONT::ApplySmooth()
 {
-	dword i,line_w,to,dark_background;
+	dword i,line_w,to,dark_background, _sh, _raw;
+	_sh = size.height;
+	_raw = raw;
 	line_w = size.width * KFONT_BPP;
-	to = size.height - 1 * line_w + raw - KFONT_BPP;
-	for(i=raw; i < to; i+=KFONT_BPP)
-	{
-		if(i-raw%line_w +KFONT_BPP == line_w) continue;
+	to = _sh - 1 * line_w + _raw - KFONT_BPP;
+	i=raw; while(i < to) {
+		if(i - _raw % line_w + KFONT_BPP == line_w) continue;
 		// pixels position, where b - black, w - write
 		// bw
 		// wb
@@ -238,6 +244,7 @@ inline fastcall dword b32(EAX) { return DSDWORD[EAX]; }
 			DSDWORD[i] = dark_background;
 			DSDWORD[i+KFONT_BPP+line_w] = dark_background;	
 		}
+		i+=KFONT_BPP;
 	}
 }
 
