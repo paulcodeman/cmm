@@ -253,6 +253,8 @@ extern int strpackcur;
 #ifdef DEBUGMODE
 extern int debug;
 #endif
+extern int verbosedebug;
+extern const char *tokname(int t);
 extern int dirmode;
 
 #endif

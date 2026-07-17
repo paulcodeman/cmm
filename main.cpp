@@ -79,6 +79,7 @@ unsigned char shortimport=FALSE;
 unsigned char useinline=2;
 unsigned char ocoff=FALSE;
 unsigned char ESPloc=FALSE;
+int verbosedebug=0;
 
 int startupfile=-1;
 int alignproc=8,aligncycle=8;
@@ -146,6 +147,7 @@ const char *usage[]={
 "-WF=<file> direct warnings to a file  -ME    display my name and my address",
 "-MER=##    set maximum number errors  -X     disable SPHINX C-- header in output",
 "-NW=##     disable selected warnings  -WE=## selected warning will be error",
+"-V         verbose token debug trace (stdout)",
 //" -SCD        split code and date",
 NULL};
 
@@ -169,7 +171,7 @@ const char *dir[]={
 #ifdef OPTVARCONST
 	"ORV",
 #endif
-   "MAP",  "WE",   "EXT",   "OPATH", NULL};
+   "MAP",  "WE",   "EXT",   "OPATH", "V", NULL};
 
 enum {
 	c_me,    c_key,     c_sym,   c_lasm,   c_endinfo=c_lasm,
@@ -192,7 +194,7 @@ enum {
 #ifdef OPTVARCONST
 	c_orv,
 #endif
-	c_map,   c_we,      c_ext,   c_opath, c_end};
+	c_map,   c_we,      c_ext,   c_opath, c_v, c_end};
 
 #define NUMEXT 6	//число разрешенных расширений компилируемого файла
 char extcompile[NUMEXT][4]={"c--","cmm","c","h--","hmm","h"};
@@ -1070,6 +1072,9 @@ nexpardll:
                 case c_opath:
                     strcpy(opath,BackString(ptr));
                     break;
+				case c_v:
+					verbosedebug=(unsigned char)1^neg;
+					break;
 			}
 			break;
 		}

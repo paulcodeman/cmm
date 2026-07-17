@@ -480,15 +480,6 @@ void doblock()
 {
 	expecting(tk_openbrace);
 	doblock2();
-/*	for(;;){
-		if(tok==tk_closebrace)break;
-		if(tok==tk_eof){
-			unexpectedeof();
-			break;
-		}
-		docommand();
-	}
-	RestoreStack();*/
 }
 
 void doblock2()
@@ -2348,6 +2339,7 @@ int usereg2=-1;
 
 //////04.10.04 13:45
 int bracket=0;
+if(verbosedebug)printf("constructcompare: start vartype=%d\n",vartype);
 unsigned char oinline=useinline;
 	useinline=0;
 	do{
@@ -2794,6 +2786,7 @@ mac1:
 		nexttok();
 	}
 nn1:
+	if(verbosedebug)printf("constructcompare nn1: tok=%s(%d) itok.name='%s' bracket=%d\n",tokname(tok),tok,itok.name,bracket);
 	if(razr==r_undef){
 		switch(vartype){
 			case tk_qword:
@@ -2815,9 +2808,11 @@ nn1:
 		}
 	}
 	// handle continuation through nested parens: e.g. if ((a + b) > 15) or if ((a + b) * c > 15)
+	if(verbosedebug)printf("constructcompare: before paren-chain: tok=%s(%d) bracket=%d\n",tokname(tok),tok,bracket);
 	while(tok == tk_closebracket && bracket > 1) {
 		bracket--;
 		nexttok();
+		if(verbosedebug)printf("constructcompare paren-chain: tok=%s(%d) itok.type=%d\n",tokname(tok),tok,itok.type);
 		if(itok.type == tp_compare || itok.type == tp_stopper) break;
 		if(tok == tk_closebracket) continue;
 		// only continue for high-precedence operators that can follow a paren in math expr
@@ -3181,7 +3176,9 @@ endcomp:
 	ittok^=invertflag;
 	ittok^=notflag;
 	op(ittok);  /* output instruction code */
+	if(verbosedebug)printf("constructcompare: before expecting() tok=%s(%d)\n",tokname(tok),tok);
 	expecting(tk_closebracket);
+	if(verbosedebug)printf("constructcompare: after expecting() tok=%s(%d)\n",tokname(tok),tok);
 	useinline=oinline;
 	return invertflag|use_cxz;
 }
@@ -3210,6 +3207,7 @@ REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
 #else
 		if((rcompr=constructcompare(0,outptr))==voidcompr||rcompr==zerocompr)i=1;
 #endif
+		if(verbosedebug)printf("compare: after constructcompare: rcompr=%d i=%d tok=%s(%d)\n",rcompr,i,tokname(tok),tok);
 		if(i){
 			if(rcompr==voidcompr && (ptok==tk_andand || ptok==tk_oror)){
 				i=0;
@@ -3238,6 +3236,7 @@ REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
 			changeregstat=BakRegStat();
 		}*/
 	}while(tok==tk_oror||tok==tk_andand);
+	if(verbosedebug)printf("compare: after do-while: tok=%s(%d) *numcomp=%d\n",tokname(tok),tok,*numcomp);
 	if(tok==tk_closebracket)nexttok();
 	for(i=0;i<*numcomp;i++){
 		unsigned long temp=outptr-(icomp+i)->loc;

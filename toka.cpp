@@ -1181,11 +1181,76 @@ ITOK oitok;
 
 //extern idrec *crec;
 
+const char *tokname(int t)
+{
+	static char buf[32];
+	switch(t){
+		case tk_eof: return "eof";
+		case tk_number: return "number";
+		case tk_string: return "string";
+		case tk_id: return "id";
+		case tk_ID: return "ID";
+		case tk_assign: return "=";
+		case tk_minus: return "-";
+		case tk_plus: return "+";
+		case tk_mult: return "*";
+		case tk_div: return "/";
+		case tk_mod: return "%";
+		case tk_or: return "|";
+		case tk_and: return "&";
+		case tk_xor: return "^";
+		case tk_not: return "~";
+		case tk_equalto: return "==";
+		case tk_notequal: return "!=";
+		case tk_greater: return ">";
+		case tk_greaterequal: return ">=";
+		case tk_less: return "<";
+		case tk_lessequal: return "<=";
+		case tk_oror: return "||";
+		case tk_andand: return "&&";
+		case tk_openbrace: return "{";
+		case tk_closebrace: return "}";
+		case tk_openbracket: return "(";
+		case tk_closebracket: return ")";
+		case tk_openblock: return "[";
+		case tk_closeblock: return "]";
+		case tk_colon: return ":";
+		case tk_semicolon: return ";";
+		case tk_camma: return ",";
+		case tk_period: return ".";
+		case tk_numsign: return "#";
+		case tk_proc: return "proc";
+		case tk_undefproc: return "undefproc";
+		case tk_declare: return "declare";
+		case tk_apiproc: return "apiproc";
+		case tk_charvar: case tk_char: return "char";
+		case tk_bytevar: case tk_byte: return "byte";
+		case tk_intvar: case tk_int: return "int";
+		case tk_wordvar: case tk_word: return "word";
+		case tk_longvar: case tk_long: return "long";
+		case tk_dwordvar: case tk_dword: return "dword";
+		case tk_floatvar: case tk_float: return "float";
+		case tk_qwordvar: case tk_qword: return "qword";
+		case tk_doublevar: case tk_double: return "double";
+		case tk_reg: return "reg";
+		case tk_reg32: return "reg32";
+		case tk_beg: return "beg";
+		case tk_if: return "if";
+		case tk_for: return "for";
+		case tk_while: return "while";
+		case tk_do: return "do";
+		case tk_return: return "return";
+		case tk_void: return "void";
+		default: sprintf(buf,"tok%d",t); return buf;
+	}
+}
+
 void nexttok()
 {
 #ifdef DEBUGMODE
 if(debug)puts("start nexttok");
 #endif
+	if(verbosedebug)printf("nexttok: %-12s  name='%s'  inptr=%u  cha='%c'\n",tokname(tok),itok.name[0]?itok.name:"(null)",inptr2,cha2>=' '?cha2:'?');
 	inptr=inptr2;
 	linenumber=linenum2;
 	cha=cha2;
@@ -2032,7 +2097,7 @@ yesid:
 			nextchar();
 			switch(cha){
 				case '=': *tok4=tk_orequals; break; //OR=
-				case '|': *tok4=tk_oror; break; 		//OR-OR
+				case '|': *tok4=tk_oror; itok4->type=tp_opperand; break; 		//OR-OR
 				default:
 					whitespace();
 					if(cha=='-')*tok4=tk_orminus; 		//OR-
@@ -2049,7 +2114,7 @@ yesid:
 			nextchar();
 			switch(cha){
 				case '=': *tok4=tk_andequals; break; //AND=
-				case '&': *tok4=tk_andand; break;
+				case '&': *tok4=tk_andand; itok4->type=tp_opperand; break;
 				default:
 					whitespace();
 					if(cha=='-')*tok4=tk_andminus;
