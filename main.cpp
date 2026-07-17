@@ -29,6 +29,7 @@ static char **_Argv; //!!! simplest way to make your own variable
 
 unsigned char compilerstr[]="SPHINX C-- 0.239";
 char opath[4096];
+char outname[4096];
 char *rawfilename;					/* file name */
 char *rawext;
 LISTCOM *listcom;
@@ -140,6 +141,7 @@ const char *usage[]={
 "-SYS  device (SYS) file               -B32  32bit binary files",
 "-MEOS executable file for MeOS        -MAP  create function map file",
 "-EXT= <ext> set file extension        -OPATH output file path",
+"-ONAME= <file> set output file name   -O    output file name (short form)",
 "",
 "                           MISCELLANEOUS",
 "-HELP -H -? help, this info           -WORDS list of C-- reserved words",
@@ -171,7 +173,7 @@ const char *dir[]={
 #ifdef OPTVARCONST
 	"ORV",
 #endif
-   "MAP",  "WE",   "EXT",   "OPATH", "V", NULL};
+   "MAP",  "WE",   "EXT",   "OPATH", "ONAME", "V", NULL};
 
 enum {
 	c_me,    c_key,     c_sym,   c_lasm,   c_endinfo=c_lasm,
@@ -194,7 +196,7 @@ enum {
 #ifdef OPTVARCONST
 	c_orv,
 #endif
-	c_map,   c_we,      c_ext,   c_opath, c_v, c_end};
+	c_map,   c_we,      c_ext,   c_opath, c_oname, c_v, c_end};
 
 #define NUMEXT 6	//число разрешенных расширений компилируемого файла
 char extcompile[NUMEXT][4]={"c--","cmm","c","h--","hmm","h"};
@@ -1072,6 +1074,9 @@ nexpardll:
                 case c_opath:
                     strcpy(opath,BackString(ptr));
                     break;
+                case c_oname:
+                    strcpy(outname,BackString(ptr));
+                    break;
 				case c_v:
 					verbosedebug=(unsigned char)1^neg;
 					break;
@@ -1723,7 +1728,9 @@ FILE *CreateOutPut(char *ext,char *mode)
 {
 char buf[256];
 FILE *diskout;
-    if (*opath) {
+    if (*outname) {
+        strcpy(buf,outname);
+    } else if (*opath) {
 		strcpy(buf,opath);
     } else if(ext && strlen(ext)) {
         sprintf(buf,"%s.%s",rawfilename,ext);
