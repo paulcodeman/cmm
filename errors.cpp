@@ -251,13 +251,9 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 		if(errfile.file!=NULL)fprintf(errfile.file,(char *)string3);
 
 		if(*fname){
-			if(str[0]=='\''||strcmp(str,"operator identifier expected")==0){
-				show_hint_line(fname,line,"?","\033[97;41m",errfile.file);
-			}else{
-				char hl[64];
-				extract_hl(str,hl,sizeof(hl));
-				show_source_line(fname,line,"\033[97;41m",hl,errfile.file);
-			}
+			char hl[64];
+			extract_hl(str,hl,sizeof(hl));
+			show_source_line(fname,line,"\033[97;41m",hl,errfile.file);
 		}
 
 	}
@@ -443,13 +439,8 @@ void operatorexpected()
 
 {
 	char buf[200];
-	if(tok==tk_id){
-		sprintf(buf,"'%s' not expected in this context",itok.name);
-	}else if(tok==tk_number||tok==tk_string){
-		sprintf(buf,"'%s' not expected in this context",itok.name);
-	}else{
-		sprintf(buf,"'%s' not expected in this context",tokstr(tok));
-	}
+	const char *what = (tok==tk_id||tok==tk_number||tok==tk_string) ? itok.name : tokstr(tok);
+	sprintf(buf,"'%s' not expected in this context", what);
 	if(verbosedebug)printf("operatorexpected: tok=%s(%d) itok.name='%s' tok2=%s(%d) itok2.name='%s' linenumber=%d searchteg=%p\n",tokname(tok),tok,itok.name,tokname(tok2),tok2,itok2.name,linenumber,(void*)searchteg);
 	preerror(buf);
 
@@ -600,9 +591,10 @@ void tobigpost()
 void unuseableinput()
 
 {
-
-	preerror("unuseable input");
-
+	char buf[200];
+	const char *what = (tok==tk_id||tok==tk_number||tok==tk_string) ? itok.name : tokstr(tok);
+	sprintf(buf,"unexpected '%s'", what);
+	preerror(buf);
 	FindStopTok();
 
 }
