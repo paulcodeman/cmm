@@ -133,7 +133,8 @@ void TWebBrowser::Reparse()
 }
 //============================================================================================
 void TWebBrowser::ParseHtml(dword _bufpointer, _bufsize){
-	int tab_len;
+	int tab_len, _draw_x, _left_gap, _font_w, _len;
+	int _tab_len;
 	dword bufpos;
 	bufsize = _bufsize;
 
@@ -161,6 +162,9 @@ void TWebBrowser::ParseHtml(dword _bufpointer, _bufsize){
 	_PARSE_START_:
 
 	SetPageDefaults();
+	_draw_x = draw_x;
+	_left_gap = left_gap;
+	_font_w = list.font_w;
 	for (bufpos=bufpointer; bufpos < bufpointer+bufsize; bufpos++;)
 	{
 		if (style.pre) {
@@ -170,8 +174,10 @@ void TWebBrowser::ParseHtml(dword _bufpointer, _bufsize){
 				continue;
 			}
 			if (ESBYTE[bufpos] == 0x09) {
-				tab_len = draw_x - left_gap / list.font_w + strlen(#linebuf) % 4;
-				if (!tab_len) tab_len = 4; else tab_len = 4 - tab_len;
+				_len = strlen(#linebuf);
+				tab_len = _draw_x - _left_gap / _font_w + _len % 4;
+				if (tab_len == 0) _tab_len = 4; else _tab_len = 4 - tab_len;
+				tab_len = _tab_len;
 				while (tab_len) {chrcat(#linebuf,' '); tab_len--;}
 				continue;
 			}
