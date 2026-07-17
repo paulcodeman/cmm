@@ -232,7 +232,7 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 
 	if(error<maxerrors){
 
-		if(strcmp(str,"operator identifier expected")==0){
+		if(str[0]=='\''||strcmp(str,"operator identifier expected")==0){
 			if(line==last_hint_line&&file==last_hint_file_id)
 				return;
 			last_hint_line=line;
@@ -251,7 +251,7 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 		if(errfile.file!=NULL)fprintf(errfile.file,(char *)string3);
 
 		if(*fname){
-			if(strcmp(str,"operator identifier expected")==0){
+			if(str[0]=='\''||strcmp(str,"operator identifier expected")==0){
 				show_hint_line(fname,line,"?","\033[97;41m",errfile.file);
 			}else{
 				char hl[64];
@@ -419,8 +419,14 @@ void codeexpected()
 void operatorexpected()
 
 {
+	char buf[200];
+	if(tok==tk_id){
+		sprintf(buf,"'%s' not expected in this context",itok.name);
+	}else{
+		strcpy(buf,"operator identifier expected");
+	}
 	if(verbosedebug)printf("operatorexpected: tok=%s(%d) itok.name='%s' tok2=%s(%d) itok2.name='%s' linenumber=%d searchteg=%p\n",tokname(tok),tok,itok.name,tokname(tok2),tok2,itok2.name,linenumber,(void*)searchteg);
-	preerror("operator identifier expected");
+	preerror(buf);
 
 }
 
