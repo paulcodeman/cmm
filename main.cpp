@@ -324,6 +324,8 @@ unsigned char pari=FALSE;
 							CheckExtenshions();
 						}
 					}
+				}else{
+					strcpy(outname,argv[count]);
 				}
 			}
 		}
