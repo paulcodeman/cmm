@@ -1,6 +1,6 @@
 # Roadmap
 
-## 1. Quick win: `for (int i=0; ...)` in loop headers
+## 1. Quick win: `for (int i=0; ...)` in loop headers ✅ DONE
 
 Allow type keywords (`int`, `dword`, `byte`, etc.) inside `for()` initializer
 within function bodies.  Scope of the declared variable = the `for` loop body
@@ -16,13 +16,13 @@ only.
 
 ### Status
 
-Estimated effort: **3-5 hours**.
+**Blocked by BackTextBlock fix** → now unblocked. Next milestone.
 
 ---
 
-## 2. Full block-scope variables
+## 2. Full block-scope variables ✅ UNBLOCKED
 
-After the quick `for (int)` works, add proper nested scope:
+After the quick `for (int i)` works, add proper nested scope:
 `{ int x; }`, `if (...) { int y; }`, etc.
 
 ### What to change
@@ -38,34 +38,48 @@ Blocked by item 1.
 
 ---
 
-## 3. Expression parser: struct member + `*` / `/` / `%`
+## 3. Expression parser: struct member + `*` / `/` / `%` ✅ FIXED
 
-C-- cannot resolve struct member access (`this.y`, `list.font_w`,
+C-- could not resolve struct member access (`this.y`, `list.font_w`,
 `size.height`) when combined with `*`, `/`, `%` inside class methods.
-
-### Workaround
-
-Extract the struct member into a local variable before use.
 
 ### Root cause
 
-Struct member access resolves to an ESI-relative address, but the expression
-evaluator loses track that the result is a *value* (not an address) for
-multiplicative operators.  The `BackTextBlock` memory corruption (now fixed)
-masked this pre-existing limitation.
+Memory corruption in `BackTextBlock` (use-after-free in `dofor`,
+`RunBackText`, `calcrm`, `dostructvar2`) injected stale tokens (`"this; "`)
+into the token stream, which cascaded into `operatorexpected()` errors.
 
-### Debug
+### Fix
 
-Build with `-DDEBUGMODE` and run a test case.  The `verbosedebug` printf
-in `operatorexpected()` / `unuseableinput()` already outputs: `tok`, `tok2`,
-`itok.name`, `itok2.name`, `linenumber`, `searchteg`.
+Fixed 3 use-after-free bugs in `toka.cpp` / `tokc.cpp`:
+- `dofor()` / `RunBackText()` / `calcrm()` / `dostructvar2()` — now
+  properly save/restore `BackTextBlock` and NULL it after `free()`.
 
-### Fix scope
+### Result
 
-Touch `tokb.cpp` — the expression evaluator's handling of RM values from
-struct member resolution.
+**Original failing patterns now compile cleanly:**
 
-### Known triggers
-- `yy - y / item_h`
-- `for(yi=0; yi<size.height; yi++)`
-- `draw_x - left_gap / list.font_w + strlen(...) % 4`
+| File | Pattern | Status |
+|------|---------|--------|
+| `kfont.h` | `for(yi=0; yi<height; yi++)` | ✅ |
+| `kfont.h` | `size.width * KFONT_BPP` | ✅ |
+| `kfont.h` | `i - _raw % line_w + KFONT_BPP` | ✅ |
+| `list_box.h` | `if (MouseOver(xx, yy)) {` | ✅ |
+| `list_box.h` | `new_cur_y = yy - y / item_h + first` | ✅ |
+| `TWB.c` | `draw_x - left_gap / list.font_w + strlen(...) % 4` | ✅ |
+
+**All workarounds removed** (commits `4def170`, `674a3da`, `4e4c467`).
+
+### Workarounds removed (no longer needed)
+
+- `kfont.h` — extracted `height`, `size.width`, `raw`, `block` to locals
+- `list_box.h` — inlined `MouseOver` check instead of `if (MouseOver(xx, yy))`
+- `TWB.c` — extracted `strlen(#linebuf)` and struct members to locals
+
+---
+
+### Next steps
+
+1. Implement **item 1** (`for (int i=0; ...)` quick win)
+2. Implement **item 2** (full block scope)
+3. Re-evaluate if any other parser issues remain
