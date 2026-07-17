@@ -1,1 +1,2 @@
-eolite\Eolite.c(39)#1> unable to open file 'imgs/images.h'.
+apps/eolite/Eolite.c(19)#1> unable to open file '../lib/clipboard.h'.
+  | #include "../lib/strings.h"

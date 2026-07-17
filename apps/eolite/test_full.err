@@ -1,0 +1,2 @@
+apps/eolite/test_full.c(3)#1> unable to open file '../lib/clipboard.h'.
+  | #include "../lib/strings.h"
