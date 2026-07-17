@@ -1,85 +1,71 @@
-# Roadmap: Expression Parser Fix
+# Roadmap
 
-## Problem
+## 1. Quick win: `for (int i=0; ...)` in loop headers
 
-C--'s expression parser cannot correctly resolve struct member access
-(`this.y`, `list.font_w`, `size.height`) when combined with `*`, `/`, `%`
-operators in expressions inside class methods — both in loop/condition
-headers and in plain assignment statements.  The parser produces
-`'X' not expected in this context` or `unexpected 'X'` errors, where X
-is the token that follows the struct member expression.
+Allow type keywords (`int`, `dword`, `byte`, etc.) inside `for()` initializer
+within function bodies.  Scope of the declared variable = the `for` loop body
+only.
 
-**Root cause**: the memory corruption in `BackTextBlock` (now fixed) masked
-this pre-existing parser limitation.
+### What to change
 
-## Current workaround
+- **tokc.cpp:648-657** — remove the `"cannot declare variables within
+  function { } block"` error for type keywords
+- **tokc.cpp `dofor()`** — allow type + identifier after `(`, add variable
+  to local table, remove it after the loop body
+- No full block-scope system needed — just track the one for-loop variable
 
-Extract the struct member (or the entire expression) into a local variable
-before the loop/condition:
+### Status
 
-```c
-// before (error)
-for(yi=0; yi<height; yi++)       // height is this.size.height
-{
-}
+Estimated effort: **3-5 hours**.
 
-// after (works)
-int h = height;
-for(yi=0; yi<h; yi++)
-{
-}
-```
+---
 
-## Next steps to fix the parser
+## 2. Full block-scope variables
 
-### 1. Understand the failing pattern
+After the quick `for (int)` works, add proper nested scope:
+`{ int x; }`, `if (...) { int y; }`, etc.
 
-Create minimal test cases that trigger the error.  Known triggers:
-- Struct member as operand of `*`, `/`, `%` inside `for(;;)` condition
-- Struct member in `if()` condition followed by `{` on next line
-- Struct member as operand of `/` or `%` in an assignment expression
-  (`yy - y / item_h`)
-- Function call result (`strlen(...)`) combined with struct member via `%`
+### What to change
 
-### 2. Locate the parser code
+- Push/pop scope on `{` / `}`
+- Allow type keywords in any block inside a function
+- Remove variables from symbol table when leaving scope
+- Fix register reuse / ESP tracking for scoped variables
 
-The error is thrown from `default:` cases in switch statements in:
-- `tokb.cpp` — main expression parser (~14 call sites for `operatorexpected()`, ~16 for `unuseableinput()`)
-- `tokc.cpp` — additional parsing paths
+### Status
 
-Key functions:
-- `calcrm()` — resolves register/variable to a register machine address
-- `dostructvar2()` — handles struct member access (`this.xxx`)
-- Internal expression evaluator in `tokb.cpp` (several thousand lines)
+Blocked by item 1.
 
-### 3. Debug approach
+---
 
-Build with `-DDEBUGMODE` and run with a test case to see the token flow
-just before the error.  The `verbosedebug` printf in `operatorexpected()`
-and `unuseableinput()` already outputs: `tok`, `tok2`, `itok.name`,
-`itok2.name`, `linenumber`, `searchteg`.
+## 3. Expression parser: struct member + `*` / `/` / `%`
 
-### 4. Hypothesis
+C-- cannot resolve struct member access (`this.y`, `list.font_w`,
+`size.height`) when combined with `*`, `/`, `%` inside class methods.
 
-The struct member access is resolved into an ESI-relative address, but the
-expression evaluator does not track that the result is a value (not an
-address) for the purposes of `*`/`/`/`%` operator precedence.  The fix
-likely involves adding an intermediate `RM` node or adjusting the operator
-handling in the expression tree builder.
+### Workaround
 
-### 5. Fix scope
+Extract the struct member into a local variable before use.
 
-A proper fix would touch the expression parser in `tokb.cpp` to correctly
-handle RM (register machine) values produced by struct member resolution
-as operands of multiplicative operators.
+### Root cause
 
-### 6. Validation
+Struct member access resolves to an ESI-relative address, but the expression
+evaluator loses track that the result is a *value* (not an address) for
+multiplicative operators.  The `BackTextBlock` memory corruption (now fixed)
+masked this pre-existing limitation.
 
-After the fix, all known failure cases must compile:
-- `list_box.h` line 108: `new_cur_y = yy - y / item_h + first`
-- `kfont.h::symbol()`: `for(yi=0; yi<height; yi++) { ... }`
-- `kfont.h::ApplySmooth()`: `for(i=raw; i < to; i+=KFONT_BPP) { ... }`
-- `TWB.c::ParseHtml()`: `draw_x - left_gap / list.font_w + strlen(...) % 4`
+### Debug
 
-The current workarounds (extracting to local variables) should be kept in
-the library code until a parser-level fix is confirmed.
+Build with `-DDEBUGMODE` and run a test case.  The `verbosedebug` printf
+in `operatorexpected()` / `unuseableinput()` already outputs: `tok`, `tok2`,
+`itok.name`, `itok2.name`, `linenumber`, `searchteg`.
+
+### Fix scope
+
+Touch `tokb.cpp` — the expression evaluator's handling of RM values from
+struct member resolution.
+
+### Known triggers
+- `yy - y / item_h`
+- `for(yi=0; yi<size.height; yi++)`
+- `draw_x - left_gap / list.font_w + strlen(...) % 4`
