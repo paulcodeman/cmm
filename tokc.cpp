@@ -4555,7 +4555,8 @@ unsigned int ifline,conloc,blinenum,numcomp=0;
 unsigned char bcha;
 unsigned char COMPARE=FALSE,modif=FALSE;
 int i;
-unsigned char *buf;
+unsigned char *saved_input=NULL;
+unsigned char *inc_buf=NULL;
 unsigned int oaddESP=addESP;
 ICOMP *icomp=NULL;
 REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
@@ -4600,7 +4601,7 @@ REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
 	if(AlignCycle)AlignCD(CS,aligncycle);
 	conloc=outptr;	//запомнить точку начала цикла
 
-	if(tok!=tk_semicolon){	//если есть условие
+		if(tok!=tk_semicolon){	//если есть условие
 		if(tok!=tk_openbracket){	//если условие начинается не с (
 			CharToBackBuf('(');	//добавить ее
 			COMPARE=TRUE;	//и флаг установить
@@ -4613,9 +4614,10 @@ REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
 		int oendinptr=endinptr;
 		endinptr=SizeBackBuf-1;//strlen(BackTextBlock);
 		i=inptr2;
-		buf=input;
+		saved_input=input;
 		bcha=cha2;
 		input=(unsigned char *)BackTextBlock;
+		if(verbosedebug)printf("dofor: condition: switching input to BackTextBlock=%p (was %p), inptr2=1, SizeBackBuf=0\n",(void*)input,(void*)saved_input);
 		SizeBackBuf=0;
 		inptr2=1;
 		cha2='(';
@@ -4632,10 +4634,12 @@ REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
 				icomp=bigcompare(typeb,&numcomp,&bakregstat,&changeregstat);
 #endif
 		free(input);
-		input=buf;
+		BackTextBlock=NULL;
+		input=saved_input;
 		inptr2=i;
 		cha2=bcha;
 		endinptr=oendinptr;
+		if(verbosedebug)printf("dofor: condition: restored input=%p inptr2=%d\n",(void*)input,i);
 		COMPARE=TRUE;
 		nexttok();
 	}
@@ -4670,7 +4674,8 @@ REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
 		}
 		CharToBackBuf('}');
 		CharToBackBuf(0);
-		buf=(unsigned char *)REALLOC(BackTextBlock,SizeBackBuf);
+		inc_buf=(unsigned char *)REALLOC(BackTextBlock,SizeBackBuf);
+		if(verbosedebug)printf("dofor: increment: REALLOC BackTextBlock=%p SizeBackBuf=%d\n",(void*)inc_buf,SizeBackBuf);
 		SizeBackBuf=0;
 	}
 
@@ -4713,7 +4718,7 @@ REGISTERSTAT *bakregstat=NULL,*changeregstat=NULL;
 		unsigned int oldlinenum=linenum2;
 		ITOK oitok;
 		oitok=itok2;
-		BackTextBlock=(char *)buf;
+		BackTextBlock=(char *)inc_buf;
 		linenum2=blinenum;
 		RunBackText();
 		linenumber=linenum2=oldlinenum;
@@ -6539,6 +6544,7 @@ COM_MOD *ocurmod;
 	startline=ostartline;
 	strinf=ostr;
 	free(input);
+	BackTextBlock=NULL;
 	input=oldinput;
 	inptr2=oldinptr;
 	cha2=bcha;

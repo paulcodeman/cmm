@@ -419,7 +419,7 @@ void codeexpected()
 void operatorexpected()
 
 {
-
+	if(verbosedebug)printf("operatorexpected: tok=%s(%d) itok.name='%s' tok2=%s(%d) itok2.name='%s' linenumber=%d searchteg=%p\n",tokname(tok),tok,itok.name,tokname(tok2),tok2,itok2.name,linenumber,(void*)searchteg);
 	preerror("operator identifier expected");
 
 }

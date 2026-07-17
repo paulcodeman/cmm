@@ -103,7 +103,7 @@ struct llist
 :int llist::ProcessMouse(int xx, yy)
 {
 	int new_cur_y, new_cur_x, ret=0;
-	if (MouseOver(xx, yy))
+	if (xx>x) && (xx<x+w) && (yy>y) && (yy<y+h)
 	{
 		new_cur_y = yy - y / item_h + first;
 		if (new_cur_y != cur_y) && (new_cur_y<count)

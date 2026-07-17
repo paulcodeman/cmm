@@ -261,8 +261,10 @@ int ctok,sopenb;
 unsigned char *pstring;
 unsigned int flag;
 unsigned int sizevar=1;
-unsigned int prevtok=tk_number,operand=tk_plus;
-int dsword,dsword2;
+	unsigned int prevtok=tk_number,operand=tk_plus;
+	int dsword,dsword2;
+	int saved_backsize=0;
+	char *saved_backblock=NULL;
 	nextchar();
 	whitespace();//пропуск незначащих символов
 	if(!displaytokerrors){
@@ -290,7 +292,9 @@ int dsword,dsword2;
 	pstring=(unsigned char *)MALLOC(STRLEN);
 	sopenb=inptr;
 	char bcha=cha;
-	SRBackBuf(0);
+	saved_backsize=SizeBackBuf;
+	SizeBackBuf=0;
+	saved_backblock=BackTextBlock;
 	flag=f_useidx;//0;//cstok.flag;
 	if(bytesize==FALSE){
 		sizevar=GetVarSize(ttok);
@@ -502,7 +506,7 @@ runblock:
 					if(strcmp(bufrm,"&this;")==0){
 						free(bufrm);
 						CharToBackBuf(0);
-						sprintf((char *)string3,"&%s*%d+this;",BackTextBlock,GetVarSize(ttok));
+						sprintf((char *)string3,"&%s*%d+this;",BackTextBlock?BackTextBlock:"",GetVarSize(ttok));
 						bufrm=BackString((char *)string3);
 //							puts((char *)string3);
 						goto con1;
@@ -511,12 +515,15 @@ runblock:
 				}
 				CharToBackBuf(';');
 				CharToBackBuf(0);
-				bufrm=(char *)REALLOC(BackTextBlock,SizeBackBuf+1);
+				bufrm=(char *)MALLOC(SizeBackBuf+1);
+				memcpy(bufrm,BackTextBlock,SizeBackBuf+1);
+				free(BackTextBlock);
 con1:
 				if(cha!=']')blockerror();
 				tokscan(&ctok,&cstok,pstring);
 				if(itok4->sib>=CODE16)itok4->sib++;
-				SRBackBuf(1);
+				SizeBackBuf=saved_backsize;
+				BackTextBlock=saved_backblock;
 //				if(itok4->post&POINTER)itok4->post=0;//&=NOTPOINTER;
 				free(pstring);
 				itok4->flag|=flag;
@@ -547,7 +554,8 @@ con1:
 //		flag|=cstok.flag;
 	}
 //	printf("out idx=%d base=%d zoom=%d\n",idx,base,zoom);
-	SRBackBuf(1);
+	SizeBackBuf=saved_backsize;
+	BackTextBlock=saved_backblock;
 	if(ctok!=tk_closeblock)expected(']');
 	numrm*=sizevar;
 	dstok.number+=numrm;
@@ -1247,10 +1255,16 @@ const char *tokname(int t)
 
 void nexttok()
 {
+	static unsigned char *lastinput=NULL;
 #ifdef DEBUGMODE
 if(debug)puts("start nexttok");
 #endif
-	if(verbosedebug)printf("nexttok: %-12s  name='%s'  inptr=%u  cha='%c'\n",tokname(tok),itok.name[0]?itok.name:"(null)",inptr2,cha2>=' '?cha2:'?');
+	if(verbosedebug){
+		if(input!=lastinput&&lastinput!=NULL)printf("nexttok: INPUT CHANGED from %p to %p since last call!\n",(void*)lastinput,(void*)input);
+		lastinput=input;
+		printf("nexttok: %-12s  name='%s'  inptr=%u  cha='%c'  buf=%p\n",tokname(tok),itok.name[0]?itok.name:"(null)",inptr2,cha2>=' '?cha2:'?',(void*)input);
+	}
+
 	inptr=inptr2;
 	linenumber=linenum2;
 	cha=cha2;
@@ -3509,6 +3523,8 @@ char *cstring;
 char c=0;
 int i;
 structteg *subteg=NULL;
+	int saved_backsize=0;
+	char *saved_backblock=NULL;
 	structadr=*itok4;
 //	bazael=tteg->baza;
 	whitespace();//пропуск незначащих символов
@@ -3523,6 +3539,9 @@ structteg *subteg=NULL;
 			free(bufrm);
 			bufrm=NULL;
 		}
+		saved_backsize=SizeBackBuf;
+		SizeBackBuf=0;
+		saved_backblock=BackTextBlock;
 		if(i==tk_number){	//числовой
 			ITOK dstok;
 			memcpy(&dstok,itok4,sizeof(ITOK));
@@ -3539,14 +3558,16 @@ notnum:
 
 //				if(itok4->segm==USEDSTR&&displaytokerrors)preerror("only once possible use variable an index structure");
 				itok4->segm=USEDSTR;
-				SRBackBuf(0);
 				AddBackBuf(sopenb,bcha);
 				CharToBackBuf(';');
 				CharToBackBuf(0);
 				if(cha!=']')blockerror();
 				if(strinf.bufstr!=NULL)free(strinf.bufstr);//internalerror("Previous block was not used");
-				strinf.bufstr=(char *)REALLOC(BackTextBlock,SizeBackBuf+1);
-				SRBackBuf(1);
+				strinf.bufstr=(char *)MALLOC(SizeBackBuf+1);
+				memcpy(strinf.bufstr,BackTextBlock,SizeBackBuf+1);
+				free(BackTextBlock);
+				BackTextBlock=saved_backblock;
+				SizeBackBuf=saved_backsize;
 				nextchar();
 //new!!!
 			}
