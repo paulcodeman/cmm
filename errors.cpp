@@ -416,14 +416,39 @@ void codeexpected()
 
 }
 
+static const char *tokstr(int t)
+{
+	switch(t){
+		case tk_openbrace:   return "{";
+		case tk_closebrace:  return "}";
+		case tk_openbracket:  return "(";
+		case tk_closebracket: return ")";
+		case tk_openblock:   return "[";
+		case tk_closeblock:  return "]";
+		case tk_semicolon:   return ";";
+		case tk_camma:       return ",";
+		case tk_colon:       return ":";
+		case tk_period:      return ".";
+		case tk_assign:      return "=";
+		case tk_plus:        return "+";
+		case tk_minus:       return "-";
+		case tk_mult:        return "*";
+		case tk_div:         return "/";
+		case tk_mod:         return "%";
+		default: return tokname(t);
+	}
+}
+
 void operatorexpected()
 
 {
 	char buf[200];
 	if(tok==tk_id){
 		sprintf(buf,"'%s' not expected in this context",itok.name);
+	}else if(tok==tk_number||tok==tk_string){
+		sprintf(buf,"'%s' not expected in this context",itok.name);
 	}else{
-		strcpy(buf,"operator identifier expected");
+		sprintf(buf,"'%s' not expected in this context",tokstr(tok));
 	}
 	if(verbosedebug)printf("operatorexpected: tok=%s(%d) itok.name='%s' tok2=%s(%d) itok2.name='%s' linenumber=%d searchteg=%p\n",tokname(tok),tok,itok.name,tokname(tok2),tok2,itok2.name,linenumber,(void*)searchteg);
 	preerror(buf);
