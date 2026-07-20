@@ -166,3 +166,78 @@ void exit(int a){
 
 #endif //not _WIN32_
 
+#ifdef _WIN32_
+
+#include <io.h>
+#include <fcntl.h>
+#include <stdarg.h>
+#include <stdlib.h>
+
+extern "C" int __stdcall MultiByteToWideChar(unsigned int, unsigned long, const char *, int, wchar_t *, int);
+
+static wchar_t *utf8_to_wide(const char *utf8)
+{
+    int len = MultiByteToWideChar(65001, 0, utf8, -1, NULL, 0);
+    wchar_t *wide = (wchar_t*)malloc(len * sizeof(wchar_t));
+    if (wide) MultiByteToWideChar(65001, 0, utf8, -1, wide, len);
+    return wide;
+}
+
+FILE *fopen_utf8(const char *filename, const char *mode)
+{
+    wchar_t *wfile = utf8_to_wide(filename);
+    wchar_t *wmode = utf8_to_wide(mode);
+    FILE *f = NULL;
+    if (wfile && wmode) f = _wfopen(wfile, wmode);
+    free(wfile);
+    free(wmode);
+    return f;
+}
+
+int open_utf8(const char *pathname, int flags, ...)
+{
+    int mode = 0;
+    if (flags & O_CREAT) {
+        va_list args;
+        va_start(args, flags);
+        mode = va_arg(args, int);
+        va_end(args);
+    }
+    wchar_t *wpath = utf8_to_wide(pathname);
+    int fd = -1;
+    if (wpath) {
+        if (flags & O_CREAT)
+            fd = _wopen(wpath, flags, mode);
+        else
+            fd = _wopen(wpath, flags);
+        free(wpath);
+    }
+    return fd;
+}
+
+#else
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <stdarg.h>
+
+FILE *fopen_utf8(const char *filename, const char *mode)
+{
+    return fopen(filename, mode);
+}
+
+int open_utf8(const char *pathname, int flags, ...)
+{
+    if (flags & O_CREAT) {
+        va_list args;
+        va_start(args, flags);
+        int mode = va_arg(args, int);
+        va_end(args);
+        return open(pathname, flags, mode);
+    } else {
+        return open(pathname, flags);
+    }
+}
+
+#endif
+

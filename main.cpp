@@ -25,6 +25,14 @@
 #include <conio.h>
 #endif
 
+#ifdef _WIN32_
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+#undef CopyFile
+#endif
+
 static char **_Argv; //!!! simplest way to make your own variable
 
 unsigned char compilerstr[]="SPHINX C-- 0.239";
@@ -273,6 +281,25 @@ void ErrOpenFile(char *str)
 
 int main(int argc,char *argv[])
 {
+#ifdef _WIN32_
+	// Wide command line → UTF-8 argv (поддержка Unicode путей)
+	int wargc;
+	wchar_t **wargv = CommandLineToArgvW(GetCommandLineW(), &wargc);
+	if (wargv) {
+		static char *utf8_argv[256];
+		static char utf8_buf[256][1024];
+		int i;
+		for (i = 0; i < wargc && i < 255; i++) {
+			WideCharToMultiByte(CP_UTF8, 0, wargv[i], -1, utf8_buf[i], 1024, NULL, NULL);
+			utf8_argv[i] = utf8_buf[i];
+		}
+		utf8_argv[i] = NULL;
+		argv = utf8_argv;
+		argc = wargc;
+		LocalFree(wargv);
+	}
+#endif
+
 int count;
 unsigned char pari=FALSE;
 	char *buffer;
@@ -1129,7 +1156,7 @@ FILE *inih;
 char m1[256];
 
 							// load name
-	if (inih = fopen(name,"rb"))
+	if (inih = fopen_utf8(name,"rb"))
 	{_loadIni(inih);return;}
 	
 	if(strcmp(name,"c--.ini")!=0)
@@ -1139,7 +1166,7 @@ char m1[256];
 	if (findpath[0]!=0)
 	{
 		sprintf(m1,"%s%s",findpath[0],name);
-		if (inih = fopen(m1,"rb"))
+		if (inih = fopen_utf8(m1,"rb"))
 		{_loadIni(inih);return;}
 	}
 							//load PATH[i=0..end]/c--.ini
@@ -1160,7 +1187,7 @@ char m1[256];
 				m1[size++] = '/';
 			
 			strcpy(m1 + size,"c--.ini");
-			if (inih = fopen(m1,"rb"))
+			if (inih = fopen_utf8(m1,"rb"))
 			{_loadIni(inih);return;}
 		}
 	}
@@ -1174,11 +1201,11 @@ char m1[256];
 	if (p){
 		p++;
 		strcpy(m1+p,"c--.ini");
-		if (inih = fopen(m1,"rb"))
+		if (inih = fopen_utf8(m1,"rb"))
 		{_loadIni(inih);return;}
 	}
 								//for KolibriOS: load /sys/settings/c--.ini
-	inih = fopen("/sys/settings/c--.ini","rb");
+	inih = fopen_utf8("/sys/settings/c--.ini","rb");
 	for(;;){
 		if(fgets(m1,255,inih)==NULL)break;
 		if(SelectComand(m1,0)==c_end)BadCommandLine(m1);
@@ -1463,7 +1490,7 @@ unsigned int size;
 int filehandle;
 long filesize;
 	outptr=startptr;
-	if((filehandle=open(symfile,O_BINARY|O_RDONLY))==-1){;
+	if((filehandle=open_utf8(symfile,O_BINARY|O_RDONLY))==-1){;
 		ErrOpenFile(symfile);
 		exit(e_symbioerror);
 	}
@@ -1740,7 +1767,7 @@ FILE *diskout;
         strcpy(buf,rawfilename);
     }
     
-	if((diskout=fopen(buf,mode))==NULL){
+	if((diskout=fopen_utf8(buf,mode))==NULL){
 		ErrOpenFile(buf);
 		exit(e_notcreateoutput);
 	}

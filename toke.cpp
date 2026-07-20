@@ -2298,7 +2298,7 @@ int index;
 
 		sprintf(m1,"%s%s",findpath[0],"mainlib.ldp");
 
-		if((lhandl=open(m1,O_RDONLY|O_BINARY))==-1)return -1;
+		if((lhandl=open_utf8(m1,O_RDONLY|O_BINARY))==-1)return -1;
 
 	}
 

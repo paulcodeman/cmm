@@ -1328,7 +1328,7 @@ void printdebuginfo()
 
 static FILE *df=NULL;
 
-	if((df=fopen("debug.tmp","w+t"))==NULL)df=stdout;
+	if((df=fopen_utf8("debug.tmp","w+t"))==NULL)df=stdout;
 
 	fprintf(df,"%s(%d)> %08X %08X tok=%d num=%08X flag=%08X scanmode=%d %s\n",startfileinfo==NULL?"":(startfileinfo+currentfileinfo)->filename,linenumber,input,inptr2,tok,itok.number,itok.flag,scanlexmode,itok.name);
 

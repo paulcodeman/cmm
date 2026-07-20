@@ -1152,7 +1152,7 @@ DLLLIST *newdll;
 
 APIPROC *listapi;
 
-	if((infile=fopen(name,"rb"))==NULL){
+	if((infile=fopen_utf8(name,"rb"))==NULL){
 
 		ErrOpenFile(name);
 
@@ -1407,7 +1407,7 @@ EXE_DOS_HEADER exeheader;  // header for EXE format
 
 FILE *stubin;
 
-		if((stubin=fopen(name,"rb"))==NULL){
+		if((stubin=fopen_utf8(name,"rb"))==NULL){
 
 			ErrOpenFile(name);
 

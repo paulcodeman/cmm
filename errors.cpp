@@ -104,7 +104,7 @@ static char *stristr(char *s, const char *needle)
 
 static void show_source_line(const char *fname, unsigned int line, const char *attr, const char *hl, FILE *err)
 {
-	FILE *f=fopen(fname,"rt");
+	FILE *f=fopen_utf8(fname,"rt");
 	if(!f)return;
 	char buf[512];
 	unsigned int cur=0;
@@ -186,7 +186,7 @@ static void extract_hl(const char *str, char *out, int outsize)
 static void show_hint_line(const char *fname, unsigned int line, const char *prefix, const char *hl_attr, FILE *err)
 {
 	if(line<2)return;
-	FILE *f=fopen(fname,"rt");
+	FILE *f=fopen_utf8(fname,"rt");
 	if(!f)return;
 	char buf[512];
 	unsigned int cur=0;
@@ -247,7 +247,7 @@ void  preerror3(char *str,unsigned int line,unsigned int file)//error message at
 
 		printf((char *)string3);
 
-		if(errfile.file==NULL&&*errfile.name)errfile.file=fopen(errfile.name,"w+t");
+		if(errfile.file==NULL&&*errfile.name)errfile.file=fopen_utf8(errfile.name,"w+t");
 		if(errfile.file!=NULL)fprintf(errfile.file,(char *)string3);
 
 		if(*fname){
@@ -1567,7 +1567,7 @@ char buf[256];
 
 	sprintf(buf,"%s.map",rawfilename);
 
-	hmap=fopen(buf,"w+t");
+	hmap=fopen_utf8(buf,"w+t");
 
 }
 

@@ -1029,7 +1029,7 @@ unsigned char *LoadFileBin(char *name)
 {
 int inico;
 unsigned char *bitobr;
-	if((inico=open(name,O_BINARY|O_RDONLY))==-1){
+	if((inico=open_utf8(name,O_BINARY|O_RDONLY))==-1){
 		badinfile(name);
 		return NULL;
 	}

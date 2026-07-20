@@ -8637,7 +8637,7 @@ long filesize;
 #ifndef _WIN32_
 	for(char* p=(char *)string3; *p; ++p) if(*p=='\\') *p='/';
 #endif
-	filehandle=open((char *)string3,O_BINARY|O_RDONLY);
+	filehandle=open_utf8((char *)string3,O_BINARY|O_RDONLY);
 	if(filehandle==-1){
 		unableopenfile((char *)string3);
 		return(0);
@@ -8665,7 +8665,7 @@ long filesize,startpos;
 		stringexpected();
 		return(0);
 	}
-	filehandle=open((char *)string3,O_BINARY|O_RDONLY);
+	filehandle=open_utf8((char *)string3,O_BINARY|O_RDONLY);
 	if(filehandle==-1){
 		unableopenfile((char *)string3);
 		return(0);
@@ -9314,7 +9314,7 @@ int loadinputfile(char *inpfile)	//считывание файла в памят
 {
 unsigned long size;
 int filehandle;
-	if((filehandle=open(inpfile,O_BINARY|O_RDONLY))==-1)return -2;
+	if((filehandle=open_utf8(inpfile,O_BINARY|O_RDONLY))==-1)return -2;
 	if((size=getfilelen(filehandle))==0){
 		badinfile(inpfile);
 		close(filehandle);

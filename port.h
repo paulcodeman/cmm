@@ -1,6 +1,8 @@
 #ifndef ___PORT_H___
 #define ___PORT_H___
 
+#include <stdio.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -90,8 +92,9 @@ int MultiByteToWideChar(unsigned int,unsigned int,char*,int,wchar_t *,int);
 
 #else
 
-//int stricmp(const char*, const char*); //Leency
-//int strnicmp(const char*, const char*, int); //Leency
+char *utf8_to_widen_buf(const char *utf8);
+FILE *fopen_utf8(const char *filename, const char *mode);
+int open_utf8(const char *pathname, int flags, ...);
 
 #endif
 
@@ -101,15 +104,16 @@ char* strlwr(char* s);
 #ifdef _PORT_CPP_
 
 long lseek (int, long, int);
-char tolower(char c);
-char toupper(char c);
-
 char * getcwd (char *buffer, int size);
 int 	stat (const char*, struct _stat*);
-
 void exit(int);
 
+#ifndef _WIN32_
+char tolower(char c);
+char toupper(char c);
 void* malloc(int); 
+#endif
+
 #endif //_PORT_CPP_
 
 #ifdef __cplusplus
