@@ -69,6 +69,92 @@ int IsMathContinuationToken(int tok)
 		IsMulDivModToken(tok);
 }
 
+int MathOpPrecedence(int op)
+{
+	if(IsMulDivModToken(op))return 6;
+	if(op==tk_plus||op==tk_minus)return 5;
+	if(op==tk_ll||op==tk_rr||op==tk_llminus||op==tk_rrminus)return 4;
+	if(op==tk_and||op==tk_andminus)return 3;
+	if(op==tk_xor||op==tk_xorminus)return 2;
+	if(op==tk_or||op==tk_orminus)return 1;
+	return 0;
+}
+
+int HasHigherMathPrecedence(int op,int baseop)
+{
+	int oprec=MathOpPrecedence(op);
+	int bprec=MathOpPrecedence(baseop);
+	return oprec!=0&&bprec!=0&&oprec>bprec;
+}
+
+int mathstopoprec=0;
+
+int ShouldStopLimitedMath(int op)
+{
+	int oprec;
+
+	if(mathstopoprec==0)return FALSE;
+	oprec=MathOpPrecedence(op);
+	return oprec!=0&&oprec<=mathstopoprec;
+}
+
+void CompileParenthesizedMathInEax(int sign,int razr,char **ofsstr)
+{
+	int savestop=mathstopoprec;
+
+	mathstopoprec=0;
+	do_e_axmath(sign,razr,ofsstr);
+	mathstopoprec=savestop;
+}
+
+void CompileRightOperandInEax(int sign,int razr,int baseop)
+{
+	char *rhs_ofsstr=NULL;
+	int savestop=mathstopoprec;
+
+	op66(razr);
+	op(0x50);
+	addESP+=razr==r16?2:4;
+	bufrm=NULL;
+	strinf.bufstr=NULL;
+
+	mathstopoprec=MathOpPrecedence(baseop);
+	do_e_axmath(sign,razr,&rhs_ofsstr);
+	mathstopoprec=savestop;
+	if(rhs_ofsstr)free(rhs_ofsstr);
+
+	op66(razr);
+	op(0x58+EDX);
+	addESP-=razr==r16?2:4;
+	itok.number=EDX;
+	warningreg(regs[razr/2-1][EDX]);
+}
+
+void CompileShiftCountInCl(int sign,int razr,int baseop)
+{
+	char *rhs_ofsstr=NULL;
+	int savestop=mathstopoprec;
+
+	op66(razr);
+	op(0x50);
+	addESP+=razr==r16?2:4;
+	bufrm=NULL;
+	strinf.bufstr=NULL;
+
+	mathstopoprec=MathOpPrecedence(baseop);
+	do_e_axmath(sign,razr,&rhs_ofsstr);
+	mathstopoprec=savestop;
+	if(rhs_ofsstr)free(rhs_ofsstr);
+
+	op(0x88);
+	op(0xC1);	// mov cl,al
+	warningreg(begs[CL]);
+
+	op66(razr);
+	op(0x58+EAX);
+	addESP-=razr==r16?2:4;
+}
+
 void AdvanceAfterNestedClose()
 {
 	int ntok=tok2;
@@ -6866,7 +6952,7 @@ loopswitch:
 
 			nexttok();
 
-			do_e_axmath(sign,razr,ofsstr);
+			CompileParenthesizedMathInEax(sign,razr,ofsstr);
 
 			if(tok!=tk_closebracket)expected(')');
 
@@ -7188,7 +7274,9 @@ char *ofsstr=NULL;
 
 unsigned char oaddstack;
 
-while(itok.type!=tp_stopper&&tok!=tk_eof&&tok!=tk_semicolon&&itok.type!=tp_compare&&tok!=tk_closebracket&&tok!=tk_closebrace&&tok!=tk_closeblock){
+	while(itok.type!=tp_stopper&&tok!=tk_eof&&tok!=tk_semicolon&&itok.type!=tp_compare&&tok!=tk_closebracket&&tok!=tk_closebrace&&tok!=tk_closeblock){
+
+		if(ShouldStopLimitedMath(tok))break;
 
 		next=1;
 
@@ -7238,6 +7326,17 @@ while(itok.type!=tp_stopper&&tok!=tk_eof&&tok!=tk_semicolon&&itok.type!=tp_compa
 
 					optnum=FALSE;
 
+				}
+
+				if((oldtok==tk_and||oldtok==tk_xor||oldtok==tk_or)&&
+					itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,oldtok)){
+					CompileRightOperandInEax(sign,razr,oldtok);
+					op66(razr);
+					op(0x01+vop);
+					op(0xC0+EDX*8);
+					setzeroflag=TRUE;
+					next=0;
+					break;
 				}
 
 				if(itok2.type==tp_opperand&&IsMulDivModToken(tok2)){
@@ -7426,7 +7525,7 @@ fold_done:
 										op(0x50);
 										addESP+=razr==r16?2:4;
 
-										do_e_axmath(sign,razr,&ofsstr);
+										CompileParenthesizedMathInEax(sign,razr,&ofsstr);
 
 										if(tok!=tk_closebracket)expected(')');
 
@@ -7674,9 +7773,10 @@ tl_hmul2:
 
 						addESP-=razr==r16?2:4;
 
-						op66(razr);
-
-						op(0x92);
+						if(oldtok==tk_minus){
+							op66(razr);
+							op(0x92);
+						}
 
 						op66(razr);
 
@@ -7850,7 +7950,7 @@ tl_hmul2:
 									op66(razr);
 									op(0x50);
 									addESP+=razr==r16?2:4;
-									do_e_axmath(sign,razr,&ofsstr);
+									CompileParenthesizedMathInEax(sign,razr,&ofsstr);
 									if(tok!=tk_closebracket)expected(')');
 									nexttok();
 									op66(razr);
@@ -7897,7 +7997,7 @@ tl_hmul2:
 										op66(razr);
 										op(0x50);
 										addESP+=razr==r16?2:4;
-										do_e_axmath(sign,razr,&ofsstr);
+										CompileParenthesizedMathInEax(sign,razr,&ofsstr);
 										if(tok!=tk_closebracket)expected(')');
 										nexttok();
 										op66(razr);
@@ -7931,7 +8031,7 @@ tl_hmul2:
 
 						warningreg(regs[razr/2-1][EDX]);
 
-						if(vop>0x20){
+						if(oldtok==tk_minus){
 
 							op66(razr);
 
@@ -7971,7 +8071,7 @@ tl_hmul2:
 						op(0x50);
 						addESP+=razr==r16?2:4;
 
-						do_e_axmath(sign,razr,&ofsstr);
+						CompileParenthesizedMathInEax(sign,razr,&ofsstr);
 
 						if(tok!=tk_closebracket)expected(')');
 
@@ -8003,7 +8103,7 @@ tl_hmul2:
 									op66(razr);
 									op(0x50);
 									addESP+=razr==r16?2:4;
-									do_e_axmath(sign,razr,&ofsstr);
+									CompileParenthesizedMathInEax(sign,razr,&ofsstr);
 									if(tok!=tk_closebracket)expected(')');
 									op66(razr);
 									op(0x58+EDX);
@@ -8050,7 +8150,7 @@ tl_hmul2:
 										op66(razr);
 										op(0x50);
 										addESP+=razr==r16?2:4;
-										do_e_axmath(sign,razr,&ofsstr);
+										CompileParenthesizedMathInEax(sign,razr,&ofsstr);
 										if(tok!=tk_closebracket)expected(')');
 										op66(razr);
 										op(0x58+EDX);
@@ -8082,7 +8182,7 @@ tl_hmul2:
 						itok.number=EDX;
 						warningreg(regs[razr/2-1][EDX]);
 
-						if(vop>0x20){
+						if(oldtok==tk_minus){
 							op66(razr);
 							op(0x90+EDX);
 						}
@@ -8219,6 +8319,11 @@ defxor:
 
 				}
 
+				if(tok==tk_minus&&CheckMinusNum()==FALSE){
+					negflag=1;
+					getoperand();
+				}
+
 				if(negflag&&tok==tk_number){
 
 					itok.number=-itok.number;
@@ -8243,7 +8348,7 @@ defxor:
 										op(0x50);
 									addESP+=razr==r16?2:4;
 
-										do_e_axmath(sign,razr,&ofsstr);
+										CompileParenthesizedMathInEax(sign,razr,&ofsstr);
 
 										if(tok!=tk_closebracket)expected(')');
 
@@ -8471,6 +8576,12 @@ mulreg:
 
 				}
 
+				if(negflag){
+					NegReg(razr,EAX);
+					negflag=0;
+					setzeroflag=TRUE;
+				}
+
 				break;
 
 			case tk_xorminus: vop+=0x10;
@@ -8520,6 +8631,16 @@ mulreg:
 			case tk_ll:
 
 			  getoperand();
+
+				if(expand==FALSE&&(tok==tk_openbracket||
+					(itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,tk_ll)))){
+					CompileShiftCountInCl(sign,razr,tok==tk_openbracket?0:tk_ll);
+					op66(razr);
+					outword(0xE0D3);	/* SHL AX,CL */
+					setzeroflag=TRUE;
+					next=0;
+					break;
+				}
 
 				if(tok==tk_number){
 
@@ -8624,6 +8745,16 @@ llminus:
 				if(sign)vop=0x10;
 
 				getoperand();
+
+				if(expand==FALSE&&(tok==tk_openbracket||
+					(itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,tk_rr)))){
+					CompileShiftCountInCl(sign,razr,tok==tk_openbracket?0:tk_rr);
+					op66(razr);
+					op(0xD3);	op(0xE8+vop);  /* SR AX,CL */
+					setzeroflag=TRUE;
+					next=0;
+					break;
+				}
 
 				if(expand==TRUE){
 
