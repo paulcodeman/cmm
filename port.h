@@ -93,10 +93,11 @@ int MultiByteToWideChar(unsigned int,unsigned int,char*,int,wchar_t *,int);
 #else
 
 char *utf8_to_widen_buf(const char *utf8);
-FILE *fopen_utf8(const char *filename, const char *mode);
-int open_utf8(const char *pathname, int flags, ...);
 
 #endif
+
+FILE *fopen_utf8(const char *filename, const char *mode);
+int open_utf8(const char *pathname, int flags, ...);
 
 char* strupr(char* s);
 char* strlwr(char* s);
