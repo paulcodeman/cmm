@@ -14568,6 +14568,16 @@ loopswitch1:
 	switch(tok){
 
 		case tk_openbracket:
+		{
+
+			int saveax=reg!=AX&&reg!=ESP;
+
+			if(saveax){
+				op66(razr);
+				op(0x50);
+				addESP+=razr==r16?2:4;
+				ClearReg(AX);
+			}
 
 			rettype=do_e_axmath(sign,razr,ofsstr);
 
@@ -14579,13 +14589,21 @@ loopswitch1:
 
 				op(0xC0+reg);	// mov reg,AX
 
-				RegToReg(reg,AX,razr);
+				ClearReg(reg);
+
+				if(saveax){
+					op66(razr);
+					op(0x58+AX);
+					addESP-=razr==r16?2:4;
+					ClearReg(AX);
+				}
 
 			}
 
 			next=0;
 
 			break;
+		}
 
 		case tk_number:
 
