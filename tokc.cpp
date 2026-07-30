@@ -5077,6 +5077,7 @@ loopsw:
 cn1:
 			tok=tk_number;
 		case tk_minus:
+		case tk_openbracket:
 		case tk_number:
 		  if(type==tk_byte||type==tk_word||type==tk_dword)i+=doconstdwordmath();
 			else if(type==tk_float)i=doconstfloatmath();
@@ -5137,7 +5138,7 @@ cn1:
 						i=addpoststring(DS);
 						nexttok();
 					}
-					else if(tok==tk_number||tok==tk_minus||tok==tk_undefofs){
+					else if(tok==tk_number||tok==tk_minus||tok==tk_openbracket||tok==tk_undefofs){
 						if(tok==tk_undefofs){
 							tok=tk_number;
 							strcpy(name,itok.name);
@@ -5172,6 +5173,7 @@ cn2:
 							tok=tk_number;
 						case tk_number:
 						case tk_minus:
+						case tk_openbracket:
 						  if(type==tk_byte||type==tk_word||type==tk_dword)i=doconstdwordmath();
 							else if(type==tk_float)i=doconstfloatmath();
 							else if(type==tk_double)i=doconstdoublemath();
@@ -5290,7 +5292,7 @@ idrec *varrec;
 					}
 					else{
 				 		CheckMinusNum();
-						if(tok!=tk_number){
+						if(tok!=tk_number&&tok!=tk_openbracket){
 							numexpected();
 							nexttok();
 						}

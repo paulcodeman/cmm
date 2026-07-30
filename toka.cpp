@@ -5039,6 +5039,7 @@ loopsw:
 				}
 				goto strl2;
 			case tk_minus:
+			case tk_openbracket:
 			case tk_number:
 				if(type==tk_bytevar||type==tk_wordvar||type==tk_dwordvar||type==tk_bits||type==tk_pointer){
 					hold=doconstdwordmath();
@@ -5136,6 +5137,7 @@ unsigned int loop=0;
 	nexttok();
 	switch(tok){	//заполнить величинами
 		case tk_minus:
+		case tk_openbracket:
 		case tk_number:
 			if(numel==0)ZeroMassiv();
 			FillTeg(doconstqwordmath(),numel,tteg);

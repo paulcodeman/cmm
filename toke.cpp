@@ -202,6 +202,28 @@ unsigned int htok;
 
 int fundef;
 
+	if(tok==tk_openbracket){
+
+		nexttok();
+
+		value=doconstqwordmath();
+
+		if(tok!=tk_closebracket)expected(')');
+
+		tok=tk_number;
+
+		itok.number=(unsigned long)value;
+
+		itok.lnumber=value;
+
+		itok.rm=tk_qword;
+
+		itok.flag=(unsigned char)postnumflag;
+
+	}
+
+	else{
+
 	CheckMinusNum();
 
 	if(tok!=tk_number){
@@ -217,6 +239,8 @@ int fundef;
 	else if(itok.rm==tk_double)value=*(double *)&itok.lnumber;
 
 	else value=itok.lnumber;
+
+	}
 
 	fundef=itok.rm;
 
@@ -510,6 +534,28 @@ ITOK saved_itok2;
 
 unsigned int saved_postnumflag;
 
+	if(tok==tk_openbracket){
+
+		nexttok();
+
+		value=doconstdwordmath();
+
+		if(tok!=tk_closebracket)expected(')');
+
+		tok=tk_number;
+
+		itok.number=value;
+
+		itok.lnumber=value;
+
+		itok.rm=tk_dword;
+
+		itok.flag=(unsigned char)postnumflag;
+
+	}
+
+	else{
+
 	CheckMinusNum();
 
 	if(tok!=tk_number){
@@ -523,6 +569,8 @@ unsigned int saved_postnumflag;
 	if(itok.rm==tk_float)value=*(float *)&itok.number;
 
 	else value=itok.number;
+
+	}
 
 	fundef=itok.rm;
 
@@ -940,6 +988,28 @@ unsigned int htok;
 
 int fundef;
 
+	if(tok==tk_openbracket){
+
+		nexttok();
+
+		value=doconstlongmath();
+
+		if(tok!=tk_closebracket)expected(')');
+
+		tok=tk_number;
+
+		itok.number=value;
+
+		itok.lnumber=value;
+
+		itok.rm=tk_long;
+
+		itok.flag=(unsigned char)postnumflag;
+
+	}
+
+	else{
+
 	CheckMinusNum();
 
 	if(tok!=tk_number){
@@ -955,6 +1025,8 @@ int fundef;
 	if(itok.rm==tk_float)value=*(float *)&itok.number;
 
 	else value=itok.number;
+
+	}
 
 	postnumflag=itok.flag;
 

@@ -14431,6 +14431,26 @@ loopswitch1:
 
 	switch(tok){
 
+		case tk_openbracket:
+
+			rettype=do_e_axmath(sign,razr,ofsstr);
+
+			if(reg!=AX){
+
+				op66(razr);
+
+				op(0x89);
+
+				op(0xC0+reg);	// mov reg,AX
+
+				RegToReg(reg,AX,razr);
+
+			}
+
+			next=0;
+
+			break;
+
 		case tk_number:
 
 			if(useloop==FALSE)MovRegNum(razr,itok.flag&f_reloc,itok.number,reg);
