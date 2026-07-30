@@ -2821,6 +2821,8 @@ nn1:
 		int r = (razr == r_undef) ? r32 : razr;
 		do_e_axmath2(0, r, 0);
 		ittok = tk_reg32;
+		htok.number = AX;
+		htok.rm = typenumber(vartype);
 	}
 	if(tok!=tk_closebracket){	//сравнение
 		// logical OR/AND (||, &&) connecting boolean expressions - not a comparison
@@ -2842,6 +2844,34 @@ nn1:
 #ifdef OPTVARCONST
 		CheckConstVar3(&tok,&itok,razr);
 #endif
+		if((ittok==tk_reg32||ittok==tk_reg||ittok==tk_beg)&&itok2.type==tp_opperand){
+			int rhsrazr = razr==r_undef ? getrazr(vartype) : razr;
+			int rhssign = (vartype==tk_long||vartype==tk_int||vartype==tk_char);
+			int rhsreg = DX;
+			int saveax = FALSE;
+			if((unsigned int)htok.number==AX){
+				saveax = TRUE;
+				rhsreg = DX;
+				op66(rhsrazr);
+				op(0x50);
+				addESP += rhsrazr==r16 ? 2 : 4;
+			}
+			else if((unsigned int)htok.number==DX) rhsreg = CX;
+			getintoreg_32(rhsreg,rhsrazr,rhssign,&ofsstr2);
+			if(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare&&tok!=tk_closebracket&&tok!=tk_closebrace&&tok!=tk_closeblock)
+				doregmath_32(rhsreg,rhsrazr,rhssign,&ofsstr2);
+			if(saveax){
+				op66(rhsrazr);
+				op(0x58+AX);
+				addESP -= rhsrazr==r16 ? 2 : 4;
+			}
+			ittok2 = rhsrazr==r8 ? tk_beg : (rhsrazr==r16 ? tk_reg : tk_reg32);
+			htok2 = itok;
+			htok2.number = rhsreg;
+			htok2.rm = typenumber(vartype);
+			usereg2 = rhsreg;
+			goto en2;
+		}
 		if(tok==tk_number){
 			switch(vartype){
 				case tk_long:
@@ -5484,6 +5514,8 @@ int next=1;
 	if(next)nexttok();
 }
 
+int paramlevel=0;
+
 void CalcRegPar(int reg,int def,char **ofsstr)
 {
 char signflag=0;
@@ -5584,6 +5616,7 @@ int i=0;
 char *ofsstr=NULL;
 int razr;
 int retreg;
+	paramlevel++;
 	ClearRegister();
 	if(tok!=tk_openbracket)expected('(');
 	while(tok2==tk_camma){
@@ -5677,6 +5710,7 @@ endparam1:
 		setzeroflag=FALSE;
 	}
 	if(ofsstr)free(ofsstr);
+	paramlevel--;
 }
 
 int CheckUses()
@@ -6290,11 +6324,16 @@ structteg *tteg=NULL,*nteg;
 			do{
 				numpointr=0;
 				skipfind=TRUE;
-				if(flag!=3)nexttok();
-				while(tok==tk_mult){
+				if(flag!=3){
+					structteg *osearchteg=searchteg;
+					searchteg=NULL;
 					nexttok();
-					numpointr++;
-					param[i++]='*';
+					while(tok==tk_mult){
+						nexttok();
+						numpointr++;
+						param[i++]='*';
+					}
+					searchteg=osearchteg;
 				}
 				if(tok==tk_id||tok==tk_ID){	//проверить на типы определенные через define
 					skipfind=FALSE;
@@ -6329,11 +6368,16 @@ structteg *tteg=NULL,*nteg;
 							type=tok;
 							SetNewTok(tok,variable);
 							paramtok=tok;
-							nexttok();
-							while(tok==tk_mult){
+							{
+								structteg *osearchteg=searchteg;
+								searchteg=NULL;
 								nexttok();
-								numpointr++;
-								param[i++]='*';
+								while(tok==tk_mult){
+									nexttok();
+									numpointr++;
+									param[i++]='*';
+								}
+								searchteg=osearchteg;
 							}
 							flag=2;
 						}
@@ -7467,6 +7511,7 @@ unsigned char oinline=useinline;
 	useinline=0;
 int structsize;
 struct idrec *ptrs;
+	paramlevel++;
 	addstack=FALSE;
 	if(am32!=FALSE)jj=2;
 	bparam=BackString(param);
@@ -7631,6 +7676,7 @@ struct idrec *ptrs;
 						case tk_byte:
 							stackpar+=jj;
 							doalmath((char)i,&ofsstr);
+							next=0;
 							addESP+=2+jj;
 							break;
 						case tk_int: i=1;
@@ -7668,6 +7714,7 @@ blokl:
 								tok=otok;
 							}
 							do_e_axmath(i,razr,&ofsstr);
+							next=0;
 							addESP+=razr==r16?2:4;
 							op66(razr);
 							break;
@@ -8146,6 +8193,7 @@ endparam:
 	setzeroflag=FALSE;
 	addstack=oaddstack;
 	useinline=oinline;
+	paramlevel--;
 	return stackpar;
 }
 

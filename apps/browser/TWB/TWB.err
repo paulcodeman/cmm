@@ -1,3 +1,0 @@
-apps/browser/TWB/TWB.c(1)#1> unable to open file 'TWB\colors.h'.
-  | #include "TWB\colors.h"
-  |           ^^^^^^^^^^^^

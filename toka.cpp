@@ -734,6 +734,7 @@ int razr=r32;
 		if(am32)block16_32error();
 	}
 	if(buf==NULL&&strc->bufstr==NULL)return;
+	if(verbosedebug)printf("CheckAllMassiv IN: buf=%p input=%p sizeel=%d\n",(void*)buf,(void*)input,sizeel);
 	ExpandRm(ctok->rm,ctok->sib,&zoom0,&base0,&idx0);
 	if(base0==-1&&idx0!=-1&&zoom0==0){
 		base0=idx0;
@@ -956,6 +957,7 @@ cont2:
 		ctok->rm=CalcRm16(base0,idx0)|rm_mod10;
 	}
 	if(ctok->post==0&&(ctok->flag&f_reloc)==0)compressoffset(ctok);
+	if(verbosedebug)printf("CheckAllMassiv OUT: input=%p\n",(void*)input);
 }
 
 int CheckMassiv(char *&buf,int sizeel,int treg,int *idx,int *base,long *num)
@@ -974,6 +976,7 @@ int retcode=-1;
 COM_MOD *ocurmod=cur_mod;
 	cur_mod=NULL;
 /////////////////
+	if(verbosedebug)printf("CheckMassiv IN: input=%p buf=%p\n",(void*)input,(void*)buf);
 	ostring=BackString((char *)string);
 	ofsst=BackString(buf);
 	free(buf);
@@ -984,6 +987,8 @@ COM_MOD *ocurmod=cur_mod;
 	oldendinptr=endinptr;
 	otok=tok;
 	oitok=itok;
+	int otok2=tok2;
+	ITOK oitok2=itok2;
 	ostr=strinf;
 	strinf.bufstr=NULL;
 
@@ -1084,9 +1089,13 @@ COM_MOD *ocurmod=cur_mod;
 	strinf=ostr;
 	tok=otok;
 	itok=oitok;
+	tok2=otok2;
+	itok2=oitok2;
 	endoffile=0;
+	if(verbosedebug)printf("CheckMassiv: PRE-restore input=%p oldinput=%p cur_mod=%p\n",(void*)input,(void*)oldinput,(void*)cur_mod);
 	free(input);
 	input=oldinput;
+	if(verbosedebug)printf("CheckMassiv: POST-restore input=%p\n",(void*)input);
 	inptr2=oldinptr;
 	cur_mod=ocurmod;	//07.09.04 22:45
 	cha2=bcha;
@@ -1379,6 +1388,11 @@ llq:
 #endif
 
 //	if(crec)printf("num=%08X\n",crec->recnumber);
+	if(verbosedebug){
+		static unsigned char *endinput=NULL;
+		if(input!=endinput&&endinput!=NULL)printf("nexttok END: input changed! was %p now %p\n",(void*)endinput,(void*)input);
+		endinput=input;
+	}
 
 }
 
@@ -3290,6 +3304,20 @@ structteg *ssubteg=subteg;
 			}
 		}
 		free(listclass);
+	}
+	bazael=searcht->baza;
+	if(((char *)string4)[0]!='_'&&strlen((char *)string4)+1<IDLENGTH){
+		char altname[IDLENGTH];
+		altname[0]='_';
+		strcpy(&altname[1],(char *)string4);
+		for(unsigned int i=0;i<searcht->numoper;i++){
+			if((bazael+i)->tok==tk_baseclass)continue;
+			if(strcmp((bazael+i)->name,altname)==0){
+				if(subteg&&subteg!=searcht)continue;
+				strcpy((char *)string4,name);
+				return (bazael+i);
+			}
+		}
 	}
 	return NULL;
 }

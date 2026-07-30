@@ -1,2 +1,0 @@
-apps/eolite/Eolite.c(19)#1> unable to open file '../lib/clipboard.h'.
-  | #include "../lib/strings.h"

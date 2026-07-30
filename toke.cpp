@@ -1508,6 +1508,7 @@ void seminext()
 
 {
 
+	if(tok==tk_closebracket&&tok2==tk_semicolon)nexttok();
 	if(tok!=tk_semicolon)expected(';');
 
 	else nexttok();
@@ -2438,7 +2439,7 @@ int cmpresult;
 
 			}
 
-			ptr->recnumber=constvalue;
+			ptr->reclnumber=constvalue;
 
 			ptr->recrm=type;
 
@@ -2461,6 +2462,7 @@ int cmpresult;
 	strcpy(newptr->recid,keystring);
 
 	newptr->newid=NULL;
+	newptr->sbuf=NULL;
 
 	newptr->rectok=tk_number;
 

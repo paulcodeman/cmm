@@ -56,6 +56,26 @@ void DivNum(unsigned long num,int razr,int sign);
 
 void ClearDX(int razr,int sign);
 
+int IsMulDivModToken(int tok)
+{
+	return tok==tk_mult||tok==tk_div||tok==tk_mod||
+		tok==tk_multminus||tok==tk_divminus||tok==tk_modminus;
+}
+
+int IsMathContinuationToken(int tok)
+{
+	return tok==tk_plus||tok==tk_minus||tok==tk_and||tok==tk_or||tok==tk_xor||
+		tok==tk_ll||tok==tk_rr||tok==tk_llminus||tok==tk_rrminus||
+		IsMulDivModToken(tok);
+}
+
+void AdvanceAfterNestedClose()
+{
+	int ntok=tok2;
+	nexttok();
+	if(tok==tk_closebracket&&(ntok!=tk_closebracket||tok2==ntok))nexttok();
+}
+
 void  doalmath2(int sign);
 
 void num2bits(ITOK *gtok,unsigned long num,int razr);
@@ -7168,7 +7188,7 @@ char *ofsstr=NULL;
 
 unsigned char oaddstack;
 
-while(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare&&tok!=tk_closebracket&&tok!=tk_closebrace&&tok!=tk_closeblock){
+while(itok.type!=tp_stopper&&tok!=tk_eof&&tok!=tk_semicolon&&itok.type!=tp_compare&&tok!=tk_closebracket&&tok!=tk_closebrace&&tok!=tk_closeblock){
 
 		next=1;
 
@@ -7220,9 +7240,7 @@ while(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare&&tok!=tk_closebr
 
 				}
 
-				if(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
-
-				   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
+				if(itok2.type==tp_opperand&&IsMulDivModToken(tok2)){
 
 					int fold_ok=(tok==tk_number);
 
@@ -7248,23 +7266,27 @@ while(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare&&tok!=tk_closebr
 
 						ITOK fold_itok2=itok2;
 
-						while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+						while((itok2.type==tp_opperand&&IsMulDivModToken(tok2))||IsMulDivModToken(tok)){
 
-						       tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
-
-							int hop=tok2;
+							int hop;
 
 							int hneg=0;
+
+							if(IsMulDivModToken(tok)){
+								hop=tok;
+								nexttok();
+							}
+							else{
+								hop=tok2;
+								nexttok();
+								nexttok();
+							}
 
 							if(hop==tk_multminus){hop=tk_mult;hneg=1;}
 
 							else if(hop==tk_divminus){hop=tk_div;hneg=1;}
 
 							else if(hop==tk_modminus){hop=tk_mod;hneg=1;}
-
-							nexttok();
-
-							nexttok();
 
 							if(tok!=tk_number){
 
@@ -7300,21 +7322,17 @@ while(itok.type!=tp_stopper&&tok!=tk_eof&&itok.type!=tp_compare&&tok!=tk_closebr
 
 							if(itok2.type!=tp_opperand)break;
 
-							if(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
-
-							   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)
-
-								nexttok();
-
-							else break;
-
 						}
 
 fold_done:
 
-						itok.lnumber=hval;
+						if(fold_ok){
 
-						itok.flag=hflag;
+							itok.lnumber=hval;
+
+							itok.flag=hflag;
+
+						}
 
 					}
 
@@ -7350,13 +7368,11 @@ fold_done:
 
 						next=1;
 
-						while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
-
-						       tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
+						while(IsMulDivModToken(tok)||(itok2.type==tp_opperand&&IsMulDivModToken(tok2))){
 
 							int hnegflag=0,hvop=0,hop;
 
-							nexttok();
+							if(!IsMulDivModToken(tok))nexttok();
 
 							hop=tok;
 
@@ -7510,6 +7526,7 @@ fold_done:
 										addstack=oaddstack;
 
 										addESP-=razr==r16?2:4;
+										if(tok==tk_closebracket&&(IsMathContinuationToken(tok2)||tok2==tk_closebracket||tok2==tk_camma||itok2.type==tp_compare)){AdvanceAfterNestedClose();next=0;}
 
 										op66(razr);
 
@@ -7904,6 +7921,7 @@ tl_hmul2:
 								}
 							}
 						}
+						if(tok==tk_closebracket&&(IsMathContinuationToken(tok2)||tok2==tk_closebracket||tok2==tk_camma||itok2.type==tp_compare)){AdvanceAfterNestedClose();next=0;}
 
 						op66(razr);
 
@@ -8318,6 +8336,7 @@ defxor:
 						addstack=oaddstack;
 
 						addESP-=razr==r16?2:4;
+						if(tok==tk_closebracket&&(IsMathContinuationToken(tok2)||tok2==tk_closebracket||tok2==tk_camma||itok2.type==tp_compare)){AdvanceAfterNestedClose();next=0;}
 
 						op66(razr);
 
@@ -8757,7 +8776,8 @@ rrminus:
 
 		}
 
-		if(next)nexttok();
+		if(tok==tk_closebracket&&itok.type!=tp_stopper&&(IsMathContinuationToken(tok2)||itok2.type==tp_compare))AdvanceAfterNestedClose();
+		else if(next&&tok!=tk_semicolon&&tok!=tk_closebracket)nexttok();
 
 	}
 
@@ -9326,6 +9346,7 @@ unsigned char oaddstack;
 						addstack=oaddstack;
 
 						addESP-=2;
+						if(tok==tk_closebracket&&(IsMathContinuationToken(tok2)||tok2==tk_closebracket||tok2==tk_camma||itok2.type==tp_compare)){AdvanceAfterNestedClose();next=0;}
 
 						op66(r16);
 
@@ -10289,7 +10310,8 @@ llminus:
 
 		}
 
-		if(next)nexttok();
+		if(tok==tk_closebracket&&itok.type!=tp_stopper&&(IsMathContinuationToken(tok2)||itok2.type==tp_compare))AdvanceAfterNestedClose();
+		else if(next&&tok!=tk_closebracket)nexttok();
 
 		ClearReg(AX);
 
@@ -12583,7 +12605,7 @@ void doregmath_32(int reg,int razr,int sign,char **ofsstr,int fdiv)  // math don
 
 int vop,i,optnum,negflag=FALSE,next;
 
-	while(itok.type!=tp_stopper&&tok!=tk_eof){
+	while(itok.type!=tp_stopper&&tok!=tk_eof&&tok!=tk_semicolon){
 
 		if(negflag){
 
@@ -12596,6 +12618,8 @@ int vop,i,optnum,negflag=FALSE,next;
 		i=vop=0;
 
 		optnum=FALSE;
+
+		next=1;
 
 #ifdef OPTVARCONST
 
@@ -12637,23 +12661,47 @@ int vop,i,optnum,negflag=FALSE,next;
 
 				else tok=tk_number;
 
-				if(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+				if(itok2.type==tp_opperand&&IsMulDivModToken(tok2)){
 
-				   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
+					int fold_ok=(tok==tk_number);
 
-					if(tok==tk_number){
+					if(fold_ok){
 
 					unsigned long long hval=itok.lnumber;
 
 					unsigned int hflag=itok.flag;
 
-					while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
+					unsigned long fold_inptr=inptr;
 
-					       tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
+					unsigned long fold_inptr2=inptr2;
 
-						int hop=tok2;
+					unsigned char fold_cha=cha;
+
+					unsigned char fold_cha2=cha2;
+
+					int fold_tok=tok;
+
+					int fold_tok2=tok2;
+
+					ITOK fold_itok=itok;
+
+					ITOK fold_itok2=itok2;
+
+					while((itok2.type==tp_opperand&&IsMulDivModToken(tok2))||IsMulDivModToken(tok)){
+
+						int hop;
 
 						int hneg=0;
+
+						if(IsMulDivModToken(tok)){
+							hop=tok;
+							nexttok();
+						}
+						else{
+							hop=tok2;
+							nexttok();
+							nexttok();
+						}
 
 						if(hop==tk_multminus){hop=tk_mult;hneg=1;}
 
@@ -12661,11 +12709,21 @@ int vop,i,optnum,negflag=FALSE,next;
 
 						else if(hop==tk_modminus){hop=tk_mod;hneg=1;}
 
-						nexttok();
+						if(tok!=tk_number){
 
-						nexttok();
+							inptr=fold_inptr; inptr2=fold_inptr2;
 
-						if(tok!=tk_number)break;
+							cha=fold_cha; cha2=fold_cha2;
+
+							tok=fold_tok; tok2=fold_tok2;
+
+							itok=fold_itok; itok2=fold_itok2;
+
+							fold_ok=0;
+
+							goto fold_done2;
+
+						}
 
 						long long opval=itok.lnumber;
 
@@ -12685,25 +12743,21 @@ int vop,i,optnum,negflag=FALSE,next;
 
 						if(itok2.type!=tp_opperand)break;
 
-						if(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
-
-						   tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)
-
-							nexttok();
-
-						else break;
-
 					}
 
 fold_done2:
 
-					itok.lnumber=hval;
+					if(fold_ok){
 
-					itok.flag=hflag;
+						itok.lnumber=hval;
+
+						itok.flag=hflag;
 
 					}
 
-					else{
+					}
+
+					if(!fold_ok){
 
 						int hsavedtok=tok;
 
@@ -12729,13 +12783,11 @@ fold_done2:
 
 						next=1;
 
-						while(itok2.type==tp_opperand&&(tok2==tk_mult||tok2==tk_div||tok2==tk_mod||
-
-						       tok2==tk_multminus||tok2==tk_divminus||tok2==tk_modminus)){
+						while(IsMulDivModToken(tok)||(itok2.type==tp_opperand&&IsMulDivModToken(tok2))){
 
 							int hnegflag=0,hvop=0,hop;
 
-							nexttok();
+							if(!IsMulDivModToken(tok))nexttok();
 
 							hop=tok;
 
@@ -12889,6 +12941,7 @@ fold_done2:
 										addstack=oaddstack;
 
 										addESP-=razr==r16?2:4;
+										if(tok==tk_closebracket&&(IsMathContinuationToken(tok2)||tok2==tk_closebracket||tok2==tk_camma||itok2.type==tp_compare)){AdvanceAfterNestedClose();next=0;}
 
 										op66(razr);
 
@@ -13021,8 +13074,6 @@ tl_hmul2:
 								}
 
 							}
-
-							if(next)nexttok();
 
 							if(tok==tk_closebracket)break;
 
@@ -13435,6 +13486,7 @@ unsigned char oaddstack;
 								}
 							}
 						}
+						if(tok==tk_closebracket&&(IsMathContinuationToken(tok2)||tok2==tk_closebracket||tok2==tk_camma||itok2.type==tp_compare||(tok2==tk_semicolon&&paramlevel==0))){AdvanceAfterNestedClose();next=0;}
 
 						if(!(comfile==file_w32&&(reg==EBX||reg==EDI||reg==ESI))){
 
@@ -13856,7 +13908,8 @@ divcalc:
 
 		ClearReg(reg);
 
-		nexttok();
+		if(tok==tk_closebracket&&itok.type!=tp_stopper&&(IsMathContinuationToken(tok2)||itok2.type==tp_compare))AdvanceAfterNestedClose();
+		else if((next||!IsMathContinuationToken(tok))&&itok.type!=tp_stopper&&tok!=tk_semicolon&&tok!=tk_closebracket)nexttok();
 
 	}
 
@@ -19008,6 +19061,7 @@ unsigned char oaddstack;
 				addstack=oaddstack;
 
 				addESP-=razr==r16?2:4;
+				if(tok==tk_closebracket&&(IsMathContinuationToken(tok2)||tok2==tk_closebracket||tok2==tk_camma||itok2.type==tp_compare)){AdvanceAfterNestedClose();next=0;}
 
 				op66(razr);
 

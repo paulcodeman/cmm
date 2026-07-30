@@ -800,7 +800,7 @@ int pinptr;
 
 		if(tok==tk_openbracket)i++;
 
-	}while(tok!=stop1&&tok!=stop2&&tok!=tk_eof&&itok.type!=type);
+	}while(tok!=tk_eof&&(i||(tok!=stop1&&tok!=stop2&&itok.type!=type)));
 
 	if(pinptr)pinptr--;
 
