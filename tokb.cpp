@@ -8082,6 +8082,11 @@ tl_hmul2:
 						itok.number=EDX;
 						warningreg(regs[razr/2-1][EDX]);
 
+						if(vop>0x20){
+							op66(razr);
+							op(0x90+EDX);
+						}
+
 						next=0;
 
 						goto defreg32;
