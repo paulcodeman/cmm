@@ -2815,12 +2815,10 @@ nn1:
 		if(verbosedebug)printf("constructcompare paren-chain: tok=%s(%d) itok.type=%d\n",tokname(tok),tok,itok.type);
 		if(itok.type == tp_compare || itok.type == tp_stopper) break;
 		if(tok == tk_closebracket) continue;
-		// only continue for high-precedence operators that can follow a paren in math expr
-		if(tok != tk_mult && tok != tk_div && tok != tk_mod &&
-		   tok != tk_multminus && tok != tk_divminus && tok != tk_modminus) break;
+		if(!IsMathContinuationToken(tok)) break;
 		int r = (razr == r_undef) ? r32 : razr;
 		do_e_axmath2(0, r, 0);
-		ittok = tk_reg32;
+		ittok = r==r8 ? tk_beg : (r==r16 ? tk_reg : tk_reg32);
 		htok.number = AX;
 		htok.rm = typenumber(vartype);
 	}

@@ -7631,8 +7631,6 @@ fold_done:
 
 										op(0x58+EDX);
 
-										addESP-=razr==r16?2:4;
-
 										itok.number=EDX;
 
 										warningreg(regs[razr/2-1][EDX]);
@@ -13082,8 +13080,6 @@ fold_done2:
 										op66(razr);
 
 										op(0x58+EDX);
-
-										addESP-=razr==r16?2:4;
 
 										itok.number=EDX;
 
