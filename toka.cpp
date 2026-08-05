@@ -506,7 +506,7 @@ runblock:
 					if(strcmp(bufrm,"&this;")==0){
 						free(bufrm);
 						CharToBackBuf(0);
-						sprintf((char *)string3,"&%s*%d+this;",BackTextBlock?BackTextBlock:"",GetVarSize(ttok));
+						sprintf((char *)string3,"&(%s)*%d+this;",BackTextBlock?BackTextBlock:"",GetVarSize(ttok));
 						bufrm=BackString((char *)string3);
 //							puts((char *)string3);
 						goto con1;
