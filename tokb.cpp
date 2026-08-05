@@ -7328,9 +7328,12 @@ unsigned char oaddstack;
 
 				}
 
-				if((oldtok==tk_and||oldtok==tk_xor||oldtok==tk_or)&&
-					itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,oldtok)){
+				if(itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,oldtok)){
 					CompileRightOperandInEax(sign,razr,oldtok);
+					if(oldtok==tk_minus){
+						op66(razr);
+						op(0x92);
+					}
 					op66(razr);
 					op(0x01+vop);
 					op(0xC0+EDX*8);
@@ -7340,7 +7343,6 @@ unsigned char oaddstack;
 				}
 
 				if(itok2.type==tp_opperand&&IsMulDivModToken(tok2)){
-
 					int fold_ok=(tok==tk_number);
 
 					if(fold_ok){
