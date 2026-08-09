@@ -3732,7 +3732,7 @@ int numpointr=0;
 
 }
 
-int do_d_wordvar(int sign,int razr,int terminater)	//signed or unsigned 16 or 32 bit memory variable
+int do_d_wordvar(int sign,int razr,int terminater,int prefixop)	//signed or unsigned 16 or 32 bit memory variable
 
 {
 
@@ -3784,13 +3784,15 @@ unsigned int oaddESP=addESP;
 
 	nexttok();
 
+	if(prefixop)next=0;
+
 #ifdef OPTVARCONST
 
 	operand=tok;
 
 #endif
 
-	switch(tok){
+	switch(prefixop?prefixop:tok){
 
 		case tk_assign:	//=
 
@@ -4436,7 +4438,7 @@ getfromax:
 
 #ifdef OPTVARCONST
 
-			initconst=UpdVarConst(&wtok,1,tk_byte,tok);
+			initconst=UpdVarConst(&wtok,1,tk_byte,prefixop?prefixop:tok);
 
 #endif
 
@@ -5352,7 +5354,7 @@ defxor:
 
 }
 
-int dobytevar(int sign,int terminater)	 // byte, char
+int dobytevar(int sign,int terminater,int prefixop)	 // byte, char
 
 {
 
@@ -5400,13 +5402,15 @@ unsigned int oaddESP=addESP;
 
 	nexttok();
 
+	if(prefixop)next=0;
+
 #ifdef OPTVARCONST
 
 	operand=tok;
 
 #endif
 
-	switch(tok){
+	switch(prefixop?prefixop:tok){
 
 		case tk_assign:
 
@@ -5822,7 +5826,7 @@ getfromax:
 
 #ifdef OPTVARCONST
 
-			initconst=UpdVarConst(&btok,1,tk_byte,tok);
+			initconst=UpdVarConst(&btok,1,tk_byte,prefixop?prefixop:tok);
 
 #endif
 
@@ -10465,7 +10469,7 @@ llminus:
 
 /* =============== doreg_32(), dobeg(), doseg() ===============*/
 
-int doreg_32(int reg,int razr,int terminater)
+int doreg_32(int reg,int razr,int terminater,int prefixop)
 
 {
 
@@ -10503,7 +10507,9 @@ char *ofsstr=NULL;
 
 	nexttok();
 
-	switch(tok){
+	if(prefixop)next=0;
+
+	switch(prefixop?prefixop:tok){
 
 		case tk_assign://=
 
@@ -11931,7 +11937,7 @@ int nrazr=0;
 
 }
 
-int dobeg(int beg,int terminater)
+int dobeg(int beg,int terminater,int prefixop)
 
 {
 
@@ -11949,7 +11955,9 @@ char *ofsstr=NULL;
 
 	nexttok();
 
-	switch(tok){
+	if(prefixop)next=0;
+
+	switch(prefixop?prefixop:tok){
 
 		case tk_assign:
 
@@ -15671,7 +15679,7 @@ int rm=outtok->rm;
 
  --------------------------------------------------*/
 
-int dofloatvar(int addop,int retrez,int terminater)
+int dofloatvar(int addop,int retrez,int terminater,int prefixop)
 
 {
 
@@ -15717,7 +15725,9 @@ char *ofsstr=NULL;
 
 	nexttok();
 
-	switch(tok){
+	if(prefixop)next=0;
+
+	switch(prefixop?prefixop:tok){
 
 		case tk_assign:	//=
 
@@ -20919,7 +20929,7 @@ newloop:
 
 }
 
-int doqwordvar(int terminater)	//64 bit memory variable
+int doqwordvar(int terminater,int prefixop)	//64 bit memory variable
 
 {
 
@@ -20963,7 +20973,9 @@ int reg1=idxregs[0],reg2=idxregs[1];
 
 	nexttok();
 
-	switch(tok){
+	if(prefixop)next=0;
+
+	switch(prefixop?prefixop:tok){
 
 		case tk_assign:	//=
 
@@ -21401,9 +21413,11 @@ getfromreg:
 
 incdec:
 
-			op(0xFF); op(vop+wtok.rm);
+			op(0x83); op((vop?0x28:0)+wtok.rm);
 
 			outaddress(&wtok);
+
+			op(1);
 
 			wtok.number+=4;
 
@@ -22369,7 +22383,7 @@ void Select2FreeReg(int r1,int r2,int *reg1,int *reg2)
 
 }
 
-void doreg64(int reg,int terminater)
+void doreg64(int reg,int terminater,int prefixop)
 
 {
 
@@ -22405,7 +22419,9 @@ int numpointr=0;
 
 	nexttok();
 
-	switch(tok){
+	if(prefixop)next=0;
+
+	switch(prefixop?prefixop:tok){
 
 		case tk_assign://=
 
@@ -22495,7 +22511,7 @@ int numpointr=0;
 
 			break;
 
-		case tk_plusplus: op66(r32); op(0x40+r1);
+		case tk_plusplus: op66(r32); op(0x83); op(0xC0+r1); op(1);
 
 			op66(r32);
 
@@ -22507,7 +22523,7 @@ int numpointr=0;
 
 			break;
 
-		case tk_minusminus: op66(r32); op(0x48+r1);
+		case tk_minusminus: op66(r32); op(0x83); op(0xE8+r1); op(1);
 
 			op66(r32);
 

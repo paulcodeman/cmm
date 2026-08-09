@@ -499,6 +499,49 @@ void doblock2()
 	else RestoreStack();
 }
 
+void doprefixincdec(unsigned int operation)
+{
+unsigned int useflag=0;
+	nexttok();
+	switch(tok){
+		case tk_charvar: useflag=1;
+		case tk_bytevar:
+			dobytevar(useflag,tk_semicolon,operation);
+			break;
+		case tk_intvar: useflag=1;
+		case tk_wordvar:
+			do_d_wordvar(useflag,r16,tk_semicolon,operation);
+			break;
+		case tk_longvar: useflag=1;
+		case tk_dwordvar:
+			do_d_wordvar(useflag,r32,tk_semicolon,operation);
+			break;
+		case tk_doublevar: useflag=4;
+		case tk_floatvar:
+			dofloatvar(useflag,tk_floatvar,tk_semicolon,operation);
+			break;
+		case tk_qwordvar:
+			doqwordvar(tk_semicolon,operation);
+			break;
+		case tk_reg32:
+			doreg_32((unsigned int)itok.number,r32,tk_semicolon,operation);
+			break;
+		case tk_reg:
+			doreg_32((unsigned int)itok.number,r16,tk_semicolon,operation);
+			break;
+		case tk_beg:
+			dobeg((unsigned int)itok.number,tk_semicolon,operation);
+			break;
+		case tk_reg64:
+			doreg64(itok.number,tk_semicolon,operation);
+			break;
+		default:
+			preerror("prefix ++ or -- requires a variable or register");
+			nextseminext();
+			break;
+	}
+}
+
 void gotodo()
 {
 	nexttok();
@@ -522,6 +565,10 @@ unsigned int useflag;
 	lastcommand=tok;
 //	printf("tok=%d %s\n",tok,itok.name);
 	switch(tok){
+		case tk_plusplus:
+		case tk_minusminus:
+			doprefixincdec(tok);
+			break;
 		case tk_ID: useflag++;
 		case tk_id:
 			if((useflag=doid((char)useflag,tk_void))!=tokens){

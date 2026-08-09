@@ -393,12 +393,12 @@ int IsMathContinuationToken(int tok);
 void getintoal(int gtok,ITOK *gstok,char *&gbuf,SINFO *gstr); /* AH may also be changed */
 void getinto_e_ax(int sign,int gtok,ITOK *gstok,char *&gbuf,SINFO *gstr,int razr,int useAX=FALSE);
 int  doeaxfloatmath(int itreturn=tk_reg32,int reg=AX,int addop=0);
-int dobytevar(int sign,int terminater=tk_semicolon); 	// byte, char
-int do_d_wordvar(int sign,int razr,int terminater=tk_semicolon); 		 /* signed or unsigned 16 bit memory variable */
-int doreg_32(int reg,int razr,int terminater=tk_semicolon);
+int dobytevar(int sign,int terminater=tk_semicolon,int prefixop=0); 	// byte, char
+int do_d_wordvar(int sign,int razr,int terminater=tk_semicolon,int prefixop=0); 		 /* signed or unsigned 16 bit memory variable */
+int doreg_32(int reg,int razr,int terminater=tk_semicolon,int prefixop=0);
 void doseg(int seg);
 int caselong(unsigned long val);
-int dobeg(int beg,int terminater=tk_semicolon);
+int dobeg(int beg,int terminater=tk_semicolon,int prefixop=0);
 void dobegmath(int beg);	/* math done is on all begs except AL */
 int is_high_prec(int op);
 void doregmath_32(int reg,int razr,int sign,char **ofsstr,int i=0);	/* math done is on all regs except AX */
@@ -406,7 +406,7 @@ int getintobeg(int beg,char **ofsstr);
 int getintoreg_32(int reg,int razr,int sign,char **ofsstr,int useloop=TRUE); /* get into word reg (except AX) with enum */
 void outaddress(ITOK *outtok);
 void FloatToNumer(int addop=0);
-int dofloatvar(int addop=0,int retrez=tk_floatvar,int terminater=tk_semicolon);
+int dofloatvar(int addop=0,int retrez=tk_floatvar,int terminater=tk_semicolon,int prefixop=0);
 void fwait3();
 void AddFloatConst(long long fnumber,int type=tk_float);
 void setwordpost(ITOK *); 					 /* for post word num setting */
@@ -429,8 +429,8 @@ void fistp_stack(int addop=0);
 void fld_stack(int size);
 void fildq_stack();
 void cpointr(int reg,int numpointr);
-int doqwordvar(int terminater=tk_semicolon);	//64 bit memory variable
-void doreg64(int reg,int terminater=tk_semicolon);
+int doqwordvar(int terminater=tk_semicolon,int prefixop=0);	//64 bit memory variable
+void doreg64(int reg,int terminater=tk_semicolon,int prefixop=0);
 void doregmath64(int reg);
 void getintoreg64(int reg);
 void float2stack(int num);
