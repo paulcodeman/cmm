@@ -2087,7 +2087,7 @@ yesid:
 				case '/':
 					do{
 						nextchar();
-					}while(!endoffile&&cha!=13);	//строка коментария
+					}while(!endoffile&&cha!=13&&cha!=10);	//строка коментария
 					if(endoffile)*tok4=tk_eof;
 					else{
 						if(scanlexmode==DEFLEX)*tok4=tk_endline;
