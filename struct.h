@@ -415,13 +415,13 @@ struct paraminfo
 struct MEOSheader
 {
 	unsigned char sign[8];
-	unsigned long vers;
-	unsigned long start;
-	unsigned long size;
-	unsigned long alloc_mem;
-	unsigned long esp;
-	unsigned long I_Param;
-	unsigned long I_Icon;
+	uint32_t vers;
+	uint32_t start;
+	uint32_t size;
+	uint32_t alloc_mem;
+	uint32_t esp;
+	uint32_t I_Param;
+	uint32_t I_Path;
 };
 
 #ifdef OPTVARCONST

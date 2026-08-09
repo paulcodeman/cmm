@@ -4,6 +4,203 @@
 
 #define _OUTLE_
 
+#define KEX_PARAM_SIZE 4096
+#define KEX_PATH_SIZE 4096
+#define KEX_MAX_ARGC 256
+#define KEX_HEAP_RESERVE (64UL * 1024UL)
+
+static unsigned int kexentry=0;
+static unsigned int kexparam=0;
+static unsigned int kexpath=0;
+static unsigned int kexargv=0;
+static unsigned int kexserviceend=0;
+
+static idrec *FindKEXSymbol(idrec *root,const char *name)
+{
+	idrec *found;
+	if(root==NULL)return NULL;
+	if(strcmp(name,root->recid)==0)return root;
+	found=FindKEXSymbol(root->left,name);
+	if(found!=NULL)return found;
+	return FindKEXSymbol(root->right,name);
+}
+
+static unsigned int KEXJump(int opcode)
+{
+	unsigned int loc;
+	if(opcode!=0xE9){
+		op(0x0F);
+		op(opcode);
+	}
+	else op(opcode);
+	loc=outptr;
+	outdword(0);
+	return loc;
+}
+
+static void PatchKEXJump(unsigned int loc,unsigned int target)
+{
+	int32_t value=(int32_t)target-(int32_t)(loc+4);
+	memcpy(output+loc,&value,sizeof(value));
+}
+
+static void PatchKEXValue(unsigned int loc,unsigned int value)
+{
+	uint32_t patch=(uint32_t)value;
+	memcpy(output+loc,&patch,sizeof(patch));
+}
+
+void AddKEXStartup()
+{
+	idrec *mainrec,*paramrec,*pathrec;
+	unsigned int argv1,argv2,param1,path1,maincall;
+	unsigned int skipws,skipone,copychar,inquote,openquote,closequote;
+	unsigned int endarg,endall,done;
+	unsigned int jskipspace,jskiptab,jempty,jmax,jquoted,jspace,jtab,jdouble,jsingle;
+	unsigned int jinclose,jcopy1,jcopy2,jcopy3,jcopy4,jcopy5,jendall,jskipback;
+	unsigned int postend;
+
+	mainrec=FindKEXSymbol(treestart,"main");
+	if(mainrec==NULL||mainrec->rectok!=tk_proc){
+		preerror("KEX entry point 'main' is not found");
+		return;
+	}
+	if(mainrec->newid==NULL||strcmp(mainrec->newid,"DD")!=0){
+		preerror("KEX entry point must be main(dword argc, dword argv)");
+		return;
+	}
+	if((mainrec->flag&f_typeproc)!=tp_pascal){
+		preerror("KEX main must use the default pascal calling convention");
+		return;
+	}
+
+	while(outptr&3)op(0);
+	kexentry=outptr;
+
+	/* Initialize the KolibriOS heap service before library startup. */
+	op(0xB8); outdword(68);			/* mov eax,68 */
+	op(0xBB); outdword(11);			/* mov ebx,11 */
+	outword(0x40CD);				/* int 0x40 */
+
+	op(0xBF); argv1=outptr; outdword(0);	/* mov edi,argv */
+	op(0xB8); path1=outptr; outdword(0);	/* mov eax,path */
+	op(0xAB);					/* stosd */
+	op(0xBD); outdword(1);			/* mov ebp,1 */
+	op(0xBE); param1=outptr; outdword(0);	/* mov esi,param */
+
+	skipws=outptr;
+	outword(0x068A);				/* mov al,[esi] */
+	outword(0x203C);				/* cmp al,' ' */
+	jskipspace=KEXJump(0x84);
+	outword(0x093C);				/* cmp al,9 */
+	jskiptab=KEXJump(0x84);
+	outword(0xC084);				/* test al,al */
+	jempty=KEXJump(0x84);
+	outword(0xFD81); outdword(KEX_MAX_ARGC);	/* cmp ebp,max */
+	jmax=KEXJump(0x83);			/* jae done */
+	outword(0xF089);				/* mov eax,esi */
+	op(0xAB);					/* stosd */
+	op(0x45);					/* inc ebp */
+	outword(0xF289);				/* mov edx,esi */
+	outword(0xDB31);				/* xor ebx,ebx */
+
+	copychar=outptr;
+	op(0xAC);					/* lodsb */
+	outword(0xC084);				/* test al,al */
+	jendall=KEXJump(0x84);
+	outword(0xDB84);				/* test bl,bl */
+	jquoted=KEXJump(0x85);
+	outword(0x203C);
+	jspace=KEXJump(0x84);
+	outword(0x093C);
+	jtab=KEXJump(0x84);
+	outword(0x223C);
+	jdouble=KEXJump(0x84);
+	outword(0x273C);
+	jsingle=KEXJump(0x84);
+	outword(0x0288);				/* mov [edx],al */
+	op(0x42);					/* inc edx */
+	jcopy1=KEXJump(0xE9);
+
+	inquote=outptr;
+	outword(0xD83A);				/* cmp al,bl */
+	jinclose=KEXJump(0x84);
+	outword(0x0288);
+	op(0x42);
+	jcopy2=KEXJump(0xE9);
+
+	openquote=outptr;
+	outword(0xC388);				/* mov bl,al */
+	jcopy3=KEXJump(0xE9);
+
+	closequote=outptr;
+	outword(0xDB31);				/* xor ebx,ebx */
+	jcopy4=KEXJump(0xE9);
+
+	endarg=outptr;
+	op(0xC6); op(0x02); op(0);		/* mov byte [edx],0 */
+	jcopy5=KEXJump(0xE9);
+
+	endall=outptr;
+	op(0xC6); op(0x02); op(0);
+	done=outptr;
+	outword(0xC031);				/* xor eax,eax */
+	op(0xAB);					/* argv[argc]=0 */
+	op(0x55);					/* push ebp (argc) */
+	op(0x68); argv2=outptr; outdword(0);	/* push argv */
+	op(0xE8); maincall=outptr; outdword(0);
+	op(0xB8); outdword(0xFFFFFFFF);
+	outword(0x40CD);
+
+	skipone=outptr;
+	op(0x46);					/* inc esi */
+	jskipback=KEXJump(0xE9);
+
+	while(outptr&3)op(0);
+	postend=outptr+postsize;
+	paramrec=FindKEXSymbol(treestart,"param");
+	pathrec=FindKEXSymbol(treestart,"program_path");
+	if(paramrec!=NULL&&paramrec->recpost&&paramrec->recsize>=KEX_PARAM_SIZE)
+		kexparam=outptr+paramrec->recnumber;
+	else{
+		kexparam=(postend+3)&~3;
+		postend=kexparam+KEX_PARAM_SIZE;
+	}
+	if(pathrec!=NULL&&pathrec->recpost&&pathrec->recsize>=KEX_PATH_SIZE)
+		kexpath=outptr+pathrec->recnumber;
+	else{
+		kexpath=(postend+3)&~3;
+		postend=kexpath+KEX_PATH_SIZE;
+	}
+	if(kexparam+KEX_PARAM_SIZE>postend)postend=kexparam+KEX_PARAM_SIZE;
+	if(kexpath+KEX_PATH_SIZE>postend)postend=kexpath+KEX_PATH_SIZE;
+	kexargv=(postend+3)&~3;
+	kexserviceend=kexargv+(KEX_MAX_ARGC+1)*4;
+
+	PatchKEXValue(argv1,kexargv);
+	PatchKEXValue(argv2,kexargv);
+	PatchKEXValue(param1,kexparam);
+	PatchKEXValue(path1,kexpath);
+	PatchKEXJump(maincall,(unsigned int)mainrec->recnumber);
+	PatchKEXJump(jskipspace,skipone);
+	PatchKEXJump(jskiptab,skipone);
+	PatchKEXJump(jskipback,skipws);
+	PatchKEXJump(jempty,done);
+	PatchKEXJump(jmax,done);
+	PatchKEXJump(jquoted,inquote);
+	PatchKEXJump(jspace,endarg);
+	PatchKEXJump(jtab,endarg);
+	PatchKEXJump(jdouble,openquote);
+	PatchKEXJump(jsingle,openquote);
+	PatchKEXJump(jinclose,closequote);
+	PatchKEXJump(jcopy1,copychar);
+	PatchKEXJump(jcopy2,copychar);
+	PatchKEXJump(jcopy3,copychar);
+	PatchKEXJump(jcopy4,copychar);
+	PatchKEXJump(jcopy5,skipws);
+	PatchKEXJump(jendall,endall);
+}
+
 unsigned short swapshort(unsigned int var)
 
 {
@@ -90,7 +287,7 @@ MEOSheader hdr;
 
 	hdr.I_Param=EntryParamStr();
 
-	hdr.I_Icon=0;
+	hdr.I_Path=0;
 
 	memcpy(output+startptr,&hdr,sizeof(MEOSheader));
 
@@ -106,6 +303,59 @@ MEOSheader hdr;
 
 	}
 
+	return 0;
+
+}
+
+int MakeKEX()
+
+{
+
+MEOSheader hdr;
+unsigned long hardmin,allocmem;
+
+	hardmin=kexserviceend+stacksize;
+	if(hardmin<kexserviceend){
+		preerror("KEX memory size overflow");
+		return -1;
+	}
+	if(kexmem){
+		if(kexmem>0xFFFFF000UL)allocmem=0xFFFFF000UL;
+		else allocmem=(kexmem+4095)&~4095UL;
+		if(allocmem<hardmin){
+			preerror("KEX -MEM value is too small for image, BSS and stack");
+			return -1;
+		}
+	}
+	else{
+		if(hardmin>0xFFFFFFFFUL-KEX_HEAP_RESERVE-4095){
+			preerror("KEX automatic memory size overflow");
+			return -1;
+		}
+		allocmem=(hardmin+KEX_HEAP_RESERVE+4095)&~4095UL;
+	}
+
+	memset(&hdr,0,sizeof(hdr));
+	memcpy(hdr.sign,"MENUET01",8);
+	hdr.vers=1;
+	hdr.start=kexentry;
+	hdr.size=outptr;
+	hdr.alloc_mem=allocmem;
+	hdr.esp=allocmem-4;
+	hdr.I_Param=kexparam;
+	hdr.I_Path=kexpath;
+	memcpy(output,&hdr,sizeof(hdr));
+
+	hout=CreateOutPut(outext,"wb");
+	if(fwrite(output,outptr,1,hout)!=1){
+		ErrWrite();
+		fclose(hout);
+		hout=NULL;
+		return -1;
+	}
+	fclose(hout);
+	hout=NULL;
+	printf("KolibriOS memory: %lu bytes%s.\n",allocmem,kexmem?" (-MEM)":" (automatic)");
 	return 0;
 
 }
@@ -359,4 +609,3 @@ int sizefixpage=0;
 	return 0;
 
 }
-

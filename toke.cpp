@@ -5255,6 +5255,16 @@ int odbg=dbg;
 
 	}
 
+	if(kexmode){
+
+		outptrdata=outptr=startptr+sizeof(MEOSheader);
+
+		notdoneprestuff=FALSE;
+
+		goto endp;
+
+	}
+
 	if(startuptomain==TRUE&&comfile==file_com){
 
 		if(notdoneprestuff==TRUE){

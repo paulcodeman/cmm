@@ -112,6 +112,8 @@ extern char *namestartupfile;
 extern unsigned char useinline;
 extern unsigned char ocoff;
 extern unsigned char ESPloc;
+extern unsigned char kexmode;
+extern unsigned long kexmem;
 
 #endif
 
@@ -704,7 +706,9 @@ void ChSize(long size);
 	--------------------------------------------------*/
 int MakeLE();
 int MakeMEOS();
+int MakeKEX();
 int MakeBin32();
+void AddKEXStartup();
 
 /*-----------------08.12.01 23:43-------------------
  pointer

@@ -88,6 +88,8 @@ unsigned char shortimport=FALSE;
 unsigned char useinline=2;
 unsigned char ocoff=FALSE;
 unsigned char ESPloc=FALSE;
+unsigned char kexmode=FALSE;
+unsigned long kexmem=0;
 int verbosedebug=0;
 
 int startupfile=-1;
@@ -147,7 +149,8 @@ const char *usage[]={
 "-COFF OBJ COFF output file            -DBG  create debug information",
 "-SYM  COM file symbiosis              -LST  create assembly listing",
 "-SYS  device (SYS) file               -B32  32bit binary files",
-"-MEOS executable file for MeOS        -MAP  create function map file",
+"-MEOS executable file for MeOS        -KEX  executable file for KolibriOS",
+"-MEM=##### set KolibriOS memory size   -MAP  create function map file",
 "-EXT= <ext> set file extension        -OPATH output file path",
 "-ONAME= <file> set output file name   -O    output file name (short form)",
 "",
@@ -168,7 +171,7 @@ const char *dir[]={
 	"P",     "X",       "EXE",   "S",      "SYS",   "ARGC",  "TEXE",
 	"ROM",   "W32",     "D32",   "W32C",   "AT",    "WFA",   "SA",
 	"STM",   "SUV",     "UST",   "MIF",    "DLL", 	"DOS4GW","ENV",
-	"CPA",   "WBSS",    "MEOS",  "SF",     "B32",   "WIB",   "DBG",
+	"CPA",   "WBSS",    "MEOS",  "KEX",    "MEM",   "SF",    "B32",   "WIB",   "DBG",
 
 	"OS",    "OC",      "A",     "0",      "1",     "2",     "3",
 	"4",     "5",       "6",     "7",      "8",     "9",     "W",
@@ -190,7 +193,7 @@ enum {
 	c_p,     c_x,		    c_exe,   c_s,      c_sys,   c_arg,   c_texe,
 	c_rom,   c_w32,     c_d32,   c_w32c,   c_at,    c_wfa,   c_sa,
 	c_stm,   c_suv,     c_ust,   c_mif,    c_dll,   c_d4g,   c_env,
-	c_cpa,   c_wbss,    c_meos,  c_sf,     c_b32,   c_wib,   c_dbg,
+	c_cpa,   c_wbss,    c_meos,  c_kex,    c_mem,   c_sf,    c_b32,   c_wib,   c_dbg,
 	c_endstart=c_dbg,
 
 	c_os,    c_oc,      c_a,     c_0,      c_1,     c_2,     c_3,
@@ -371,6 +374,7 @@ unsigned char pari=FALSE;
 	}
 	time(&systime); //текущее время
 	memcpy(&timeptr,localtime(&systime),sizeof(tm));
+	if(kexmode)addconsttotree("KEX_MODE",TRUE);
 	InitDefineConst();
 	compile();
 	if(error==0)exit(e_ok);
@@ -460,6 +464,7 @@ union{
 	free(bufstr);
 	if(warning==TRUE&&wact[7].usewarn)WarnUnusedVar();//предупреждения о неиспользованных процедурах и переменных
 	if(numstrtbl)CreatStrTabRes();	//завершить создание ресурсов
+	if(kexmode&&error==0)AddKEXStartup();
 	if(fobj==FALSE){
 		if(comfile==file_w32&&error==0){
 			AddJmpApi();	//косвенные вызовы API
@@ -740,6 +745,7 @@ errlate:
 				case c_9: chip=9; break;  //PIII
 				case c_x: header=(unsigned char)0^neg; break;
 				case c_exe:
+					kexmode=FALSE;
 					comfile=file_exe;
 					modelmem=SMALL;
 					splitdata=TRUE;
@@ -751,6 +757,7 @@ errlate:
 					dos2=0;
 					break;
 				case c_sys:
+					kexmode=FALSE;
 					comfile=file_sys;
 					if(extflag) strcpy(outext,"sys");
 					startptr=0; 		// start address
@@ -763,6 +770,7 @@ errlate:
 					FixUp=TRUE;
 					jumptomain=CALL_NONE;
 */			case c_obj:
+					kexmode=FALSE;
 /*					fobj=TRUE;
 //					if(comfile==file_d32)FixUp=TRUE;
 					FastCallApi=FALSE;
@@ -829,10 +837,12 @@ errlate:
 					fargc=(unsigned char)TRUE^neg;
 					break;
 				case c_texe:
+					kexmode=FALSE;
 					if(extflag) strcpy(outext,"exe");
 					comfile=file_exe;
 					break;
 				case c_rom:
+					kexmode=FALSE;
 					if(extflag) strcpy(outext,"rom");
 					comfile=file_rom;
 					startptr=0;
@@ -840,6 +850,7 @@ errlate:
 					GetMemExeDat();
 					break;
 				case c_dll:
+					kexmode=FALSE;
 					wconsole=TRUE;
 					dllflag=TRUE;
 					if(extflag) strcpy(outext,"dll");
@@ -854,15 +865,18 @@ errlate:
 					if(FILEALIGN==0)FILEALIGN=512;
 					break;*/
 				case c_w32c:
+					kexmode=FALSE;
 					wconsole=TRUE;
 					goto init_w32;
 				case c_w32:
+					kexmode=FALSE;
 					wconsole=FALSE;
 					dllflag=FALSE;
 init_w32:
 					comfile=file_w32;
 					goto nexpar;
 				case c_d32:
+					kexmode=FALSE;
 					comfile=file_d32;
 nexpar:
 					if(extflag) strcpy(outext,"exe");
@@ -874,13 +888,29 @@ nexpardll:
 					if(FILEALIGN==0)FILEALIGN=512;
 					break;
 				case c_meos:
+					kexmode=FALSE;
 					comfile=file_meos;
 					am32=TRUE;
 					startptrdata=startptr=0;
 					if(extflag) strcpy(outext,"");
 					if(chip<3)chip=3;
 					break;
+				case c_kex:
+					kexmode=TRUE;
+					comfile=file_meos;
+					am32=TRUE;
+					startptrdata=startptr=0;
+					jumptomain=CALL_NONE;
+					header=0;
+					if(extflag) strcpy(outext,"kex");
+					if(chip<3)chip=3;
+					break;
+				case c_mem:
+					if(ptr==NULL)return c_end;
+					kexmem=getnumber((unsigned char *)ptr);
+					break;
 				case c_b32:
+					kexmode=FALSE;
 					comfile=file_bin;
 					am32=TRUE;
 					startptrdata=startptr=0;
@@ -1351,7 +1381,7 @@ EXE_DOS_HEADER exeheader;  // header for EXE format
 		return MakeObj();
 	}
 	if(comfile==file_w32)return MakePE();
-	if(comfile==file_meos)return MakeMEOS();
+	if(comfile==file_meos)return kexmode?MakeKEX():MakeMEOS();
 	if(comfile==file_bin)return MakeBin32();
 	memset(&exeheader,0,sizeof(EXE_DOS_HEADER));
 	if(comfile==file_d32){
