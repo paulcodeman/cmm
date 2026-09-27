@@ -3184,7 +3184,72 @@ en2:
 		}
 	}
 	if(ittok==tk_number&&htok.flag==0&&ittok2==tk_number&&htok2.flag==0){
-		invertflag=(htok.number!=htok2.number?zerocompr:voidcompr);
+		/* both sides are compile-time constants: evaluate the comparison
+		   itself (it used to be folded as if it were always "==") */
+		int res;
+		int cmpop=comparetok;
+		if(cmpop==0)cmpop=tk_notequal;
+		if(vartype==tk_float){
+			float fa=*(float *)&htok.number,fb=*(float *)&htok2.number;
+			switch(cmpop){
+				case tk_equalto: res=fa==fb; break;
+				case tk_greater: res=fa>fb; break;
+				case tk_less: res=fa<fb; break;
+				case tk_greaterequal: res=fa>=fb; break;
+				case tk_lessequal: res=fa<=fb; break;
+				default: res=fa!=fb; break;
+			}
+		}
+		else if(vartype==tk_double){
+			double da=*(double *)&htok.lnumber,db=*(double *)&htok2.lnumber;
+			switch(cmpop){
+				case tk_equalto: res=da==db; break;
+				case tk_greater: res=da>db; break;
+				case tk_less: res=da<db; break;
+				case tk_greaterequal: res=da>=db; break;
+				case tk_lessequal: res=da<=db; break;
+				default: res=da!=db; break;
+			}
+		}
+		else if(vartype==tk_char||vartype==tk_int||vartype==tk_long){
+			long long sa=(long)htok.number,sb=(long)htok2.number;
+			if(vartype==tk_char){sa=(signed char)htok.number;sb=(signed char)htok2.number;}
+			else if(vartype==tk_int){sa=(short)htok.number;sb=(short)htok2.number;}
+			switch(cmpop){
+				case tk_equalto: res=sa==sb; break;
+				case tk_greater: res=sa>sb; break;
+				case tk_less: res=sa<sb; break;
+				case tk_greaterequal: res=sa>=sb; break;
+				case tk_lessequal: res=sa<=sb; break;
+				default: res=sa!=sb; break;
+			}
+		}
+		else if(vartype==tk_qword||vartype==tk_reg64){
+			unsigned long long qa=htok.lnumber,qb=htok2.lnumber;
+			switch(cmpop){
+				case tk_equalto: res=qa==qb; break;
+				case tk_greater: res=qa>qb; break;
+				case tk_less: res=qa<qb; break;
+				case tk_greaterequal: res=qa>=qb; break;
+				case tk_lessequal: res=qa<=qb; break;
+				default: res=qa!=qb; break;
+			}
+		}
+		else{
+			unsigned long ua=htok.number,ub=htok2.number;
+			if(vartype==tk_byte){ua&=0xff;ub&=0xff;}
+			else if(vartype==tk_word){ua&=0xffff;ub&=0xffff;}
+			switch(cmpop){
+				case tk_equalto: res=ua==ub; break;
+				case tk_greater: res=ua>ub; break;
+				case tk_less: res=ua<ub; break;
+				case tk_greaterequal: res=ua>=ub; break;
+				case tk_lessequal: res=ua<=ub; break;
+				default: res=ua!=ub; break;
+			}
+		}
+		if(notflag)res=!res;
+		invertflag=(res?voidcompr:zerocompr);
 		useinline=oinline;
 		return invertflag;
 	}
@@ -3582,6 +3647,36 @@ endp:
 				}
 #endif
 				docommand();
+			}
+		}
+		if(rcompr==zerocompr||rcompr==voidcompr){
+			/* constant condition: handle the else branch that may follow */
+			if(tok==tk_semicolon&&(tok2==tk_else||tok2==tk_ELSE))nexttok();
+			if(tok==tk_else||tok==tk_ELSE){
+				nexttok();
+				if(rcompr==voidcompr){
+					if(tok==tk_openbrace){
+						cha=cha2;
+						inptr=inptr2;
+						SkipBlock();
+						inptr2=inptr;
+						cha2=cha;
+						linenum2=linenumber;
+						nexttok();
+					}
+					else{
+						do{
+							nexttok();
+						}while(tok!=tk_semicolon&&tok!=tk_eof);
+					}
+				}
+				else{
+					if(tok==tk_openbrace){
+						doblock();
+						nexttok();
+					}
+					else docommand();
+				}
 			}
 		}
 		endblock();
@@ -4097,6 +4192,36 @@ c1:
 				if(comconst&&comconst->rec&&comconst->typevar==tk_equalto)Const2VarRec(comconst);
 #endif
 				docommand();
+			}
+		}
+		if(rcompr==zerocompr||rcompr==voidcompr){
+			/* constant condition: handle the else branch that may follow */
+			if(tok==tk_semicolon&&(tok2==tk_else||tok2==tk_ELSE))nexttok();
+			if(tok==tk_else||tok==tk_ELSE){
+				nexttok();
+				if(rcompr==voidcompr){
+					if(tok==tk_openbrace){
+						cha=cha2;
+						inptr=inptr2;
+						SkipBlock();
+						inptr2=inptr;
+						cha2=cha;
+						linenum2=linenumber;
+						nexttok();
+					}
+					else{
+						do{
+							nexttok();
+						}while(tok!=tk_semicolon&&tok!=tk_eof);
+					}
+				}
+				else{
+					if(tok==tk_openbrace){
+						doblock();
+						nexttok();
+					}
+					else docommand();
+				}
 			}
 		}
 		endblock();

@@ -1111,6 +1111,9 @@ void nextchar()
 {
 	if(inptr<endinptr){
 		cha=input[inptr];
+		// lone LF -> CR: the tokenizer keys line breaks on CR only, so an LF-only
+		// source lets a `//` comment run to EOF and swallow the whole file.
+		if(cha==10&&!(inptr>0&&input[inptr-1]==13))cha=13;
 		endoffile=0;
 		if(savestring3)string3[posstr3++]=cha;
 		inptr++;

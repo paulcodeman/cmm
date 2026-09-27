@@ -1260,9 +1260,7 @@ void * MALLOC (unsigned long size)
 void *mem;
 	mem=malloc(size);
 	if(mem==NULL)OutMemory();
-#ifdef _UNIX_
 	else memset(mem,0,size);
-#endif
 
 //	if(((unsigned long)mem+size)>maxusedmem)maxusedmem=(unsigned long)mem+size;
 

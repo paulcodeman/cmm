@@ -383,13 +383,28 @@ void CompareRegStat(REGISTERSTAT *bak)
 #endif
 
 	for(int i=0;i<8;i++){
-
 		if((regstat+i)->type==t_undef||(regstat+i)->type!=(bak+i)->type||
-
-				((regstat+i)->type==t_id&&strcmp((regstat+i)->id,(bak+i)->id)!=0))ClearRegBak(i,bak);
-
+				((regstat+i)->type==t_id&&strcmp((regstat+i)->id,(bak+i)->id)!=0)||
+				((regstat+i)->type==t_const&&(regstat+i)->number!=(bak+i)->number)||
+				(regstat+i)->razr!=(bak+i)->razr){
+			ClearRegBak(i,bak);
+			continue;
+		}
+		/* keep in the merged list only the variables the register holds on both paths */
+REGEQVAR *prev=NULL,*cur=(bak+i)->next;
+		while(cur){
+REGEQVAR *nextv=cur->next;
+REGEQVAR *now=(regstat+i)->next;
+			while(now&&!(now->razr==cur->razr&&strcmp(now->name,cur->name)==0))now=now->next;
+			if(now==NULL){
+				if(prev)prev->next=nextv;
+				else (bak+i)->next=nextv;
+				free(cur);
+			}
+			else prev=cur;
+			cur=nextv;
+		}
 	}
-
 }
 
 int convertrazr(int *reg,int razr)
