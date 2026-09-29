@@ -514,6 +514,15 @@ int loadfile(char *filename,int firstflag);
 void RestoreStack();
 void IsUses(idrec *rec);
 int SkipBlock();
+void SkipStatement();
+int HasStructLocals();
+extern char *autojumpfile;
+extern int autojumpnew;
+void AutoJumpLoad();
+int AutoJumpPromote(int tok);
+int AutoJumpFailed(int tok,unsigned int line,unsigned int file);
+int AutoJumpFailedName(char *type,unsigned int line,unsigned int file);
+#define E_AUTOJUMP_RETRY 42	/* -AJPASS exit code: statements were demoted, run again */
 void declareanonim();
 void declareunion();
 void startblock();

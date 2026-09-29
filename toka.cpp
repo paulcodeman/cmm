@@ -1823,7 +1823,7 @@ extreg32:
 			}
 		}
 		if(useasm==FALSE){
-			if((useme=FastSearch(id,idofs,2,(char *)string4))!=-1)*tok4=useme;
+			if((useme=FastSearch(id,idofs,2,(char *)string4))!=-1)*tok4=AutoJumpPromote(useme);
 			else if(idasm==TRUE&&(useme=CheckAsmName((char *)string4))!=-1){
 				*tok4=tk_idasm;
 				itok4->rm=useme;
@@ -3227,6 +3227,19 @@ elementteg *bazael=searcht->baza;
 				||(bazael+i)->tok==tk_struct	//new 20.06.05 21:33
 				){
 			if(AskUseDestr((structteg *)(bazael+i)->rec))return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+/* is there a local struct in scope (it may need a destructor on return)? */
+int HasStructLocals()
+{
+struct localrec *ptrs;
+treelocalrec *ftlr;
+	for(ftlr=tlr;ftlr!=NULL;ftlr=ftlr->next){
+		for(ptrs=ftlr->lrec;ptrs!=NULL;ptrs=ptrs->rec.next){
+			if(ptrs->rec.rectok==tk_structvar)return TRUE;
 		}
 	}
 	return FALSE;

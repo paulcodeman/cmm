@@ -319,7 +319,9 @@ static int FoldClimb(T *value,int minprec,int (*calc)(T *,T,int),T (*getnum)(),C
 			case tk_llminus: op=tk_ll; right=-right; break;
 			case tk_rrminus: op=tk_rr; right=-right; break;
 		}
-		while(itok2.type==tp_opperand&&MathOpPrecedence(tok2)>p){
+		/* an operator missing from the table (p==0) keeps the old strict
+		   left-to-right folding: nothing binds tighter to its right operand */
+		while(p!=0&&itok2.type==tp_opperand&&MathOpPrecedence(tok2)>p){
 			if(FoldClimb(&right,p+1,calc,getnum,NULL)==FALSE)return FALSE;
 		}
 		if(calc(value,right,op)==FALSE)beep();

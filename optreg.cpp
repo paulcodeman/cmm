@@ -897,19 +897,19 @@ int oscanlexmode;
 
 	scanlexmode=DEFLEX;
 
-	while(tok2!=stop1&&tok2!=stop2&&tok2!=tk_eof&&itok2.type!=type){
+	/* skip to the last token of the expression: stop when the next token is
+	   a stopper outside the brackets of the expression itself.  The old loop
+	   stepped over a ')' closing a group and then onto the stopper, so the
+	   check of tok2 missed it and the next statement was skipped too
+	   (EBX = (a + x); ECX = (a + x); r = EBX; lost r = EBX) */
+	for(;;){
+		if(tok2==tk_eof)break;
+		if(i==0&&(tok2==stop1||tok2==stop2||itok2.type==type))break;
 
 		nexttok();
 
-		while(tok==tk_closebracket&&i){
-
-			i--;
-
-			nexttok();
-
-		}
-
 		if(tok==tk_openbracket)i++;
+		else if(tok==tk_closebracket&&i)i--;
 
 		if(bufrm){
 

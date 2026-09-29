@@ -19,6 +19,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef _UNIX_
+#include <sys/wait.h>
+#endif
 #include "tok.h"
 
 #ifdef _KOS_
@@ -161,6 +164,8 @@ const char *usage[]={
 "-MER=##    set maximum number errors  -X     disable SPHINX C-- header in output",
 "-NW=##     disable selected warnings  -WE=## selected warning will be error",
 "-V         verbose token debug trace (stdout)",
+"-AJ        automatic short jumps: if/else/while/for/return/break/continue/",
+"           goto/switch get the short form wherever it fits (compiles several times)",
 //" -SCD        split code and date",
 NULL};
 
@@ -184,7 +189,7 @@ const char *dir[]={
 #ifdef OPTVARCONST
 	"ORV",
 #endif
-   "MAP",  "WE",   "EXT",   "OPATH", "ONAME", "V", NULL};
+   "MAP",  "WE",   "EXT",   "OPATH", "ONAME", "V", "AJ", "AJPASS", NULL};
 
 enum {
 	c_me,    c_key,     c_sym,   c_lasm,   c_endinfo=c_lasm,
@@ -207,7 +212,7 @@ enum {
 #ifdef OPTVARCONST
 	c_orv,
 #endif
-	c_map,   c_we,      c_ext,   c_opath, c_oname, c_v, c_end};
+	c_map,   c_we,      c_ext,   c_opath, c_oname, c_v, c_aj, c_ajpass, c_end};
 
 #define NUMEXT 6	//число разрешенных расширений компилируемого файла
 char extcompile[NUMEXT][4]={"c--","cmm","c","h--","hmm","h"};
@@ -282,6 +287,104 @@ void ErrOpenFile(char *str)
 	printf("Unable to open file %s.\n",str);
 }
 
+unsigned char autojump=FALSE;	/* -AJ */
+
+#if defined(_WIN32_)||defined(_UNIX_)
+static char **ajargv=NULL;	/* copy of the command line: main() edits argv */
+static int ajargc=0;
+
+/* run this compiler once more with -AJPASS=<passfile> added to the command
+   line; returns its exit code, or -1 if it could not be run or crashed */
+static int AutoJumpSpawn(const char *passfile)
+{
+#ifdef _WIN32_
+	wchar_t exe[4096];
+	wchar_t wpass[4096];
+	if(GetModuleFileNameW(NULL,exe,4096)==0)return -1;
+	if(MultiByteToWideChar(CP_UTF8,0,passfile,-1,wpass,4096)==0)return -1;
+	LPWSTR cl=GetCommandLineW();
+	size_t n=wcslen(cl)+wcslen(wpass)+32;
+	wchar_t *cmd=(wchar_t *)malloc(n*sizeof(wchar_t));
+	if(cmd==NULL)return -1;
+	_snwprintf(cmd,n,L"%ls \"-AJPASS=%ls\"",cl,wpass);
+	cmd[n-1]=0;
+	STARTUPINFOW si;
+	PROCESS_INFORMATION pi;
+	memset(&si,0,sizeof(si));
+	si.cb=sizeof(si);
+	if(!CreateProcessW(exe,cmd,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi)){
+		free(cmd);
+		return -1;
+	}
+	free(cmd);
+	WaitForSingleObject(pi.hProcess,INFINITE);
+	DWORD code=(DWORD)-1;
+	GetExitCodeProcess(pi.hProcess,&code);
+	CloseHandle(pi.hThread);
+	CloseHandle(pi.hProcess);
+	return code>255?-1:(int)code;
+#else
+	char **args=(char **)malloc((ajargc+2)*sizeof(char *));
+	char *passarg=(char *)malloc(strlen(passfile)+16);
+	if(args==NULL||passarg==NULL)return -1;
+	sprintf(passarg,"-AJPASS=%s",passfile);
+	for(int i=0;i<ajargc;i++)args[i]=ajargv[i];
+	args[ajargc]=passarg;
+	args[ajargc+1]=NULL;
+	fflush(stdout);
+	pid_t pid=fork();
+	if(pid<0)return -1;
+	if(pid==0){
+		execv("/proc/self/exe",args);
+		execvp(args[0],args);
+		_exit(127);
+	}
+	int status;
+	if(waitpid(pid,&status,0)<0)return -1;
+	free(args);
+	free(passarg);
+	if(!WIFEXITED(status))return -1;
+	return WEXITSTATUS(status)==127?-1:WEXITSTATUS(status);
+#endif
+}
+
+/* -AJ driver: compile in child passes until no statement needs demoting.
+   Returns the exit code of the final pass, or -1 to compile here instead. */
+static int AutoJumpDrive()
+{
+	char passfile[4200];
+	char outfile[4300];
+	int code=-1;
+	snprintf(passfile,sizeof(passfile),"%s.ajp",rawfilename);
+	snprintf(outfile,sizeof(outfile),"%s.out",passfile);
+	remove(passfile);
+	for(int pass=0,crash=0;pass<16;){
+		code=AutoJumpSpawn(passfile);
+		if(code<0||code>e_manyinclude&&code!=E_AUTOJUMP_RETRY){
+			if(++crash<3)continue;	/* c-- itself occasionally crashes: retry */
+			code=-1;
+			break;
+		}
+		if(code!=E_AUTOJUMP_RETRY)break;
+		pass++;
+	}
+	if(code==E_AUTOJUMP_RETRY)code=-1;
+	if(code>=0){
+		FILE *f=fopen(outfile,"rb");
+		if(f){
+			char buf[4096];
+			size_t n;
+			while((n=fread(buf,1,sizeof(buf),f))>0)fwrite(buf,1,n,stdout);
+			fclose(f);
+		}
+	}
+	else puts("-AJ: automatic short jumps failed, compiling with the jumps as written");
+	remove(passfile);
+	remove(outfile);
+	return code;
+}
+#endif
+
 int main(int argc,char *argv[])
 {
 #ifdef _WIN32_
@@ -306,10 +409,26 @@ int main(int argc,char *argv[])
 int count;
 unsigned char pari=FALSE;
 	char *buffer;
+	int ajpass=FALSE;
+
+#if defined(_WIN32_)||defined(_UNIX_)
+	ajargc=argc;
+	ajargv=(char **)malloc((argc+1)*sizeof(char *));
+	for(count=0;count<argc;count++){
+		ajargv[count]=strdup(argv[count]);
+		if((argv[count][0]=='-'||argv[count][0]=='/')&&strnicmp(argv[count]+1,"AJPASS=",7)==0){
+			/* a -AJ pass: its report goes to a file, the driver prints the last one */
+			char outfile[4300];
+			snprintf(outfile,sizeof(outfile),"%s.out",argv[count]+8);
+			if(freopen(outfile,"w",stdout)!=NULL)ajpass=TRUE;
+		}
+	}
+	ajargv[argc]=NULL;
+#endif
 
 	char compiler_ver[64];
 	snprintf(compiler_ver, 64, "\nSPHINX C-- Compiler   Version %d.%d%s   %s\r\n",ver1,ver2,betta,__DATE__);
-	puts(compiler_ver);
+	if(!ajpass)puts(compiler_ver);
 #ifdef _KOS_
 	con_set_title(compiler_ver);
 #endif
@@ -375,8 +494,17 @@ unsigned char pari=FALSE;
 	time(&systime); //текущее время
 	memcpy(&timeptr,localtime(&systime),sizeof(tm));
 	if(kexmode)addconsttotree("KEX_MODE",TRUE);
+#if defined(_WIN32_)||defined(_UNIX_)
+	if(autojump&&autojumpfile==NULL){
+		fflush(stdout);
+		int code=AutoJumpDrive();
+		if(code>=0)exit(code);
+	}
+#endif
+	if(autojumpfile)AutoJumpLoad();
 	InitDefineConst();
 	compile();
+	if(autojumpfile&&autojumpnew)exit(E_AUTOJUMP_RETRY);
 	if(error==0)exit(e_ok);
 	exit(e_someerrors);
 	return 0;
@@ -646,7 +774,7 @@ char *p,*q;
 	while(isspace(*p))p++;	//пока незначащие символы
 	while(*p)*q++=*p++;     //переместить строку
 	*q='\0';
-	for(i=strlen(st)-1;isspace(st[i])&&i>=0;i--);
+	for(i=strlen(st)-1;i>=0&&isspace(st[i]);i--);
 	st[i+1]='\0';
 }
 
@@ -1138,6 +1266,13 @@ nexpardll:
                     break;
 				case c_v:
 					verbosedebug=(unsigned char)1^neg;
+					break;
+				case c_aj:
+					autojump=(unsigned char)1^neg;
+					break;
+				case c_ajpass:
+					if(ptr==NULL)return c_end;
+					if(autojumpfile==NULL)autojumpfile=strdup(ptr);
 					break;
 			}
 			break;

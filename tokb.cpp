@@ -89,6 +89,20 @@ int HasHigherMathPrecedence(int op,int baseop)
 
 int mathstopoprec=0;
 int negfirstoperand=0;	/* do_e_axmath: negate the first operand (a &- b ... with precedence) */
+/* `v = expr;` left v in EAX: position right after that store and v itself.
+   A load of v into EAX emitted exactly there (nothing in between) is dropped
+   when the register tracker agrees that EAX still holds v on every path. */
+unsigned int eaxstoreend=(unsigned int)-1;
+ITOK eaxstoretok;
+
+static int EaxHoldsStoredVar(ITOK *t)
+{
+	if(outptr!=eaxstoreend||optinitreg==FALSE)return FALSE;
+	if((t->flag&f_useidx)!=0||t->rm!=eaxstoretok.rm||t->sib!=eaxstoretok.sib||
+			t->number!=eaxstoretok.number||t->segm!=eaxstoretok.segm||t->post!=eaxstoretok.post||
+			strcmp(t->name,eaxstoretok.name)!=0)return FALSE;
+	return (GetRegVar(t)&(1<<EAX))!=0;
+}
 
 int ShouldStopLimitedMath(int op)
 {
@@ -116,8 +130,8 @@ void CompileRightOperandInEax(int sign,int razr,int baseop)
 	op66(razr);
 	op(0x50);
 	addESP+=razr==r16?2:4;
-	bufrm=NULL;
-	strinf.bufstr=NULL;
+	/* bufrm/strinf belong to the operand token just read (its index,
+	   arr[i] * c): they must reach do_e_axmath, not be dropped */
 
 	mathstopoprec=MathOpPrecedence(baseop);
 	do_e_axmath(sign,razr,&rhs_ofsstr);
@@ -139,8 +153,8 @@ void CompileShiftCountInCl(int sign,int razr,int baseop)
 	op66(razr);
 	op(0x50);
 	addESP+=razr==r16?2:4;
-	bufrm=NULL;
-	strinf.bufstr=NULL;
+	/* bufrm/strinf belong to the operand token just read (its index,
+	   arr[i] * c): they must reach do_e_axmath, not be dropped */
 
 	mathstopoprec=MathOpPrecedence(baseop);
 	do_e_axmath(sign,razr,&rhs_ofsstr);
@@ -158,61 +172,286 @@ void CompileShiftCountInCl(int sign,int razr,int baseop)
 
 /* Register-target variants of the two helpers above: REG holds the left
    operand.  The right operand (everything that binds tighter than baseop) is
-   compiled into EAX with a limited precedence, then combined into REG. */
-void CompileRightOperandInReg(int sign,int razr,int baseop,int reg,int vop)
+   compiled into EAX with a limited precedence, then combined into REG.
+   The scratch registers EAX, ECX and EDX (except REG itself) are saved around
+   it: KolibriOS code loads a function number into EAX and then computes the
+   other syscall arguments into registers, so this code must not touch them. */
+/* Which of ECX/EDX can the code for the operand that starts at the current
+   token use?  The operand is about to be compiled into EAX by do_e_axmath.
+   The source text is only looked at (no token is consumed): a plain mix of
+   variables, numbers and + - & | ^ with constant shifts needs EAX alone,
+   * / % need EDX (and ECX for / %), a shift by a non-constant needs ECX, and
+   an operand that binds tighter than the operator before it, a bracket or a
+   unary minus after an operator is combined through EDX.  Anything else
+   (calls, indexing, strings, members, unusual operators) answers "both". */
+#define SCRATCH_ALL ((1<<EAX)|(1<<ECX)|(1<<EDX))
+
+static int ScratchOperandTok(int t)
+{
+	switch(t){
+		case tk_number: case tk_postnumber:
+		case tk_dwordvar: case tk_longvar: case tk_wordvar: case tk_intvar:
+		case tk_bytevar: case tk_charvar: case tk_reg32: case tk_reg: case tk_beg:
+			return TRUE;
+	}
+	return FALSE;
+}
+
+static int ScanScratchUse()
+{
+	int mask=1<<EAX;
+	int depth=0;
+	int lastprec[32];
+	int wantoperand;
+	int shiftcount=FALSE;	/* the next operand is a shift count */
+	unsigned int p;
+	lastprec[0]=0;
+	if(bufrm!=NULL||strinf.bufstr!=NULL||(itok.flag&f_useidx)!=0)return SCRATCH_ALL;
+	if(tok==tk_openbracket){
+		depth=1;
+		lastprec[1]=0;
+		wantoperand=TRUE;
+	}
+	else if(tok==tk_minus)wantoperand=TRUE;
+	else if(ScratchOperandTok(tok))wantoperand=FALSE;
+	else return SCRATCH_ALL;
+	if(inptr2==0||input==NULL)return SCRATCH_ALL;
+	p=inptr2-1;
+	for(int n=0;n<256;n++){
+		unsigned char c;
+		/* skip white space and comments */
+		for(;;){
+			if(p>=endinptr)return SCRATCH_ALL;
+			c=input[p];
+			if(c<=' '){p++; continue;}
+			if(c=='/'&&p+1<endinptr&&input[p+1]=='/'){
+				while(p<endinptr&&input[p]!=10&&input[p]!=13)p++;
+				continue;
+			}
+			if(c=='/'&&p+1<endinptr&&input[p+1]=='*'){
+				p+=2;
+				while(p+1<endinptr&&!(input[p]=='*'&&input[p+1]=='/'))p++;
+				p+=2;
+				continue;
+			}
+			break;
+		}
+		char c2=p+1<endinptr?input[p+1]:0;
+		if(isalpha(c)||c=='_'||c>=0x80||isdigit(c)||c=='#'||c=='\''){	/* operand */
+			if(!wantoperand)return SCRATCH_ALL;
+			if(c=='\''){
+				p++;
+				while(p<endinptr&&input[p]!='\'')p++;
+				p++;
+			}
+			else{
+				int isnum=isdigit(c);
+				if(shiftcount&&!isnum&&c!='\'')mask|=1<<ECX;
+				if(c=='#')p++;
+				while(p<endinptr&&(isalnum(input[p])||input[p]=='_'||input[p]>=0x80))p++;
+			}
+			shiftcount=FALSE;
+			wantoperand=FALSE;
+			/* a call, an index or a member access: give up */
+			unsigned int q=p;
+			while(q<endinptr&&input[q]<=' ')q++;
+			if(q<endinptr&&(input[q]=='('||input[q]=='['||input[q]=='.'||
+					(input[q]=='-'&&q+1<endinptr&&input[q+1]=='>')))return SCRATCH_ALL;
+			continue;
+		}
+		if(c=='('){
+			if(!wantoperand||depth>=31)return SCRATCH_ALL;
+			if(lastprec[depth]!=0)mask|=1<<EDX;	/* a op (...) */
+			if(shiftcount)mask|=1<<ECX;
+			shiftcount=FALSE;
+			depth++;
+			lastprec[depth]=0;
+			p++;
+			continue;
+		}
+		if(c==')'){
+			if(wantoperand)return SCRATCH_ALL;
+			if(depth==0)return mask;
+			depth--;
+			p++;
+			continue;
+		}
+		if(c==';'||c==','||c=='}'||c=='{'||c=='?'||c==':'||c=='='&&c2!='='){
+			if(wantoperand)return SCRATCH_ALL;
+			return depth==0?mask:SCRATCH_ALL;
+		}
+		if((c=='<'&&c2!='<')||(c=='>'&&c2!='>')||(c=='='&&c2=='=')||(c=='!'&&c2=='=')||
+				(c=='&'&&c2=='&')||(c=='|'&&c2=='|')){	/* comparison or logic: the end */
+			if(wantoperand)return SCRATCH_ALL;
+			return mask;
+		}
+		if(c=='-'&&wantoperand){	/* unary minus */
+			if(lastprec[depth]!=0)mask|=1<<EDX;
+			if(shiftcount)mask|=1<<ECX;
+			p++;
+			continue;
+		}
+		if(wantoperand)return SCRATCH_ALL;
+		int op,len=1;
+		switch(c){
+			case '+': op=tk_plus; break;
+			case '-': op=tk_minus; break;
+			case '*': op=tk_mult; break;
+			case '/': op=tk_div; break;
+			case '%': op=tk_mod; break;
+			case '&': op=tk_and; break;
+			case '|': op=tk_or; break;
+			case '^': op=tk_xor; break;
+			case '<': op=tk_ll; len=2; break;
+			case '>': op=tk_rr; len=2; break;
+			default: return SCRATCH_ALL;
+		}
+		if(p+len<endinptr&&input[p+len]=='=')return SCRATCH_ALL;	/* x op= ... */
+		int prec=MathOpPrecedence(op);
+		if(op==tk_mult||op==tk_div||op==tk_mod)mask|=1<<EDX;
+		if(op==tk_div||op==tk_mod)mask|=1<<ECX;
+		if(lastprec[depth]!=0&&prec>lastprec[depth])mask|=1<<EDX;
+		lastprec[depth]=prec;
+		if(op==tk_ll||op==tk_rr)shiftcount=TRUE;
+		wantoperand=TRUE;
+		p+=len;
+		if(mask==SCRATCH_ALL)return mask;
+	}
+	return SCRATCH_ALL;
+}
+
+/* Does the rest of the expression (after the current token) contain a bracket
+   used as an operand after an operator, e.g. bb + (a * 2)?  Only looks at the
+   source text. */
+static int ExprHasOperandBracket()
+{
+	unsigned int p;
+	int depth=0;
+	unsigned char prev=0;	/* last significant character */
+	if(inptr2==0||input==NULL)return FALSE;
+	for(p=inptr2-1;p<endinptr;p++){
+		unsigned char c=input[p];
+		unsigned char c2=p+1<endinptr?input[p+1]:0;
+		if(c<=' ')continue;
+		if(c=='/'&&c2=='/'){
+			while(p<endinptr&&input[p]!=10&&input[p]!=13)p++;
+			continue;
+		}
+		if(c=='/'&&c2=='*'){
+			p+=2;
+			while(p+1<endinptr&&!(input[p]=='*'&&input[p+1]=='/'))p++;
+			p++;
+			continue;
+		}
+		if(c=='\''||c=='"')return FALSE;
+		if(c=='('){
+			if(prev&&strchr("+-*/%&|^<>",prev))return TRUE;
+			depth++;
+		}
+		else if(c==')'){
+			if(depth==0)return FALSE;
+			depth--;
+		}
+		else if(depth==0){
+			if(c==';'||c==','||c=='{'||c=='}'||c=='?'||c==':')return FALSE;
+			if(c=='='&&c2!='=')return FALSE;
+			if((c=='='||c=='!')&&c2=='=')return FALSE;
+			if((c=='<'&&c2!='<'&&prev!='<')||(c=='>'&&c2!='>'&&prev!='>'))return FALSE;
+			if((c=='&'&&c2=='&')||(c=='|'&&c2=='|'))return FALSE;
+		}
+		prev=c;
+	}
+	return FALSE;
+}
+
+static int SaveScratchRegs(int reg,int need=SCRATCH_ALL)
+{
+	int mask=0;
+	for(int r=EAX;r<=EDX;r++){	/* EAX, ECX, EDX */
+		if(r==reg||(need&(1<<r))==0)continue;
+		op(0x50+r);	// push r (native width)
+		addESP+=am32?4:2;
+		mask|=1<<r;
+	}
+	return mask;
+}
+
+static void RestoreScratchRegs(int mask)
+{
+	for(int r=EDX;r>=EAX;r--){
+		if((mask&(1<<r))==0)continue;
+		op(0x58+r);	// pop r
+		addESP-=am32?4:2;
+		ClearReg(r);
+	}
+}
+
+static void CompileLimitedMathInEax(int sign,int razr,int baseop)
 {
 	char *rhs_ofsstr=NULL;
 	int savestop=mathstopoprec;
-
-	op66(razr);
-	op(0x50+reg);	// push reg
-	addESP+=razr==r16?2:4;
-	bufrm=NULL;
-	strinf.bufstr=NULL;
-
 	mathstopoprec=MathOpPrecedence(baseop);
 	do_e_axmath(sign,razr,&rhs_ofsstr);
 	mathstopoprec=savestop;
 	if(rhs_ofsstr)free(rhs_ofsstr);
+}
 
+void CompileRightOperandInReg(int sign,int razr,int baseop,int reg,int vop)
+{
+	int saved=SaveScratchRegs(reg,ScanScratchUse());
+
+	op66(razr);
+	op(0x50+reg);	// push reg
+	addESP+=razr==r16?2:4;
+	CompileLimitedMathInEax(sign,razr,baseop);
 	op66(razr);
 	op(0x58+reg);	// pop reg
 	addESP-=razr==r16?2:4;
 	op66(razr);
 	op(0x01+vop);	// op reg,eax
 	op(0xC0+reg);
+	RestoreScratchRegs(saved);
 	ClearReg(reg);
-	warningreg(regs[razr/2-1][EAX]);
-	setzeroflag=TRUE;
+	setzeroflag=TRUE;	/* the pops do not change the flags */
 }
 
 void CompileShiftCountInReg(int sign,int razr,int baseop,int reg,int shopc)
 {
-	char *rhs_ofsstr=NULL;
-	int savestop=mathstopoprec;
+	int saved=SaveScratchRegs(reg,ScanScratchUse()|(1<<ECX)|(reg==ECX?1<<EDX:0));
 
 	op66(razr);
 	op(0x50+reg);	// push reg
 	addESP+=razr==r16?2:4;
-	bufrm=NULL;
-	strinf.bufstr=NULL;
-
-	mathstopoprec=MathOpPrecedence(baseop);
-	do_e_axmath(sign,razr,&rhs_ofsstr);
-	mathstopoprec=savestop;
-	if(rhs_ofsstr)free(rhs_ofsstr);
-
-	op(0x88);
-	op(0xC1);	// mov cl,al
-	op66(razr);
-	op(0x58+reg);	// pop reg
-	addESP-=razr==r16?2:4;
-	op66(razr);
-	op(0xD3);
-	op(shopc+reg);	// shl/shr/sar reg,cl
+	CompileLimitedMathInEax(sign,razr,baseop);
+	if(reg==ECX){
+		op66(razr);
+		op(0x58+EDX);	// pop edx      (EDX is saved, so it is free here)
+		addESP-=razr==r16?2:4;
+		op(0x88);
+		op(0xC1);	// mov cl,al
+		op66(razr);
+		op(0x89);
+		op(0xD0);	// mov eax,edx
+		op66(razr);
+		op(0xD3);
+		op(shopc+EAX);	// shl/shr/sar eax,cl
+		op66(razr);
+		op(0x89);
+		op(0xC1);	// mov ecx,eax
+	}
+	else{
+		op(0x88);
+		op(0xC1);	// mov cl,al
+		op66(razr);
+		op(0x58+reg);	// pop reg
+		addESP-=razr==r16?2:4;
+		op66(razr);
+		op(0xD3);
+		op(shopc+reg);	// shl/shr/sar reg,cl
+		if((saved&(1<<ECX))==0)warningreg(begs[CL]);
+	}
+	RestoreScratchRegs(saved);
 	ClearReg(reg);
-	warningreg(begs[CL]);
-	warningreg(regs[razr/2-1][EAX]);
 	setzeroflag=TRUE;
 }
 
@@ -4461,6 +4700,7 @@ getfromax:
 				if(retrez==0)retrez=razr==r16?tk_reg:tk_reg32;
 
 				convert_returnvalue(posiblret,rettype);
+				int simplestore=(wbuf==NULL&&wstr.bufstr==NULL&&hnumber==EAX&&razr==r32&&(wtok.flag&f_useidx)==0);
 
 				if(addESP!=oaddESP&&am32&&ESPloc&&(wtok.type==tp_paramvar||wtok.type==tp_localvar))wtok.number+=addESP-oaddESP;
 
@@ -4513,6 +4753,10 @@ getfromax:
 				KillVar(wtok.name);
 
 				AddRegVar(hnumber,razr,&wtok);
+				if(simplestore){
+					eaxstoreend=outptr;
+					eaxstoretok=wtok;
+				}
 
 			}
 
@@ -6512,6 +6756,7 @@ int reg1=idxregs[0],reg2=idxregs[1];
 		case tk_longvar:
 
 			i+=4;
+			if(i==4&&razr==r32&&gbuf==NULL&&gstr->bufstr==NULL&&EaxHoldsStoredVar(gstok))break;	/* already in EAX */
 
 longvar:
 
@@ -9233,6 +9478,15 @@ int doalmath(int sign,char **ofsstr)
 int negflag=0,i=0;
 
 int rettype=tk_beg;
+
+	if(tok==tk_openbracket||(tok==tk_minus&&tok2==tk_openbracket)||
+			(bufrm==NULL&&strinf.bufstr==NULL&&ExprHasOperandBracket())){
+		/* a byte expression with brackets (bb + (a * 2) as well): the byte code
+		   generator has no brackets, so evaluate it in EAX as C does (operands promoted
+		   to int); the result is AL */
+		do_e_axmath(sign,am32?r32:r16,ofsstr);
+		return tk_beg;
+	}
 
 	if(tok==tk_minus){
 
@@ -13400,6 +13654,8 @@ tl_hmul2:
 						goto defreg32;
 
 					case tk_openbracket:
+						{
+						int saved=SaveScratchRegs(reg,ScanScratchUse());
 
 						nexttok();
 
@@ -13422,8 +13678,14 @@ tl_hmul2:
 						op66(razr);
 						op(0x58+reg);
 						addESP-=razr==r16?2:4;
+						op66(razr);
+						op(0x01+vop);
+						op(0xc0+reg);	// op reg,eax
+						RestoreScratchRegs(saved);
+						ClearReg(reg);
 						next=0;
-						goto addax;
+						break;
+						}
 
 					case tk_reg:
 
@@ -13825,7 +14087,7 @@ defxormin:
 
 			  getoperand(am32==TRUE?ECX:(reg==BX?SI:BX));
 				if(tok==tk_minus)CheckMinusNum();
-				if(reg!=ECX&&(tok==tk_openbracket||tok==tk_minus||(itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,tk_rr)))){
+				if((tok==tk_openbracket||tok==tk_minus||(itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,tk_rr)))){
 					CompileShiftCountInReg(sign,razr,tk_rr,reg,sign?0xF8:0xE8);
 					next=0;
 					break;
@@ -13855,7 +14117,7 @@ defxormin:
 
 			  getoperand(am32==TRUE?ECX:(reg==BX?SI:BX));
 				if(tok==tk_minus)CheckMinusNum();
-				if(reg!=ECX&&(tok==tk_openbracket||tok==tk_minus||(itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,tk_ll)))){
+				if((tok==tk_openbracket||tok==tk_minus||(itok2.type==tp_opperand&&HasHigherMathPrecedence(tok2,tk_ll)))){
 					CompileShiftCountInReg(sign,razr,tk_ll,reg,0xE0);
 					next=0;
 					break;
@@ -13928,6 +14190,7 @@ llshift:
 				}
 
 				if(tok==tk_openbracket){
+					int saved=SaveScratchRegs(reg,ScanScratchUse());
 					op66(razr);
 					op(0x50+reg);	// push reg
 					addESP+=razr==r16?2:4;
@@ -13942,8 +14205,8 @@ llshift:
 					op(0x0F);
 					op(0xAF);
 					op(0xC0+reg*8+EAX);	// imul reg,eax
+					RestoreScratchRegs(saved);
 					ClearReg(reg);
-					warningreg(regs[razr/2-1][EAX]);
 					setzeroflag=FALSE;
 					if(negflag){
 						NegReg(razr,reg);
@@ -14688,12 +14951,27 @@ negparen:
 		case tk_openbracket:
 		{
 
-			int saveax=reg!=AX&&reg!=ESP;
+			int saved=0;
 
-			if(saveax){
-				op66(razr);
-				op(0x50);
-				addESP+=razr==r16?2:4;
+			if(tok==tk_openbracket&&useloop&&reg!=AX&&reg!=ESP&&ScanScratchUse()==(1<<EAX)){
+				/* REG = (x << 16) + w: a simple group (and simple operators after
+				   it) is computed in REG itself, like the legacy x << 16 + w, instead
+				   of push eax / ... in eax / mov reg,eax / pop eax.  Only the group
+				   is compiled here; the caller continues with + w in REG. */
+				char *gofs=NULL;
+				nexttok();
+				rettype=getintoreg_32(reg,razr,sign,&gofs);
+				if(tok!=tk_closebracket&&itok.type!=tp_stopper&&tok!=tk_eof)doregmath_32(reg,razr,sign,&gofs);
+				if(gofs)free(gofs);
+				if(tok!=tk_closebracket)expected(')');
+				nexttok();
+				ClearReg(reg);
+				next=0;
+				break;
+			}
+
+			if(reg!=AX&&reg!=ESP){
+				saved=SaveScratchRegs(reg,ScanScratchUse());	/* EAX, ECX, EDX except reg */
 				ClearReg(AX);
 			}
 
@@ -14709,12 +14987,7 @@ negparen:
 
 				ClearReg(reg);
 
-				if(saveax){
-					op66(razr);
-					op(0x58+AX);
-					addESP-=razr==r16?2:4;
-					ClearReg(AX);
-				}
+				RestoreScratchRegs(saved);
 
 			}
 
@@ -19067,7 +19340,20 @@ defal:
 				case 1: break;
 
 				case 2:
-					if(sign)goto divin;	/* sar rounds towards -inf, C rounds towards zero */
+					if(sign){	/* sar alone rounds towards -inf, C rounds towards zero */
+						if(expand==TRUE)goto divin;
+						op66(razr);
+						op(0x99);	// cdq
+						op66(razr);
+						outword(0xD029);	// sub eax,edx  (+1 for negative)
+						op66(razr);
+						outword(0xF8D1);	// sar eax,1
+						setzeroflag=TRUE;
+						ClearReg(AX);
+						ClearReg(DX);
+						warningreg(regs[razr/2-1][EDX]);
+						break;
+					}
 
 					if(expand==TRUE){
 
@@ -19117,6 +19403,34 @@ defal:
 
 					vop=caselong(itok.number);
 
+					if(vop!=NUMNUM&&sign&&expand==FALSE&&optimizespeed&&vop<(razr==r16?15:31)){
+						/* signed x / 2^k rounding towards zero: add 2^k-1 to negative x first
+						   (9 bytes; idiv is 6 bytes, so only when optimising for speed) */
+						op66(razr);
+						op(0x99);	// cdq
+						op66(razr);
+						if(itok.number-1<128){
+							op(0x83);
+							op(0xE2);
+							op(itok.number-1);	// and edx,2^k-1
+						}
+						else{
+							op(0xC1);
+							op(0xEA);
+							op((razr==r16?16:32)-vop);	// shr edx,32-k
+						}
+						op66(razr);
+						outword(0xD001);	// add eax,edx
+						op66(razr);
+						op(0xC1);
+						op(0xF8);
+						op(vop);	// sar eax,k
+						setzeroflag=TRUE;
+						ClearReg(AX);
+						ClearReg(DX);
+						warningreg(regs[razr/2-1][EDX]);
+						break;
+					}
 					if(vop!=NUMNUM&&sign==0){
 
 						if(expand==TRUE){
