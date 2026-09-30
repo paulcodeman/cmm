@@ -2332,9 +2332,12 @@ cont_float:
 	return(swapped);
 }
 
+static int cmprhsneg=FALSE;	/* the right operand of the last comparison started with '-' */
+
 int CheckCompareTok(int reg)
 {
 int comparetok=tk_equalto;
+	cmprhsneg=(tok2==tk_minus);
 	if(itok.type==tp_compare || tok==tk_oror || tok==tk_andand) comparetok=tok;
 	else unknowncompop();
 	getoperand(reg);
@@ -2383,6 +2386,7 @@ int use_cxz=0;
 char *ofsstr=NULL,*ofsstr2=NULL;
 int usereg=-1;
 int usereg2=-1;
+int leftlit=FALSE,rightlit=FALSE,litneg=FALSE;	/* literal operands, one written with '-' */
 
 //////04.10.04 13:45
 int bracket=0;
@@ -2402,9 +2406,11 @@ unsigned char oinline=useinline;
 	// For for-loop conditions that end with semicolon, also stop at semicolon
 	if(vartype==tk_for) ofsstr=GetLecsem(tk_closebracket,tk_semicolon,tp_compare);
 	else ofsstr=GetLecsem(tk_closebracket,tk_eof,tp_compare);
+	if(tok2==tk_minus)litneg=TRUE;
 	getoperand();	//NEW 04.10.04 13:45
 	if(tok==tk_openbracket){
 		bracket++;
+		if(tok2==tk_minus)litneg=TRUE;
 		getoperand();
 	}
 	if(tok==tk_not){
@@ -2622,7 +2628,9 @@ mac1:
 			vartype=(am32==FALSE?tk_word:tk_dword);
 			break;
 	}
+	if(tok==tk_minus&&tok2==tk_number)litneg=TRUE;
 	CheckMinusNum();
+	leftlit=(tok==tk_number);
 	if(itok2.type!=tp_compare&&tok2!=tk_closebracket){	//сложный операнд
 		if(ofsstr){
 			int retreg;
@@ -2856,7 +2864,12 @@ nn1:
 	}
 	// handle continuation through nested parens: e.g. if ((a + b) > 15) or if ((a + b) * c > 15)
 	if(verbosedebug)printf("constructcompare: before paren-chain: tok=%s(%d) bracket=%d\n",tokname(tok),tok,bracket);
-	while(tok == tk_closebracket && bracket > 1) {
+	/* continue through a ')' only when a comparison, an operator or another ')'
+	   follows.  A ')' followed by && or || closes this condition part, e.g.
+	   while ((p[i]) && (i<n)), and one at the end of the text, e.g. the
+	   condition of for(;(x);), is the closing bracket: expecting() takes it. */
+	while(tok == tk_closebracket && bracket > 1 && tok2 != tk_andand && tok2 != tk_oror &&
+			(tok2 == tk_closebracket || itok2.type == tp_compare || IsMathContinuationToken(tok2))) {
 		bracket--;
 		nexttok();
 		if(verbosedebug)printf("constructcompare paren-chain: tok=%s(%d) itok.type=%d\n",tokname(tok),tok,itok.type);
@@ -2870,26 +2883,34 @@ nn1:
 		htok.rm = typenumber(vartype);
 	}
 	if(tok!=tk_closebracket){	//сравнение
-		// logical OR/AND (||, &&) connecting boolean expressions - not a comparison
-		if(tok == tk_oror || tok == tk_andand) return voidcompr;
+		/* a && b without brackets around each part: this used to return "always
+		   true" silently and left the code generator out of step */
+		if(tok == tk_oror || tok == tk_andand)preerror("write each part of && or || in its own brackets: (a) && (b)");
 		ofsstr2=GetLecsem(tk_closebracket);
 		comparetok=CheckCompareTok(preg);
+		if(cmprhsneg)litneg=TRUE;
 		if(tok>=tk_char&&tok<=tk_double){
 			type2=tok;
 			if(ofsstr2)free(ofsstr2);
 			ofsstr2=GetLecsem(tk_closebracket);
 			getoperand(preg);
 		}
+		if(tok==tk_minus&&tok2==tk_number)litneg=TRUE;
 		if(tok==tk_minus){
 			if(CheckMinusNum()==FALSE){
 				preerror("only negative of constants valid within compairsons");
 				nexttok();
 			}
 		}
+		rightlit=(tok==tk_number);
 #ifdef OPTVARCONST
 		CheckConstVar3(&tok,&itok,razr);
 #endif
-		if((ittok==tk_reg32||ittok==tk_reg||ittok==tk_beg)&&itok2.type==tp_opperand){
+		/* the right operand is an expression (b + c, or one that starts with a
+		   bracket: a == (b + c)): compute it into a register */
+		/* (a number first, 1 + b, is folded below and finished in a register there;
+		   getintoreg_32 looped forever on it for a byte register) */
+		if((ittok==tk_reg32||ittok==tk_reg||ittok==tk_beg)&&tok!=tk_number&&(itok2.type==tp_opperand||tok==tk_openbracket)){
 			int rhsrazr = razr==r_undef ? getrazr(vartype) : razr;
 			int rhssign = (vartype==tk_long||vartype==tk_int||vartype==tk_char);
 			int rhsreg = DX;
@@ -2946,13 +2967,44 @@ nn1:
 					htok2.lnumber=doconstdoublemath();
 					break;
 			}
+			if(itok.type==tp_opperand&&vartype!=tk_float&&vartype!=tk_double&&
+					vartype!=tk_qword&&vartype!=tk_reg64){
+				/* a == 1 + b: the folder stopped at an operand that is not a
+				   constant and left the operator current.  Load the folded part
+				   into a register and finish the right side there. */
+				int crazr=razr==r_undef?getrazr(vartype):razr;
+				int rrazr=crazr==r8?r32:crazr;
+				int rsign=(vartype==tk_long||vartype==tk_int||vartype==tk_char);
+				int lhsreg=(ittok==tk_reg32||ittok==tk_reg||ittok==tk_beg);
+				int rreg=(lhsreg&&(unsigned int)htok.number==DX)?CX:DX;
+				int saveax=lhsreg&&(unsigned int)htok.number==AX;
+				if(saveax){
+					op66(rrazr);
+					op(0x50);
+					addESP+=rrazr==r16?2:4;
+				}
+				MovRegNum(rrazr,postnumflag&f_reloc,htok2.number,rreg);
+				doregmath_32(rreg,rrazr,rsign,&ofsstr2);
+				if(saveax){
+					op66(rrazr);
+					op(0x58+AX);
+					addESP-=rrazr==r16?2:4;
+				}
+				ClearReg(rreg);
+				ittok2=crazr==r8?tk_beg:(crazr==r16?tk_reg:tk_reg32);
+				htok2=itok;
+				htok2.number=rreg;
+				htok2.rm=typenumber(vartype);
+				usereg2=-1;
+				goto en2;
+			}
 			htok2.rm=typenumber(vartype);
 			ittok2=tk_number;
 			htok2.flag=itok.flag;
 		}
 		else{
 			if(ittok>=tk_charvar&&ittok<=tk_doublevar&&(tok==tk_proc||tok==tk_id||
-					tok==tk_undefproc||tok==tk_declare||tok==tk_apiproc||tok==tk_ID||
+					tok==tk_undefproc||tok==tk_declare||tok==tk_apiproc||tok==tk_ID||tok==tk_openbracket||
 					itok2.type==tp_opperand||(tok>=tk_charvar&&tok<=tk_doublevar))){
 				if(ofsstr2){
 					int retreg;
@@ -3184,7 +3236,75 @@ en2:
 		}
 	}
 	if(ittok==tk_number&&htok.flag==0&&ittok2==tk_number&&htok2.flag==0){
-		invertflag=(htok.number!=htok2.number?zerocompr:voidcompr);
+		/* both sides are compile-time constants: evaluate the comparison
+		   itself (it used to be folded as if it were always "==") */
+		int res;
+		int cmpop=comparetok;
+		if(cmpop==0)cmpop=tk_notequal;
+		if(vartype==tk_float){
+			float fa=*(float *)&htok.number,fb=*(float *)&htok2.number;
+			switch(cmpop){
+				case tk_equalto: res=fa==fb; break;
+				case tk_greater: res=fa>fb; break;
+				case tk_less: res=fa<fb; break;
+				case tk_greaterequal: res=fa>=fb; break;
+				case tk_lessequal: res=fa<=fb; break;
+				default: res=fa!=fb; break;
+			}
+		}
+		else if(vartype==tk_double){
+			double da=*(double *)&htok.lnumber,db=*(double *)&htok2.lnumber;
+			switch(cmpop){
+				case tk_equalto: res=da==db; break;
+				case tk_greater: res=da>db; break;
+				case tk_less: res=da<db; break;
+				case tk_greaterequal: res=da>=db; break;
+				case tk_lessequal: res=da<=db; break;
+				default: res=da!=db; break;
+			}
+		}
+		else if(vartype==tk_char||vartype==tk_int||vartype==tk_long||
+				(leftlit&&rightlit&&litneg&&(vartype==tk_dword||vartype==tk_word))){
+			/* typed signed, or two literals one of which is written negative:
+			   compare as C does (-1 < 3) */
+			long long sa=(long)htok.number,sb=(long)htok2.number;
+			if(vartype==tk_char){sa=(signed char)htok.number;sb=(signed char)htok2.number;}
+			else if(vartype==tk_int){sa=(short)htok.number;sb=(short)htok2.number;}
+			switch(cmpop){
+				case tk_equalto: res=sa==sb; break;
+				case tk_greater: res=sa>sb; break;
+				case tk_less: res=sa<sb; break;
+				case tk_greaterequal: res=sa>=sb; break;
+				case tk_lessequal: res=sa<=sb; break;
+				default: res=sa!=sb; break;
+			}
+		}
+		else if(vartype==tk_qword||vartype==tk_reg64){
+			unsigned long long qa=htok.lnumber,qb=htok2.lnumber;
+			switch(cmpop){
+				case tk_equalto: res=qa==qb; break;
+				case tk_greater: res=qa>qb; break;
+				case tk_less: res=qa<qb; break;
+				case tk_greaterequal: res=qa>=qb; break;
+				case tk_lessequal: res=qa<=qb; break;
+				default: res=qa!=qb; break;
+			}
+		}
+		else{
+			unsigned long ua=htok.number,ub=htok2.number;
+			if(vartype==tk_byte){ua&=0xff;ub&=0xff;}
+			else if(vartype==tk_word){ua&=0xffff;ub&=0xffff;}
+			switch(cmpop){
+				case tk_equalto: res=ua==ub; break;
+				case tk_greater: res=ua>ub; break;
+				case tk_less: res=ua<ub; break;
+				case tk_greaterequal: res=ua>=ub; break;
+				case tk_lessequal: res=ua<=ub; break;
+				default: res=ua!=ub; break;
+			}
+		}
+		if(notflag)res=!res;
+		invertflag=(res?voidcompr:zerocompr);
 		useinline=oinline;
 		return invertflag;
 	}
@@ -3570,11 +3690,7 @@ endp:
 			}
 		}
 		else{
-			if(rcompr==zerocompr){
-				do{
-					nexttok();
-				}while(tok!=tk_semicolon&&tok!=tk_eof);
-			}
+			if(rcompr==zerocompr)SkipStatement();
 			else{
 #ifdef OPTVARCONST
 				if(comconst&&comconst->rec&&comconst->typevar==tk_equalto){
@@ -3582,6 +3698,21 @@ endp:
 				}
 #endif
 				docommand();
+			}
+		}
+		if(rcompr==zerocompr||rcompr==voidcompr){
+			/* constant condition: handle the else branch that may follow */
+			if(tok==tk_semicolon&&(tok2==tk_else||tok2==tk_ELSE))nexttok();
+			if(tok==tk_else||tok==tk_ELSE){
+				nexttok();
+				if(rcompr==voidcompr)SkipStatement();
+				else{
+					if(tok==tk_openbrace){
+						doblock();
+						nexttok();
+					}
+					else docommand();
+				}
 			}
 		}
 		endblock();
@@ -4057,7 +4188,7 @@ c1:
 			return NULL;
 		}
 	}
-	if((icomp+(*numcomp-1))->use_cxz==cxnzcompr){
+	if(*numcomp&&(icomp+(*numcomp-1))->use_cxz==cxnzcompr){
 		outptr-=4;
 		outword(0xE3);
 		(icomp+(*numcomp-1))->loc=outptr;
@@ -4087,16 +4218,27 @@ c1:
 			}
 		}
 		else{
-			if(rcompr==zerocompr){
-				do{
-					nexttok();
-				}while(tok!=tk_semicolon&&tok!=tk_eof);
-			}
+			if(rcompr==zerocompr)SkipStatement();
 			else{
 #ifdef OPTVARCONST
 				if(comconst&&comconst->rec&&comconst->typevar==tk_equalto)Const2VarRec(comconst);
 #endif
 				docommand();
+			}
+		}
+		if(rcompr==zerocompr||rcompr==voidcompr){
+			/* constant condition: handle the else branch that may follow */
+			if(tok==tk_semicolon&&(tok2==tk_else||tok2==tk_ELSE))nexttok();
+			if(tok==tk_else||tok==tk_ELSE){
+				nexttok();
+				if(rcompr==voidcompr)SkipStatement();
+				else{
+					if(tok==tk_openbrace){
+						doblock();
+						nexttok();
+					}
+					else docommand();
+				}
 			}
 		}
 		endblock();
@@ -4560,7 +4702,7 @@ unsigned int oaddESP=addESP;
 	docommand();
 	SetContinueLabel();
 	if(dbg)AddLine();
-	if(tok!=tk_while)preerror("'while' expected following 'do'");
+	if(tok!=tk_while&&tok!=tk_WHILE)preerror("'while' expected following 'do'");
 	icomp=(ICOMP *)MALLOC(sizeof(ICOMP)*MAXIF);	//блок для инфо о сравнениях
 	do{
 #ifdef OPTVARCONST
@@ -8396,6 +8538,74 @@ int SkipParam(int depth)
 	return TRUE;
 }
 
+/* tok is '(' or '{': skip to the matching close and make the token after it current */
+static void SkipGroupTok()
+{
+	int isbrace=(tok==tk_openbrace);
+	cha=cha2;
+	inptr=inptr2;
+	if(isbrace)SkipBlock();
+	else SkipParam(1);
+	inptr2=inptr;
+	cha2=cha;
+	linenum2=linenumber;
+	nexttok();
+}
+
+/* Skip one statement without compiling it (the dead branch of a constant
+   condition).  Leaves tok on the token after the statement, like docommand(). */
+void SkipStatement()
+{
+	switch(tok){
+		case tk_eof: return;
+		case tk_semicolon: nexttok(); return;
+		case tk_openbrace: SkipGroupTok(); return;
+		case tk_if:
+		case tk_IF:
+			nexttok();
+			if(tok==tk_openbracket)SkipGroupTok();
+			SkipStatement();
+			if(tok==tk_else||tok==tk_ELSE){
+				nexttok();
+				SkipStatement();
+			}
+			return;
+		case tk_for:
+		case tk_FOR:
+		case tk_while:
+		case tk_WHILE:
+		case tk_switch:
+		case tk_SWITCH:
+		case tk_loop:
+		case tk_loopnz:
+		case tk_LOOPNZ:
+			nexttok();
+			if(tok==tk_openbracket)SkipGroupTok();
+			SkipStatement();
+			return;
+		case tk_do:
+			nexttok();
+			SkipStatement();
+			if(tok==tk_while||tok==tk_WHILE){
+				nexttok();
+				if(tok==tk_openbracket)SkipGroupTok();
+			}
+			if(tok==tk_semicolon)nexttok();
+			return;
+	}
+	for(int depth=0;tok!=tk_eof;){
+		if(tok==tk_openbracket)depth++;
+		else if(tok==tk_closebracket)depth--;
+		else if(tok==tk_openbrace){	/* initializer list, asm block */
+			SkipGroupTok();
+			continue;
+		}
+		else if(tok==tk_semicolon&&depth<=0)break;
+		nexttok();
+	}
+	nexttok();
+}
+
 int SkipLocalVar()
 {
 	while(tok!=tk_openbrace&&tok!=tk_eof){
@@ -8679,9 +8889,16 @@ int updates=0;
 				hold--;	 // CALL_SHORT
 				if(short_ok(hold))output[(postbuf+count)->loc]=(unsigned char)hold;
 				else{
-					if((postbuf+count)->type==BREAK_SHORT)preerror3("BREAK distance too large, use break",(postbuf+count)->line);
-					else if((postbuf+count)->type==CONTINUE_SHORT)preerror3("CONTINUE distance too large, use continue",(postbuf+count)->line);
-					else preerror3(shorterr,(postbuf+count)->line,(postbuf+count)->file);
+					if((postbuf+count)->type==BREAK_SHORT){
+						if(!AutoJumpFailed(tk_break,(postbuf+count)->line,(postbuf+count)->file))
+							preerror3("BREAK distance too large, use break",(postbuf+count)->line,(postbuf+count)->file);
+					}
+					else if((postbuf+count)->type==CONTINUE_SHORT){
+						if(!AutoJumpFailed(tk_continue,(postbuf+count)->line,(postbuf+count)->file))
+							preerror3("CONTINUE distance too large, use continue",(postbuf+count)->line,(postbuf+count)->file);
+					}
+					else if(!AutoJumpFailed(tk_goto,(postbuf+count)->line,(postbuf+count)->file))
+						preerror3(shorterr,(postbuf+count)->line,(postbuf+count)->file);
 				}
 			}
 			if(hold<127){
@@ -9777,8 +9994,15 @@ nn1:
 		i=(am32==0?2:4);
 		if(typer==tk_RETURN)i=1;
 		if(paramsize||localsize)i--;
-		if(insertmode||((!optimizespeed)&&paramsize&&
-				(current_proc_type&f_typeproc)!=tp_cdecl)||psavereg->size>i){
+		/* a near 'return' costs a 5 byte jmp to the epilogue; the epilogue itself
+		   (leave/pop ebp + ret n) is at most 4 bytes: put it right here when
+		   nothing else has to run on the way out */
+		int inlineret=(typer==tk_return&&am32&&!insertmode&&ESPloc==FALSE&&
+				psavereg->size==0&&!psavereg->all&&!(addstack&&sizestack)&&
+				(current_proc_type&f_far)==0&&current_proc_type!=f_interrupt&&
+				!HasStructLocals());
+		if(!inlineret&&(insertmode||((!optimizespeed)&&paramsize&&
+				(current_proc_type&f_typeproc)!=tp_cdecl)||psavereg->size>i)){
 			if(numblocks>1){	//заменить return на goto
 				AddRetList(outptr+1,line,typer);
 				retproc=TRUE;

@@ -192,314 +192,189 @@ unsigned long long value;
 
 }
 
-unsigned long long doconstqwordmath()
 
+/* ---- constant expression folding with standard C operator precedence ----
+   The three doconst*math() evaluators below used to fold strictly left to
+   right (with an ad-hoc special case for * / %).  They now use precedence
+   climbing with the same table as the runtime code generator
+   (MathOpPrecedence in tokb.cpp), so that an expression gives the same value
+   whether or not its operands are known at compile time.  Unknown operators
+   keep the old left-to-right behaviour.  When an operand turns out not to be
+   a number the lexer is rewound to the operator that started the current
+   top-level term and the value folded so far is returned, exactly like before. */
+
+struct CONSTFOLDSTATE
 {
+	unsigned int inptr;
+	unsigned int inptr2;
+	unsigned char cha;
+	unsigned char cha2;
+	unsigned int linenumber;
+	unsigned int linenum2;
+	int tok;
+	int tok2;
+	ITOK itok;
+	ITOK itok2;
+	unsigned int postnumflag;
+};
 
-unsigned long long value;
+static void SaveFoldState(CONSTFOLDSTATE *s)
+{
+	s->inptr=inptr;
+	s->inptr2=inptr2;
+	s->cha=cha;
+	s->cha2=cha2;
+	s->linenumber=linenumber;
+	s->linenum2=linenum2;
+	s->tok=tok;
+	s->tok2=tok2;
+	s->itok=itok;
+	s->itok2=itok2;
+	s->postnumflag=postnumflag;
+}
 
-unsigned int htok;
+static void RestoreFoldState(CONSTFOLDSTATE *s)
+{
+	inptr=s->inptr;
+	inptr2=s->inptr2;
+	cha=s->cha;
+	cha2=s->cha2;
+	linenumber=s->linenumber;
+	linenum2=s->linenum2;
+	tok=s->tok;
+	tok2=s->tok2;
+	itok=s->itok;
+	itok2=s->itok2;
+	postnumflag=s->postnumflag;
+}
 
-int fundef;
-
-unsigned int saved_inptr;
-
-unsigned int saved_inptr2;
-
-unsigned char saved_cha;
-
-unsigned char saved_cha2;
-
-unsigned int saved_linenumber;
-
-unsigned int saved_linenum2;
-
-int saved_tok;
-
-int saved_tok2;
-
-ITOK saved_itok;
-
-ITOK saved_itok2;
-
-unsigned int saved_postnumflag;
-
-	if(tok==tk_openbracket){
-
+/* tok is an operator; make the following number the current token.
+   Accepts "$", "!" and a unary minus in front of the number.
+   Returns FALSE (with tok still the operator) when no number follows. */
+static int FoldNextNumber()
+{
+	if(tok2==tk_number){
 		nexttok();
-
-		value=doconstqwordmath();
-
-		if(tok!=tk_closebracket)expected(')');
-
-		tok=tk_number;
-
-		itok.number=(unsigned long)value;
-
-		itok.lnumber=value;
-
-		itok.rm=tk_qword;
-
-		itok.flag=(unsigned char)postnumflag;
-
+		return TRUE;
 	}
-
-	else{
-
-	CheckMinusNum();
-
-	if(tok!=tk_number){
-
-		numexpected();
-
-		return(0);
-
-	}
-
-	if(itok.rm==tk_float)value=*(float *)&itok.number;
-
-	else if(itok.rm==tk_double)value=*(double *)&itok.lnumber;
-
-	else value=itok.lnumber;
-
-	}
-
-	fundef=itok.rm;
-
-	postnumflag=itok.flag;
-
-	calcnumber=TRUE;
-
-	while(itok2.type==tp_opperand){
-
-		if(fundef==tk_undefofs&&tok2!=tk_plus&&tok2!=tk_minus)break;
-
+	if(tok2==tk_minus){
 		nexttok();
-
-		htok=tok;
-
-		if(tok2!=tk_number){
-
-			if(tok2!=tk_dollar&&tok2!=tk_not){
-
-				calcnumber=FALSE;
-
-				return(value);
-
-			}
-
-			nexttok();
-
-			if(tok!=tk_number){
-
-				calcnumber=FALSE;
-
-				return(value);
-
-			}
-
-		}
-
-		else nexttok();
-
-		if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-		else if(itok.rm==tk_double)itok.lnumber=*(double *)&itok.lnumber;
-
-		if(is_high_prec(htok)){
-
-			if(calcqwordnumber(&value,itok.lnumber,htok)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-		}else if(itok2.type==tp_opperand&&is_high_prec(tok2)){
-
-			unsigned long long right=itok.lnumber;
-
-			unsigned int t;
-
-			postnumflag^=itok.flag;
-
-			nexttok();
-
-			t=tok;
-
-				if(tok2!=tk_number){
-
-				if(tok2!=tk_dollar&&tok2!=tk_not){
-
-					inptr=saved_inptr;
-
-					inptr2=saved_inptr2;
-
-					cha=saved_cha;
-
-					cha2=saved_cha2;
-
-					linenumber=saved_linenumber;
-
-					linenum2=saved_linenum2;
-
-					tok=saved_tok;
-
-					tok2=saved_tok2;
-
-					itok=saved_itok;
-
-					itok2=saved_itok2;
-
-					postnumflag=saved_postnumflag;
-
-					calcnumber=FALSE;
-
-					return(value);
-
-				}
-
-				nexttok();
-
-				if(tok!=tk_number){
-
-					inptr=saved_inptr;
-
-					inptr2=saved_inptr2;
-
-					cha=saved_cha;
-
-					cha2=saved_cha2;
-
-					linenumber=saved_linenumber;
-
-					linenum2=saved_linenum2;
-
-					tok=saved_tok;
-
-					tok2=saved_tok2;
-
-					itok=saved_itok;
-
-					itok2=saved_itok2;
-
-					postnumflag=saved_postnumflag;
-
-					calcnumber=FALSE;
-
-					return(value);
-
-				}
-
-			}else nexttok();
-
-			if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-			else if(itok.rm==tk_double)itok.lnumber=*(double *)&itok.lnumber;
-
-			if(calcqwordnumber(&right,itok.lnumber,t)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
-
-				nexttok();
-
-				t=tok;
-
-				if(tok2!=tk_number){
-
-					if(tok2!=tk_dollar&&tok2!=tk_not){
-
-						inptr=saved_inptr;
-
-						inptr2=saved_inptr2;
-
-						cha=saved_cha;
-
-						cha2=saved_cha2;
-
-						linenumber=saved_linenumber;
-
-						linenum2=saved_linenum2;
-
-						tok=saved_tok;
-
-						tok2=saved_tok2;
-
-						itok=saved_itok;
-
-						itok2=saved_itok2;
-
-						postnumflag=saved_postnumflag;
-
-						calcnumber=FALSE;
-
-						return(value);
-
-					}
-
-					nexttok();
-
-					if(tok!=tk_number){
-
-						inptr=saved_inptr;
-
-						inptr2=saved_inptr2;
-
-						cha=saved_cha;
-
-						cha2=saved_cha2;
-
-						linenumber=saved_linenumber;
-
-						linenum2=saved_linenum2;
-
-						tok=saved_tok;
-
-						tok2=saved_tok2;
-
-						itok=saved_itok;
-
-						itok2=saved_itok2;
-
-						postnumflag=saved_postnumflag;
-
-						calcnumber=FALSE;
-
-						return(value);
-
-					}
-
-				}else nexttok();
-
-				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-				else if(itok.rm==tk_double)itok.lnumber=*(double *)&itok.lnumber;
-
-				if(calcqwordnumber(&right,itok.lnumber,t)==FALSE)beep();
-
-				postnumflag^=itok.flag;
-
-			}
-
-			if(calcqwordnumber(&value,right,htok)==FALSE)beep();
-
-		}else{
-
-			if(calcqwordnumber(&value,itok.lnumber,htok)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-		}
-
-done_qword:;
-
+		if(CheckMinusNum()==FALSE)return FALSE;
+		return TRUE;
 	}
-
+	if(tok2!=tk_dollar&&tok2!=tk_not)return FALSE;
 	nexttok();
+	if(tok!=tk_number)return FALSE;
+	return TRUE;
+}
 
+static unsigned long long FoldGetQword()
+{
+	if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+	else if(itok.rm==tk_double)itok.lnumber=*(double *)&itok.lnumber;
+	return itok.lnumber;
+}
+
+static unsigned long FoldGetDword()
+{
+	if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+	if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
+	return itok.number;
+}
+
+static long FoldGetLong()
+{
+	if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
+	if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
+	return itok.number;
+}
+
+/* Fold operators of precedence >= minprec into *value.  With top!=NULL only
+   one operator (plus everything that binds tighter) is folded and the lexer
+   state at that operator is stored in *top, so that the caller can rewind to
+   it when a later operand turns out not to be a number.
+   Returns FALSE when a non-number operand was met. */
+template<class T>
+static int FoldClimb(T *value,int minprec,int (*calc)(T *,T,int),T (*getnum)(),CONSTFOLDSTATE *top)
+{
+	while(itok2.type==tp_opperand){
+		int op=tok2;
+		int p=MathOpPrecedence(op);
+		T right;
+		if(p<minprec)return TRUE;
+		nexttok();
+		if(top)SaveFoldState(top);	/* rewind point: the operator itself */
+		if(FoldNextNumber()==FALSE)return FALSE;
+		right=getnum();
+		postnumflag^=itok.flag;
+		/* the "op-" tokens (a *- b, a &- b ...) negate their operand: do it now,
+		   before tighter-binding operators are folded into it */
+		switch(op){
+			case tk_multminus: op=tk_mult; right=-right; break;
+			case tk_divminus: op=tk_div; right=-right; break;
+			case tk_modminus: op=tk_mod; right=-right; break;
+			case tk_andminus: op=tk_and; right=-right; break;
+			case tk_orminus: op=tk_or; right=-right; break;
+			case tk_xorminus: op=tk_xor; right=-right; break;
+			case tk_llminus: op=tk_ll; right=-right; break;
+			case tk_rrminus: op=tk_rr; right=-right; break;
+		}
+		/* an operator missing from the table (p==0) keeps the old strict
+		   left-to-right folding: nothing binds tighter to its right operand */
+		while(p!=0&&itok2.type==tp_opperand&&MathOpPrecedence(tok2)>p){
+			if(FoldClimb(&right,p+1,calc,getnum,NULL)==FALSE)return FALSE;
+		}
+		if(calc(value,right,op)==FALSE)beep();
+		if(top)return TRUE;
+	}
+	return TRUE;
+}
+
+template<class T>
+static T FoldTail(T value,int fundef,int (*calc)(T *,T,int),T (*getnum)())
+{
+CONSTFOLDSTATE top;
+	postnumflag=itok.flag;
+	calcnumber=TRUE;
+	while(itok2.type==tp_opperand){
+		if(fundef==tk_undefofs&&tok2!=tk_plus&&tok2!=tk_minus)break;
+		if(FoldClimb(&value,0,calc,getnum,&top)==FALSE){
+			RestoreFoldState(&top);
+			calcnumber=FALSE;
+			return value;
+		}
+	}
+	nexttok();
 	calcnumber=FALSE;
+	return value;
+}
 
-	return(value);
-
+unsigned long long doconstqwordmath()
+{
+unsigned long long value;
+int fundef;
+	if(tok==tk_openbracket){
+		nexttok();
+		value=doconstqwordmath();
+		if(tok!=tk_closebracket)expected(')');
+		tok=tk_number;
+		itok.number=(unsigned long)value;
+		itok.lnumber=value;
+		itok.rm=tk_qword;
+		itok.flag=(unsigned char)postnumflag;
+	}
+	else{
+		CheckMinusNum();
+		if(tok!=tk_number){
+			numexpected();
+			return(0);
+		}
+		if(itok.rm==tk_float)value=*(float *)&itok.number;
+		else if(itok.rm==tk_double)value=*(double *)&itok.lnumber;
+		else value=itok.lnumber;
+	}
+	fundef=itok.rm;
+	return FoldTail<unsigned long long>(value,fundef,calcqwordnumber,FoldGetQword);
 }
 
 int calcdwordnumber(unsigned long *retnum,unsigned long number,int operand)
@@ -565,333 +440,30 @@ int is_high_prec(int op)
 }
 
 unsigned long doconstdwordmath()
-
 {
-
 unsigned long value;
-
-unsigned int htok;
-
 int fundef;
-
-unsigned int saved_inptr;
-
-unsigned int saved_inptr2;
-
-unsigned char saved_cha;
-
-unsigned char saved_cha2;
-
-unsigned int saved_linenumber;
-
-unsigned int saved_linenum2;
-
-int saved_tok;
-
-int saved_tok2;
-
-ITOK saved_itok;
-
-ITOK saved_itok2;
-
-unsigned int saved_postnumflag;
-
 	if(tok==tk_openbracket){
-
 		nexttok();
-
 		value=doconstdwordmath();
-
 		if(tok!=tk_closebracket)expected(')');
-
 		tok=tk_number;
-
 		itok.number=value;
-
 		itok.lnumber=value;
-
 		itok.rm=tk_dword;
-
 		itok.flag=(unsigned char)postnumflag;
-
 	}
-
 	else{
-
-	CheckMinusNum();
-
-	if(tok!=tk_number){
-
-		numexpected();
-
-		return(0);
-
+		CheckMinusNum();
+		if(tok!=tk_number){
+			numexpected();
+			return(0);
+		}
+		if(itok.rm==tk_float)value=*(float *)&itok.number;
+		else value=itok.number;
 	}
-
-	if(itok.rm==tk_float)value=*(float *)&itok.number;
-
-	else value=itok.number;
-
-	}
-
 	fundef=itok.rm;
-
-	postnumflag=itok.flag;
-
-	calcnumber=TRUE;
-
-	while(itok2.type==tp_opperand){
-
-		if(fundef==tk_undefofs&&tok2!=tk_plus&&tok2!=tk_minus)break;
-
-		nexttok();
-
-		htok=tok;
-
-		saved_inptr=inptr;
-
-		saved_inptr2=inptr2;
-
-		saved_cha=cha;
-
-		saved_cha2=cha2;
-
-		saved_linenumber=linenumber;
-
-		saved_linenum2=linenum2;
-
-		saved_tok=tok;
-
-		saved_tok2=tok2;
-
-		saved_itok=itok;
-
-		saved_itok2=itok2;
-
-		saved_postnumflag=postnumflag;
-
-		if(tok2!=tk_number){
-
-			if(tok2!=tk_dollar&&tok2!=tk_not){
-
-				calcnumber=FALSE;
-
-				return(value);
-
-			}
-
-			nexttok();
-
-			if(tok!=tk_number){
-
-				calcnumber=FALSE;
-
-				return(value);
-
-			}
-
-		}
-
-		else nexttok();
-
-		if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-		if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
-
-		if(is_high_prec(htok)){
-
-			if(calcdwordnumber(&value,itok.number,htok)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-		}else if(itok2.type==tp_opperand&&is_high_prec(tok2)){
-
-			unsigned long right=itok.number;
-
-			unsigned int t;
-
-			postnumflag^=itok.flag;
-
-			nexttok();
-
-			t=tok;
-
-				if(tok2!=tk_number){
-
-				if(tok2!=tk_dollar&&tok2!=tk_not){
-
-					inptr=saved_inptr;
-
-					inptr2=saved_inptr2;
-
-					cha=saved_cha;
-
-					cha2=saved_cha2;
-
-					linenumber=saved_linenumber;
-
-					linenum2=saved_linenum2;
-
-					tok=saved_tok;
-
-					tok2=saved_tok2;
-
-					itok=saved_itok;
-
-					itok2=saved_itok2;
-
-					postnumflag=saved_postnumflag;
-
-					calcnumber=FALSE;
-
-					return(value);
-
-				}
-
-				nexttok();
-
-				if(tok!=tk_number){
-
-					inptr=saved_inptr;
-
-					inptr2=saved_inptr2;
-
-					cha=saved_cha;
-
-					cha2=saved_cha2;
-
-					linenumber=saved_linenumber;
-
-					linenum2=saved_linenum2;
-
-					tok=saved_tok;
-
-					tok2=saved_tok2;
-
-					itok=saved_itok;
-
-					itok2=saved_itok2;
-
-					postnumflag=saved_postnumflag;
-
-					calcnumber=FALSE;
-
-					return(value);
-
-				}
-
-			}else nexttok();
-
-			if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-			if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
-
-			if(calcdwordnumber(&right,itok.number,t)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
-
-				nexttok();
-
-				t=tok;
-
-				if(tok2!=tk_number){
-
-					if(tok2!=tk_dollar&&tok2!=tk_not){
-
-						inptr=saved_inptr;
-
-						inptr2=saved_inptr2;
-
-						cha=saved_cha;
-
-						cha2=saved_cha2;
-
-						linenumber=saved_linenumber;
-
-						linenum2=saved_linenum2;
-
-						tok=saved_tok;
-
-						tok2=saved_tok2;
-
-						itok=saved_itok;
-
-						itok2=saved_itok2;
-
-						postnumflag=saved_postnumflag;
-
-						calcnumber=FALSE;
-
-						return(value);
-
-					}
-
-					nexttok();
-
-					if(tok!=tk_number){
-
-						inptr=saved_inptr;
-
-						inptr2=saved_inptr2;
-
-						cha=saved_cha;
-
-						cha2=saved_cha2;
-
-						linenumber=saved_linenumber;
-
-						linenum2=saved_linenum2;
-
-						tok=saved_tok;
-
-						tok2=saved_tok2;
-
-						itok=saved_itok;
-
-						itok2=saved_itok2;
-
-						postnumflag=saved_postnumflag;
-
-						calcnumber=FALSE;
-
-						return(value);
-
-					}
-
-				}else nexttok();
-
-				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-				if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
-
-				if(calcdwordnumber(&right,itok.number,t)==FALSE)beep();
-
-				postnumflag^=itok.flag;
-
-			}
-
-			if(calcdwordnumber(&value,right,htok)==FALSE)beep();
-
-		}else{
-
-			if(calcdwordnumber(&value,itok.number,htok)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-		}
-
-done_high:;
-
-	}
-
-	nexttok();
-
-	calcnumber=FALSE;
-
-	return(value);
-
+	return FoldTail<unsigned long>(value,fundef,calcdwordnumber,FoldGetDword);
 }
 
 int calclongnumber(long *retnum,long number,int operand)
@@ -951,357 +523,30 @@ long value;
 }
 
 signed long doconstlongmath()
-
-//я┐╜я┐╜я┐╜слия┐╜я┐╜ я┐╜я┐╜ражя┐╜я┐╜я┐╜я┐╜
-
 {
-
 long value;
-
-unsigned int htok;
-
 int fundef;
-
-unsigned int saved_inptr;
-
-unsigned int saved_inptr2;
-
-unsigned char saved_cha;
-
-unsigned char saved_cha2;
-
-unsigned int saved_linenumber;
-
-unsigned int saved_linenum2;
-
-int saved_tok;
-
-int saved_tok2;
-
-ITOK saved_itok;
-
-ITOK saved_itok2;
-
-unsigned int saved_postnumflag;
-
 	if(tok==tk_openbracket){
-
 		nexttok();
-
 		value=doconstlongmath();
-
 		if(tok!=tk_closebracket)expected(')');
-
 		tok=tk_number;
-
 		itok.number=value;
-
 		itok.lnumber=value;
-
 		itok.rm=tk_long;
-
 		itok.flag=(unsigned char)postnumflag;
-
 	}
-
 	else{
-
-	CheckMinusNum();
-
-	if(tok!=tk_number){
-
-		numexpected();
-
-		return(0);
-
+		CheckMinusNum();
+		if(tok!=tk_number){
+			numexpected();
+			return(0);
+		}
+		if(itok.rm==tk_float)value=*(float *)&itok.number;
+		else value=itok.number;
 	}
-
 	fundef=itok.rm;
-
-	if(itok.rm==tk_float)value=*(float *)&itok.number;
-
-	else value=itok.number;
-
-	}
-
-	postnumflag=itok.flag;
-
-	calcnumber=TRUE;
-
-	while(itok2.type==tp_opperand){
-
-		if(fundef==tk_undefofs&&tok2!=tk_plus&&tok2!=tk_minus)break;
-
-		nexttok();
-
-		htok=tok;
-
-		saved_inptr=inptr;
-
-		saved_inptr2=inptr2;
-
-		saved_cha=cha;
-
-		saved_cha2=cha2;
-
-		saved_linenumber=linenumber;
-
-		saved_linenum2=linenum2;
-
-		saved_tok=tok;
-
-		saved_tok2=tok2;
-
-		saved_itok=itok;
-
-		saved_itok2=itok2;
-
-		saved_postnumflag=postnumflag;
-
-		saved_inptr=inptr;
-
-		saved_inptr2=inptr2;
-
-		saved_cha=cha;
-
-		saved_cha2=cha2;
-
-		saved_linenumber=linenumber;
-
-		saved_linenum2=linenum2;
-
-		saved_tok=tok;
-
-		saved_tok2=tok2;
-
-		saved_itok=itok;
-
-		saved_itok2=itok2;
-
-		saved_postnumflag=postnumflag;
-
-		if(tok2!=tk_number){
-
-			if(tok2!=tk_dollar&&tok2!=tk_not){
-
-				calcnumber=FALSE;
-
-				return(value);
-
-			}
-
-			nexttok();
-
-			if(tok!=tk_number){
-
-				calcnumber=FALSE;
-
-				return(value);
-
-			}
-
-		}
-
-		else nexttok();
-
-		if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-		if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
-
-		if(is_high_prec(htok)){
-
-			if(calclongnumber(&value,itok.number,htok)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-		}else if(itok2.type==tp_opperand&&is_high_prec(tok2)){
-
-			long right=itok.number;
-
-			unsigned int t;
-
-			postnumflag^=itok.flag;
-
-			nexttok();
-
-			t=tok;
-
-				if(tok2!=tk_number){
-
-				if(tok2!=tk_dollar&&tok2!=tk_not){
-
-					inptr=saved_inptr;
-
-					inptr2=saved_inptr2;
-
-					cha=saved_cha;
-
-					cha2=saved_cha2;
-
-					linenumber=saved_linenumber;
-
-					linenum2=saved_linenum2;
-
-					tok=saved_tok;
-
-					tok2=saved_tok2;
-
-					itok=saved_itok;
-
-					itok2=saved_itok2;
-
-					postnumflag=saved_postnumflag;
-
-					calcnumber=FALSE;
-
-					return(value);
-
-				}
-
-				nexttok();
-
-				if(tok!=tk_number){
-
-					inptr=saved_inptr;
-
-					inptr2=saved_inptr2;
-
-					cha=saved_cha;
-
-					cha2=saved_cha2;
-
-					linenumber=saved_linenumber;
-
-					linenum2=saved_linenum2;
-
-					tok=saved_tok;
-
-					tok2=saved_tok2;
-
-					itok=saved_itok;
-
-					itok2=saved_itok2;
-
-					postnumflag=saved_postnumflag;
-
-					calcnumber=FALSE;
-
-					return(value);
-
-				}
-
-			}else nexttok();
-
-			if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-			if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
-
-			if(calclongnumber(&right,itok.number,t)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-			while(itok2.type==tp_opperand&&is_high_prec(tok2)){
-
-				nexttok();
-
-				t=tok;
-
-				if(tok2!=tk_number){
-
-					if(tok2!=tk_dollar&&tok2!=tk_not){
-
-						inptr=saved_inptr;
-
-						inptr2=saved_inptr2;
-
-						cha=saved_cha;
-
-						cha2=saved_cha2;
-
-						linenumber=saved_linenumber;
-
-						linenum2=saved_linenum2;
-
-						tok=saved_tok;
-
-						tok2=saved_tok2;
-
-						itok=saved_itok;
-
-						itok2=saved_itok2;
-
-						postnumflag=saved_postnumflag;
-
-						calcnumber=FALSE;
-
-						return(value);
-
-					}
-
-					nexttok();
-
-					if(tok!=tk_number){
-
-						inptr=saved_inptr;
-
-						inptr2=saved_inptr2;
-
-						cha=saved_cha;
-
-						cha2=saved_cha2;
-
-						linenumber=saved_linenumber;
-
-						linenum2=saved_linenum2;
-
-						tok=saved_tok;
-
-						tok2=saved_tok2;
-
-						itok=saved_itok;
-
-						itok2=saved_itok2;
-
-						postnumflag=saved_postnumflag;
-
-						calcnumber=FALSE;
-
-						return(value);
-
-					}
-
-				}else nexttok();
-
-				if(itok.rm==tk_float)itok.number=*(float *)&itok.number;
-
-				if(itok.rm==tk_double)itok.number=*(double *)&itok.lnumber;
-
-				if(calclongnumber(&right,itok.number,t)==FALSE)beep();
-
-				postnumflag^=itok.flag;
-
-			}
-
-			if(calclongnumber(&value,right,htok)==FALSE)beep();
-
-		}else{
-
-			if(calclongnumber(&value,itok.number,htok)==FALSE)beep();
-
-			postnumflag^=itok.flag;
-
-		}
-
-done_long:;
-
-	}
-
-	nexttok();
-
-	calcnumber=FALSE;
-
-	return(value);
-
+	return FoldTail<long>(value,fundef,calclongnumber,FoldGetLong);
 }
 
 int calcfloatnumber(float *retnum,float number,int operand)

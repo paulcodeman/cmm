@@ -19,6 +19,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef _UNIX_
+#include <sys/wait.h>
+#endif
 #include "tok.h"
 
 #ifdef _KOS_
@@ -161,6 +164,8 @@ const char *usage[]={
 "-MER=##    set maximum number errors  -X     disable SPHINX C-- header in output",
 "-NW=##     disable selected warnings  -WE=## selected warning will be error",
 "-V         verbose token debug trace (stdout)",
+"-AJ        automatic short jumps: if/else/while/for/return/break/continue/",
+"           goto/switch get the short form wherever it fits (compiles several times)",
 //" -SCD        split code and date",
 NULL};
 
@@ -184,7 +189,7 @@ const char *dir[]={
 #ifdef OPTVARCONST
 	"ORV",
 #endif
-   "MAP",  "WE",   "EXT",   "OPATH", "ONAME", "V", NULL};
+   "MAP",  "WE",   "EXT",   "OPATH", "ONAME", "V", "AJ", "AJPASS", NULL};
 
 enum {
 	c_me,    c_key,     c_sym,   c_lasm,   c_endinfo=c_lasm,
@@ -207,7 +212,7 @@ enum {
 #ifdef OPTVARCONST
 	c_orv,
 #endif
-	c_map,   c_we,      c_ext,   c_opath, c_oname, c_v, c_end};
+	c_map,   c_we,      c_ext,   c_opath, c_oname, c_v, c_aj, c_ajpass, c_end};
 
 #define NUMEXT 6	//число разрешенных расширений компилируемого файла
 char extcompile[NUMEXT][4]={"c--","cmm","c","h--","hmm","h"};
@@ -282,6 +287,177 @@ void ErrOpenFile(char *str)
 	printf("Unable to open file %s.\n",str);
 }
 
+unsigned char autojump=FALSE;	/* -AJ */
+
+#if defined(_WIN32_)||defined(_UNIX_)||defined(_KOS_)
+static char **ajargv=NULL;	/* copy of the command line: main() edits argv */
+static int ajargc=0;
+
+#ifdef _KOS_
+/* KolibriOS has no exit codes: a child pass writes its code to <passfile>.rc */
+extern void (*kos_exit_hook)(int);
+static char ajrcfile[4300];
+
+static void AutoJumpKosExit(int code)
+{
+	fflush(stdout);
+	FILE *f=fopen(ajrcfile,"wt");
+	if(f){
+		fprintf(f,"%d",code);
+		fclose(f);
+	}
+	con_exit(1);	/* close this pass's console window */
+}
+#endif
+#endif
+
+#if defined(_WIN32_)||defined(_UNIX_)
+
+/* run this compiler once more with -AJPASS=<passfile> added to the command
+   line; returns its exit code, or -1 if it could not be run or crashed */
+static int AutoJumpSpawn(const char *passfile)
+{
+#ifdef _WIN32_
+	wchar_t exe[4096];
+	wchar_t wpass[4096];
+	if(GetModuleFileNameW(NULL,exe,4096)==0)return -1;
+	if(MultiByteToWideChar(CP_UTF8,0,passfile,-1,wpass,4096)==0)return -1;
+	LPWSTR cl=GetCommandLineW();
+	size_t n=wcslen(cl)+wcslen(wpass)+32;
+	wchar_t *cmd=(wchar_t *)malloc(n*sizeof(wchar_t));
+	if(cmd==NULL)return -1;
+	_snwprintf(cmd,n,L"%ls \"-AJPASS=%ls\"",cl,wpass);
+	cmd[n-1]=0;
+	STARTUPINFOW si;
+	PROCESS_INFORMATION pi;
+	memset(&si,0,sizeof(si));
+	si.cb=sizeof(si);
+	if(!CreateProcessW(exe,cmd,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi)){
+		free(cmd);
+		return -1;
+	}
+	free(cmd);
+	WaitForSingleObject(pi.hProcess,INFINITE);
+	DWORD code=(DWORD)-1;
+	GetExitCodeProcess(pi.hProcess,&code);
+	CloseHandle(pi.hThread);
+	CloseHandle(pi.hProcess);
+	return code>255?-1:(int)code;
+#else
+	char **args=(char **)malloc((ajargc+2)*sizeof(char *));
+	char *passarg=(char *)malloc(strlen(passfile)+16);
+	if(args==NULL||passarg==NULL)return -1;
+	sprintf(passarg,"-AJPASS=%s",passfile);
+	for(int i=0;i<ajargc;i++)args[i]=ajargv[i];
+	args[ajargc]=passarg;
+	args[ajargc+1]=NULL;
+	fflush(stdout);
+	pid_t pid=fork();
+	if(pid<0)return -1;
+	if(pid==0){
+		execv("/proc/self/exe",args);
+		execvp(args[0],args);
+		_exit(127);
+	}
+	int status;
+	if(waitpid(pid,&status,0)<0)return -1;
+	free(args);
+	free(passarg);
+	if(!WIFEXITED(status))return -1;
+	return WEXITSTATUS(status)==127?-1:WEXITSTATUS(status);
+#endif
+}
+#endif
+
+#ifdef _KOS_
+static int AutoJumpSpawn(const char *passfile)
+{
+	char rcfile[4300];
+	snprintf(rcfile,sizeof(rcfile),"%s.rc",passfile);
+	remove(rcfile);
+	size_t n=strlen(passfile)+16;
+	for(int i=1;i<ajargc;i++)n+=strlen(ajargv[i])+3;
+	char *args=(char *)malloc(n);
+	if(args==NULL)return -1;
+	args[0]=0;
+	for(int i=1;i<ajargc;i++){
+		int q=strchr(ajargv[i],' ')!=NULL;
+		if(q)strcat(args,"\"");
+		strcat(args,ajargv[i]);
+		if(q)strcat(args,"\"");
+		strcat(args," ");
+	}
+	strcat(args,"-AJPASS=");
+	strcat(args,passfile);
+	/* SF 70.7: start the program; returns its PID or a negative error */
+	char fstruc[25];
+	*((int *)(fstruc+0))=7;
+	*((int *)(fstruc+4))=0;
+	*((char **)(fstruc+8))=args;
+	*((int *)(fstruc+12))=0;
+	*((int *)(fstruc+16))=0;
+	*((char *)(fstruc+20))=0;
+	*((char **)(fstruc+21))=ajargv[0];
+	int pid;
+	fflush(stdout);
+	__asm__ __volatile__("int $0x40":"=a"(pid):"a"(70),"b"(fstruc):"memory");
+	free(args);
+	if(pid<=0)return -1;
+	for(;;){	/* SF 18.21: slot of the PID, 0 once it has exited */
+		int slot;
+		__asm__ __volatile__("int $0x40":"=a"(slot):"a"(18),"b"(21),"c"(pid));
+		if(slot==0)break;
+		__asm__ __volatile__("int $0x40"::"a"(5),"b"(2));
+	}
+	FILE *f=fopen(rcfile,"rt");
+	if(f==NULL)return -1;	/* crashed */
+	int code=-1;
+	if(fscanf(f,"%d",&code)!=1)code=-1;
+	fclose(f);
+	remove(rcfile);
+	return code<0||code>255?-1:code;
+}
+#endif
+
+#if defined(_WIN32_)||defined(_UNIX_)||defined(_KOS_)
+
+/* -AJ driver: compile in child passes until no statement needs demoting.
+   Returns the exit code of the final pass, or -1 to compile here instead. */
+static int AutoJumpDrive()
+{
+	char passfile[4200];
+	char outfile[4300];
+	int code=-1;
+	snprintf(passfile,sizeof(passfile),"%s.ajp",rawfilename);
+	snprintf(outfile,sizeof(outfile),"%s.out",passfile);
+	remove(passfile);
+	for(int pass=0,crash=0;pass<16;){
+		code=AutoJumpSpawn(passfile);
+		if(code<0||code>e_manyinclude&&code!=E_AUTOJUMP_RETRY){
+			if(++crash<3)continue;	/* c-- itself occasionally crashes: retry */
+			code=-1;
+			break;
+		}
+		if(code!=E_AUTOJUMP_RETRY)break;
+		pass++;
+	}
+	if(code==E_AUTOJUMP_RETRY)code=-1;
+	if(code>=0){
+		FILE *f=fopen(outfile,"rb");
+		if(f){
+			char buf[4096];
+			size_t n;
+			while((n=fread(buf,1,sizeof(buf),f))>0)fwrite(buf,1,n,stdout);
+			fclose(f);
+		}
+	}
+	else puts("-AJ: automatic short jumps failed, compiling with the jumps as written");
+	remove(passfile);
+	remove(outfile);
+	return code;
+}
+#endif
+
 int main(int argc,char *argv[])
 {
 #ifdef _WIN32_
@@ -306,10 +482,30 @@ int main(int argc,char *argv[])
 int count;
 unsigned char pari=FALSE;
 	char *buffer;
+	int ajpass=FALSE;
+
+#if defined(_WIN32_)||defined(_UNIX_)||defined(_KOS_)
+	ajargc=argc;
+	ajargv=(char **)malloc((argc+1)*sizeof(char *));
+	for(count=0;count<argc;count++){
+		ajargv[count]=strdup(argv[count]);
+		if((argv[count][0]=='-'||argv[count][0]=='/')&&strnicmp(argv[count]+1,"AJPASS=",7)==0){
+			/* a -AJ pass: its report goes to a file, the driver prints the last one */
+			char outfile[4300];
+			snprintf(outfile,sizeof(outfile),"%s.out",argv[count]+8);
+			if(freopen(outfile,"w",stdout)!=NULL)ajpass=TRUE;
+#ifdef _KOS_
+			snprintf(ajrcfile,sizeof(ajrcfile),"%s.rc",argv[count]+8);
+			kos_exit_hook=AutoJumpKosExit;
+#endif
+		}
+	}
+	ajargv[argc]=NULL;
+#endif
 
 	char compiler_ver[64];
 	snprintf(compiler_ver, 64, "\nSPHINX C-- Compiler   Version %d.%d%s   %s\r\n",ver1,ver2,betta,__DATE__);
-	puts(compiler_ver);
+	if(!ajpass)puts(compiler_ver);
 #ifdef _KOS_
 	con_set_title(compiler_ver);
 #endif
@@ -336,9 +532,20 @@ unsigned char pari=FALSE;
 		for(count=1;count<argc;count++){ //обработка командной строки
 			if(argv[count][0]=='/'||argv[count][0]=='-'){
 			//if(argv[count][0]=='-'){
+#ifdef _KOS_
+				/* KolibriOS paths start with '/': an existing file is the source, not an option */
+				FILE *argf;
+				if(argv[count][0]=='/'&&(argf=fopen(argv[count],"rb"))!=NULL){
+					fclose(argf);
+					goto srcarg;
+				}
+#endif
 				if(SelectComand(argv[count]+1,&count)==c_end) BadCommandLine(argv[count]);
 			}
 			else{
+#ifdef _KOS_
+srcarg:
+#endif
 				if(pari==FALSE){
 					rawfilename=argv[count];
 					pari=TRUE;
@@ -375,8 +582,17 @@ unsigned char pari=FALSE;
 	time(&systime); //текущее время
 	memcpy(&timeptr,localtime(&systime),sizeof(tm));
 	if(kexmode)addconsttotree("KEX_MODE",TRUE);
+#if defined(_WIN32_)||defined(_UNIX_)||defined(_KOS_)
+	if(autojump&&autojumpfile==NULL){
+		fflush(stdout);
+		int code=AutoJumpDrive();
+		if(code>=0)exit(code);
+	}
+#endif
+	if(autojumpfile)AutoJumpLoad();
 	InitDefineConst();
 	compile();
+	if(autojumpfile&&autojumpnew)exit(E_AUTOJUMP_RETRY);
 	if(error==0)exit(e_ok);
 	exit(e_someerrors);
 	return 0;
@@ -646,7 +862,7 @@ char *p,*q;
 	while(isspace(*p))p++;	//пока незначащие символы
 	while(*p)*q++=*p++;     //переместить строку
 	*q='\0';
-	for(i=strlen(st)-1;isspace(st[i])&&i>=0;i--);
+	for(i=strlen(st)-1;i>=0&&isspace(st[i]);i--);
 	st[i+1]='\0';
 }
 
@@ -1139,6 +1355,13 @@ nexpardll:
 				case c_v:
 					verbosedebug=(unsigned char)1^neg;
 					break;
+				case c_aj:
+					autojump=(unsigned char)1^neg;
+					break;
+				case c_ajpass:
+					if(ptr==NULL)return c_end;
+					if(autojumpfile==NULL)autojumpfile=strdup(ptr);
+					break;
 			}
 			break;
 		}
@@ -1260,9 +1483,7 @@ void * MALLOC (unsigned long size)
 void *mem;
 	mem=malloc(size);
 	if(mem==NULL)OutMemory();
-#ifdef _UNIX_
 	else memset(mem,0,size);
-#endif
 
 //	if(((unsigned long)mem+size)>maxusedmem)maxusedmem=(unsigned long)mem+size;
 

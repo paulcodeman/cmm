@@ -401,6 +401,8 @@ int caselong(unsigned long val);
 int dobeg(int beg,int terminater=tk_semicolon,int prefixop=0);
 void dobegmath(int beg);	/* math done is on all begs except AL */
 int is_high_prec(int op);
+int MathOpPrecedence(int op);
+int CheckMinusNum();
 void doregmath_32(int reg,int razr,int sign,char **ofsstr,int i=0);	/* math done is on all regs except AX */
 int getintobeg(int beg,char **ofsstr);
 int getintoreg_32(int reg,int razr,int sign,char **ofsstr,int useloop=TRUE); /* get into word reg (except AX) with enum */
@@ -512,6 +514,15 @@ int loadfile(char *filename,int firstflag);
 void RestoreStack();
 void IsUses(idrec *rec);
 int SkipBlock();
+void SkipStatement();
+int HasStructLocals();
+extern char *autojumpfile;
+extern int autojumpnew;
+void AutoJumpLoad();
+int AutoJumpPromote(int tok);
+int AutoJumpFailed(int tok,unsigned int line,unsigned int file);
+int AutoJumpFailedName(char *type,unsigned int line,unsigned int file);
+#define E_AUTOJUMP_RETRY 42	/* -AJPASS exit code: statements were demoted, run again */
 void declareanonim();
 void declareunion();
 void startblock();

@@ -11,6 +11,7 @@
 
 #include <unistd.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include "dirlist.h"
 #include "id.h"
@@ -1111,6 +1112,9 @@ void nextchar()
 {
 	if(inptr<endinptr){
 		cha=input[inptr];
+		// lone LF -> CR: the tokenizer keys line breaks on CR only, so an LF-only
+		// source lets a `//` comment run to EOF and swallow the whole file.
+		if(cha==10&&!(inptr>0&&input[inptr-1]==13))cha=13;
 		endoffile=0;
 		if(savestring3)string3[posstr3++]=cha;
 		inptr++;
@@ -1820,7 +1824,7 @@ extreg32:
 			}
 		}
 		if(useasm==FALSE){
-			if((useme=FastSearch(id,idofs,2,(char *)string4))!=-1)*tok4=useme;
+			if((useme=FastSearch(id,idofs,2,(char *)string4))!=-1)*tok4=AutoJumpPromote(useme);
 			else if(idasm==TRUE&&(useme=CheckAsmName((char *)string4))!=-1){
 				*tok4=tk_idasm;
 				itok4->rm=useme;
@@ -3229,6 +3233,19 @@ elementteg *bazael=searcht->baza;
 	return FALSE;
 }
 
+/* is there a local struct in scope (it may need a destructor on return)? */
+int HasStructLocals()
+{
+struct localrec *ptrs;
+treelocalrec *ftlr;
+	for(ftlr=tlr;ftlr!=NULL;ftlr=ftlr->next){
+		for(ptrs=ftlr->lrec;ptrs!=NULL;ptrs=ptrs->rec.next){
+			if(ptrs->rec.rectok==tk_structvar)return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 void AutoDestructor()
 {
 struct localrec *ptrs;
@@ -3914,9 +3931,19 @@ ITOK cstok;
 					displaytokerrors=1;
 					tokscan(&i,&cstok,string2);
 					if(i==tk_string){
+#ifdef _KOS_
+						/* newlib's stat() is a stub that always fails on KolibriOS */
+						int fh=open_utf8((char *)string3,O_BINARY|O_RDONLY);
+						if(fh==-1)unableopenfile((char *)string3);
+						else{
+							itok4->number=getfilelen(fh);
+							close(fh);
+						}
+#else
 						struct stat statbuf;
 						if(stat((char *)string3,&statbuf)!=0)unableopenfile((char *)string3);
 						else itok4->number=statbuf.st_size;
+#endif
 					}
 					else stringexpected();
 				}

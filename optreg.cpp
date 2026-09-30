@@ -383,13 +383,28 @@ void CompareRegStat(REGISTERSTAT *bak)
 #endif
 
 	for(int i=0;i<8;i++){
-
 		if((regstat+i)->type==t_undef||(regstat+i)->type!=(bak+i)->type||
-
-				((regstat+i)->type==t_id&&strcmp((regstat+i)->id,(bak+i)->id)!=0))ClearRegBak(i,bak);
-
+				((regstat+i)->type==t_id&&strcmp((regstat+i)->id,(bak+i)->id)!=0)||
+				((regstat+i)->type==t_const&&(regstat+i)->number!=(bak+i)->number)||
+				(regstat+i)->razr!=(bak+i)->razr){
+			ClearRegBak(i,bak);
+			continue;
+		}
+		/* keep in the merged list only the variables the register holds on both paths */
+REGEQVAR *prev=NULL,*cur=(bak+i)->next;
+		while(cur){
+REGEQVAR *nextv=cur->next;
+REGEQVAR *now=(regstat+i)->next;
+			while(now&&!(now->razr==cur->razr&&strcmp(now->name,cur->name)==0))now=now->next;
+			if(now==NULL){
+				if(prev)prev->next=nextv;
+				else (bak+i)->next=nextv;
+				free(cur);
+			}
+			else prev=cur;
+			cur=nextv;
+		}
 	}
-
 }
 
 int convertrazr(int *reg,int razr)
@@ -882,19 +897,19 @@ int oscanlexmode;
 
 	scanlexmode=DEFLEX;
 
-	while(tok2!=stop1&&tok2!=stop2&&tok2!=tk_eof&&itok2.type!=type){
+	/* skip to the last token of the expression: stop when the next token is
+	   a stopper outside the brackets of the expression itself.  The old loop
+	   stepped over a ')' closing a group and then onto the stopper, so the
+	   check of tok2 missed it and the next statement was skipped too
+	   (EBX = (a + x); ECX = (a + x); r = EBX; lost r = EBX) */
+	for(;;){
+		if(tok2==tk_eof)break;
+		if(i==0&&(tok2==stop1||tok2==stop2||itok2.type==type))break;
 
 		nexttok();
 
-		while(tok==tk_closebracket&&i){
-
-			i--;
-
-			nexttok();
-
-		}
-
 		if(tok==tk_openbracket)i++;
+		else if(tok==tk_closebracket&&i)i--;
 
 		if(bufrm){
 

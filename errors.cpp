@@ -494,6 +494,8 @@ char smalltype[IDLENGTH];
 
 char buf[80];
 
+	if(AutoJumpFailedName(type,line,currentfileinfo))return;	/* -AJ: demote and retry */
+
 	strcpy(smalltype,type);
 
 	strlwr(smalltype);
