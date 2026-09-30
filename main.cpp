@@ -455,9 +455,20 @@ unsigned char pari=FALSE;
 		for(count=1;count<argc;count++){ //обработка командной строки
 			if(argv[count][0]=='/'||argv[count][0]=='-'){
 			//if(argv[count][0]=='-'){
+#ifdef _KOS_
+				/* KolibriOS paths start with '/': an existing file is the source, not an option */
+				FILE *argf;
+				if(argv[count][0]=='/'&&(argf=fopen(argv[count],"rb"))!=NULL){
+					fclose(argf);
+					goto srcarg;
+				}
+#endif
 				if(SelectComand(argv[count]+1,&count)==c_end) BadCommandLine(argv[count]);
 			}
 			else{
+#ifdef _KOS_
+srcarg:
+#endif
 				if(pari==FALSE){
 					rawfilename=argv[count];
 					pari=TRUE;

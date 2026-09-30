@@ -11,6 +11,7 @@
 
 #include <unistd.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include "dirlist.h"
 #include "id.h"
@@ -3930,9 +3931,19 @@ ITOK cstok;
 					displaytokerrors=1;
 					tokscan(&i,&cstok,string2);
 					if(i==tk_string){
+#ifdef _KOS_
+						/* newlib's stat() is a stub that always fails on KolibriOS */
+						int fh=open_utf8((char *)string3,O_BINARY|O_RDONLY);
+						if(fh==-1)unableopenfile((char *)string3);
+						else{
+							itok4->number=getfilelen(fh);
+							close(fh);
+						}
+#else
 						struct stat statbuf;
 						if(stat((char *)string3,&statbuf)!=0)unableopenfile((char *)string3);
 						else itok4->number=statbuf.st_size;
+#endif
 					}
 					else stringexpected();
 				}

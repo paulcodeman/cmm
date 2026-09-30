@@ -217,9 +217,15 @@ int open_utf8(const char *pathname, int flags, ...)
 
 #else
 
+#include <stdarg.h>
+#ifdef _KOS_
+/* newlib's fcntl.h brings sys/stat.h, whose stat() clashes with the one above */
+extern "C" int open(const char *, int, ...);
+#define O_CREAT 0x0200
+#else
 #include <stdio.h>
 #include <fcntl.h>
-#include <stdarg.h>
+#endif
 
 FILE *fopen_utf8(const char *filename, const char *mode)
 {
