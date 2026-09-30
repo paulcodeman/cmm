@@ -289,9 +289,29 @@ void ErrOpenFile(char *str)
 
 unsigned char autojump=FALSE;	/* -AJ */
 
-#if defined(_WIN32_)||defined(_UNIX_)
+#if defined(_WIN32_)||defined(_UNIX_)||defined(_KOS_)
 static char **ajargv=NULL;	/* copy of the command line: main() edits argv */
 static int ajargc=0;
+
+#ifdef _KOS_
+/* KolibriOS has no exit codes: a child pass writes its code to <passfile>.rc */
+extern void (*kos_exit_hook)(int);
+static char ajrcfile[4300];
+
+static void AutoJumpKosExit(int code)
+{
+	fflush(stdout);
+	FILE *f=fopen(ajrcfile,"wt");
+	if(f){
+		fprintf(f,"%d",code);
+		fclose(f);
+	}
+	con_exit(1);	/* close this pass's console window */
+}
+#endif
+#endif
+
+#if defined(_WIN32_)||defined(_UNIX_)
 
 /* run this compiler once more with -AJPASS=<passfile> added to the command
    line; returns its exit code, or -1 if it could not be run or crashed */
@@ -347,6 +367,59 @@ static int AutoJumpSpawn(const char *passfile)
 	return WEXITSTATUS(status)==127?-1:WEXITSTATUS(status);
 #endif
 }
+#endif
+
+#ifdef _KOS_
+static int AutoJumpSpawn(const char *passfile)
+{
+	char rcfile[4300];
+	snprintf(rcfile,sizeof(rcfile),"%s.rc",passfile);
+	remove(rcfile);
+	size_t n=strlen(passfile)+16;
+	for(int i=1;i<ajargc;i++)n+=strlen(ajargv[i])+3;
+	char *args=(char *)malloc(n);
+	if(args==NULL)return -1;
+	args[0]=0;
+	for(int i=1;i<ajargc;i++){
+		int q=strchr(ajargv[i],' ')!=NULL;
+		if(q)strcat(args,"\"");
+		strcat(args,ajargv[i]);
+		if(q)strcat(args,"\"");
+		strcat(args," ");
+	}
+	strcat(args,"-AJPASS=");
+	strcat(args,passfile);
+	/* SF 70.7: start the program; returns its PID or a negative error */
+	char fstruc[25];
+	*((int *)(fstruc+0))=7;
+	*((int *)(fstruc+4))=0;
+	*((char **)(fstruc+8))=args;
+	*((int *)(fstruc+12))=0;
+	*((int *)(fstruc+16))=0;
+	*((char *)(fstruc+20))=0;
+	*((char **)(fstruc+21))=ajargv[0];
+	int pid;
+	fflush(stdout);
+	__asm__ __volatile__("int $0x40":"=a"(pid):"a"(70),"b"(fstruc):"memory");
+	free(args);
+	if(pid<=0)return -1;
+	for(;;){	/* SF 18.21: slot of the PID, 0 once it has exited */
+		int slot;
+		__asm__ __volatile__("int $0x40":"=a"(slot):"a"(18),"b"(21),"c"(pid));
+		if(slot==0)break;
+		__asm__ __volatile__("int $0x40"::"a"(5),"b"(2));
+	}
+	FILE *f=fopen(rcfile,"rt");
+	if(f==NULL)return -1;	/* crashed */
+	int code=-1;
+	if(fscanf(f,"%d",&code)!=1)code=-1;
+	fclose(f);
+	remove(rcfile);
+	return code<0||code>255?-1:code;
+}
+#endif
+
+#if defined(_WIN32_)||defined(_UNIX_)||defined(_KOS_)
 
 /* -AJ driver: compile in child passes until no statement needs demoting.
    Returns the exit code of the final pass, or -1 to compile here instead. */
@@ -411,7 +484,7 @@ unsigned char pari=FALSE;
 	char *buffer;
 	int ajpass=FALSE;
 
-#if defined(_WIN32_)||defined(_UNIX_)
+#if defined(_WIN32_)||defined(_UNIX_)||defined(_KOS_)
 	ajargc=argc;
 	ajargv=(char **)malloc((argc+1)*sizeof(char *));
 	for(count=0;count<argc;count++){
@@ -421,6 +494,10 @@ unsigned char pari=FALSE;
 			char outfile[4300];
 			snprintf(outfile,sizeof(outfile),"%s.out",argv[count]+8);
 			if(freopen(outfile,"w",stdout)!=NULL)ajpass=TRUE;
+#ifdef _KOS_
+			snprintf(ajrcfile,sizeof(ajrcfile),"%s.rc",argv[count]+8);
+			kos_exit_hook=AutoJumpKosExit;
+#endif
 		}
 	}
 	ajargv[argc]=NULL;
@@ -505,7 +582,7 @@ srcarg:
 	time(&systime); //текущее время
 	memcpy(&timeptr,localtime(&systime),sizeof(tm));
 	if(kexmode)addconsttotree("KEX_MODE",TRUE);
-#if defined(_WIN32_)||defined(_UNIX_)
+#if defined(_WIN32_)||defined(_UNIX_)||defined(_KOS_)
 	if(autojump&&autojumpfile==NULL){
 		fflush(stdout);
 		int code=AutoJumpDrive();

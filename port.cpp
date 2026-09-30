@@ -158,7 +158,10 @@ char * getcwd (char *buffer, int size)
 		return 0;
 }
 
+void (*kos_exit_hook)(int)=NULL;	/* -AJ child pass: report the exit code */
+
 void exit(int a){
+	if(kos_exit_hook)kos_exit_hook(a);
 	__asm__ __volatile__("int $0x40"::"a"(-1));
 }
 
